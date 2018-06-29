@@ -23,7 +23,7 @@ if mapHasCustomSpawns then
         local totalDistance = 0
         local alivePlayers = getAlivePlayers()
         for _, ply in pairs( alivePlayers ) do
-            totalDistance = totalDistance + ply:GetPos():Distance(spawn)
+            totalDistance = totalDistance + ply:GetPos():DistToSqr( spawn )
         end
 
         return (totalDistance/alivePlayers.count)
@@ -39,17 +39,18 @@ if mapHasCustomSpawns then
         for _, spawn in pairs( customSpawnsForMap ) do
             local averagePlayerDistance = getAveragePlayerDistanceFromCustomSpawn( spawn )
 
-            table.insert( averagePlayerDistanceFromSpawns, {
-                "spawn" = spawn,
-                "average-distance" = averagePlayerDistance
-            })
+            local spawnDistanceData = {}
+            spawnDistanceData["spawn"] = spawn
+            spawnDistanceDat[average-distance] = averagePlayerDistance
+
+            table.insert( averagePlayerDistanceFromSpawns, spawnDistanceData )
         end
 
         cfcRandomSpawn.spawnPointRankings = averagePlayerDistanceFromSpawns
         table.SortByMember( cfcRandomSpawn.spawnPointRankings, "average-distance", true )
     end
 
-    timer.Create( "CFC_UpdateOptimalSpawnPosition", 0.75, 0, cfcRandomSpawn.updateSpawnPointRankings )
+    timer.Create( "CFC_UpdateOptimalSpawnPosition", 0.5, 0, cfcRandomSpawn.updateSpawnPointRankings )
 
     function cfcRandomSpawn.handlePlayerSpawn( ply )
         if not (ply && IsValid( ply )) then return end
