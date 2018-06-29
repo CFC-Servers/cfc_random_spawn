@@ -1,34 +1,64 @@
 
-hook.Add( "PlayerSpawn", "CFC_PlayerSpawning", function( ply, text, team )
-    -- if ply in pvp
-        for k, v in pairs( cfcRandomSpawn.config.PVP_SPAWN_LOCATIONS ) do
-            if table.HasValue( v, game.GetMap() ) then
-                local randomPosition = table.Random( v ) -- use this for reference
-                local HDtNP = 0
-                local bestPosition
+local customSpawnsForMap = cfcRandomSpawn.config.CUSTOM_SPAWNS[game.GetMap()]
+local mapHasCustomSpawns = customSpawnsForMap ~= nil
 
-                for k2, v2 in pairs( v ) do
-                    if k2 == 0 and v2 == game.GetMap() then continue end
-                    if k2 == 0 and v2 != game.GetMap() then return end
+if mapHasCustomSpawns then
+    cfcRandomSpawn.spawnPointRankings = cfcRandomSpawn.spawnPointRankings or {}
 
-                    for k3, v3 in pairs( player.GetHumans() ) do
-                        local pD = v3:GetPos():Distance( v2:GetPos() )
-                        if pD > HDtNP then
-                            HDtNP = pD
-                            bestPosition = v2
-                        end
-                    end
-                end
-
-                -- by calling randomPosition it will work as it has been set up and I've decided not to remove it
-                if randomPosition == game.GetMap() then randomPosition = table.Random( v ) repeat until randomPosition != game.GetMap() end
-
-                timer.Simple( ply:Ping() / 500, function()
-                    ply:SetPos( bestPosition )
-                end)
-
-                return
+    local function getAlivePlayers()
+        local alivePlayers = {}
+        for _, ply in pairs( player.GetHumans() ) do
+            if ( ply:Alive() ) then
+                table.insert( alivePlayers, ply )
             end
         end
-    -- end
-end )
+
+        return alivePlayers
+    end
+
+    -- TODO: Very Inefficient: http://wiki.garrysmod.com/page/Vector/Distance
+    local function getAveragePlayerDistanceFromCustomSpawn( spawn )
+        local totalDistance = 0
+        local alivePlayers = getAlivePlayers()
+        for _, ply in pairs( alivePlayers ) do
+            totalDistance = totalDistance + ply:GetPos():Distance(spawn)
+        end
+
+        return (totalDistance/alivePlayers.count)
+    end
+
+    function cfcRandomSpawn.getOptimalSpawnPosition()
+        return cfcRandomSpawn.spawnPointRankings[1]["spawn"]
+    end
+
+    function cfcRandomSpawn.updateSpawnPointRankings()
+        local averagePlayerDistanceFromSpawns = {}
+
+        for _, spawn in pairs( customSpawnsForMap ) do
+            local averagePlayerDistance = getAveragePlayerDistanceFromCustomSpawn( spawn )
+
+            table.insert( averagePlayerDistanceFromSpawns, {
+                "spawn" = spawn,
+                "average-distance" = averagePlayerDistance
+            })
+        end
+
+        cfcRandomSpawn.spawnPointRankings = averagePlayerDistanceFromSpawns
+        table.SortByMember( cfcRandomSpawn.spawnPointRankings, "average-distance", true )
+    end
+
+    timer.Create( "CFC_UpdateOptimalSpawnPosition", 0.75, 0, cfcRandomSpawn.updateSpawnPointRankings )
+
+    function cfcRandomSpawn.handlePlayerSpawn( ply )
+        if not (ply && IsValid( ply )) then return end
+        if ply.LinkedSpawnPoint then return end
+        local optimalSpawnPosition = cfcRandomSpawn.getOptimalSpawnPosition()
+
+        timer.Simple( ply:Ping() / 500, function()
+            ply:SetPos( optimalSpawnPosition )
+        end)
+    end
+
+    hook.Add( "PlayerSpawn", "CFC_PlayerSpawning", cfcRandomSpawn.handlePlayerSpawn )
+end
+
