@@ -26,7 +26,7 @@ if mapHasCustomSpawns then
             totalDistance = totalDistance + ply:GetPos():DistToSqr( spawn )
         end
 
-        return (totalDistance/alivePlayers.count)
+        return totalDistance / #alivePlayers
     end
 
     function cfcRandomSpawn.getOptimalSpawnPosition()
