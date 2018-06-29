@@ -2,6 +2,8 @@
 local customSpawnsForMap = cfcRandomSpawn.config.CUSTOM_SPAWNS[game.GetMap()]
 local mapHasCustomSpawns = customSpawnsForMap ~= nil
 
+hook.Remove( "PlayerSpawn", "CFC_PlayerSpawning" )
+
 if mapHasCustomSpawns then
     cfcRandomSpawn.spawnPointRankings = cfcRandomSpawn.spawnPointRankings or {}
 
