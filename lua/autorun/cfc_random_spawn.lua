@@ -54,5 +54,5 @@ if not frile or frile.VERSION < version then
 end
 
 -- Do not adjust the load order. You must first load the libraries, than module and then languages.
-frile.includeFolder( "cfcRandomSpawn/", false, true )
-frile.includeFolder( "cfcRandomSpawn/module/" )
+frile.includeFolder( "cfc_random_spawn/", false, true )
+frile.includeFolder( "cfc_random_spawn/module/" )

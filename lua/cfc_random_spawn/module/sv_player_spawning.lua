@@ -11,7 +11,7 @@ hook.Add( "PlayerSpawn", "CFC_PlayerSpawning", function( ply, text, team )
                     if k2 == 0 and v2 == game.GetMap() then continue end
                     if k2 == 0 and v2 != game.GetMap() then return end
 
-                    for k3, v3 in pairs( player.GetAll() ) do
+                    for k3, v3 in pairs( player.GetHumans() ) do
                         local pD = v3:GetPos():Distance( v2:GetPos() )
                         if pD > HDtNP then
                             HDtNP = pD
