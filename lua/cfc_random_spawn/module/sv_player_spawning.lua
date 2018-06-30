@@ -59,7 +59,7 @@ if mapHasCustomSpawns then
         local optimalSpawnPosition = cfcRandomSpawn.getOptimalSpawnPosition()
 
         ply:SetPos( optimalSpawnPosition )
-		cfcRandomSpawn.updateSpawnPointRankings()
+        cfcRandomSpawn.updateSpawnPointRankings()
     end
 
     hook.Add( "PlayerSpawn", "CFC_PlayerSpawning", cfcRandomSpawn.handlePlayerSpawn )
