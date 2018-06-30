@@ -18,10 +18,10 @@ if mapHasCustomSpawns then
         return alivePlayers
     end
 
-    -- TODO: Very Inefficient: http://wiki.garrysmod.com/page/Vector/Distance
     local function getAveragePlayerDistanceFromCustomSpawn( spawn )
         local totalDistance = 0
         local alivePlayers = getAlivePlayers()
+		
         for _, ply in pairs( alivePlayers ) do
             totalDistance = totalDistance + ply:GetPos():DistToSqr( spawn )
         end
@@ -30,7 +30,8 @@ if mapHasCustomSpawns then
     end
 
     function cfcRandomSpawn.getOptimalSpawnPosition()
-        return cfcRandomSpawn.spawnPointRankings[1]["spawn"]
+		local randomSpawn = math.random(1,4)
+        return cfcRandomSpawn.spawnPointRankings[randomSpawn]["spawn"]
     end
 
     function cfcRandomSpawn.updateSpawnPointRankings()
@@ -41,13 +42,13 @@ if mapHasCustomSpawns then
 
             local spawnDistanceData = {}
             spawnDistanceData["spawn"] = spawn
-            spawnDistanceDat[average-distance] = averagePlayerDistance
+            spawnDistanceData["average-distance"] = averagePlayerDistance
 
             table.insert( averagePlayerDistanceFromSpawns, spawnDistanceData )
         end
 
         cfcRandomSpawn.spawnPointRankings = averagePlayerDistanceFromSpawns
-        table.SortByMember( cfcRandomSpawn.spawnPointRankings, "average-distance", true )
+        table.SortByMember( cfcRandomSpawn.spawnPointRankings, "average-distance", false )
     end
 
     timer.Create( "CFC_UpdateOptimalSpawnPosition", 0.5, 0, cfcRandomSpawn.updateSpawnPointRankings )
@@ -57,11 +58,9 @@ if mapHasCustomSpawns then
         if ply.LinkedSpawnPoint then return end
         local optimalSpawnPosition = cfcRandomSpawn.getOptimalSpawnPosition()
 
-        timer.Simple( ply:Ping() / 500, function()
-            ply:SetPos( optimalSpawnPosition )
-        end)
+        ply:SetPos( optimalSpawnPosition )
+		cfcRandomSpawn.updateSpawnPointRankings()
     end
 
     hook.Add( "PlayerSpawn", "CFC_PlayerSpawning", cfcRandomSpawn.handlePlayerSpawn )
 end
-
