@@ -24,8 +24,11 @@ if mapHasCustomSpawns then
         local measurablePlayers = getMeasurablePlayers()
 		
         for _, ply in pairs( measurablePlayers ) do
-            totalDistanceSquared = totalDistanceSquared + ply:GetPos():DistToSqr( spawn )
-        return ( 1 / totalDistanceSquared )
+	    local plyDistanceSqr = ( ply:GetPos():DistToSqr( spawn ) )
+	    if plyDistanceSqr < 30*30 then plyDistanceSqr = 1 end
+            totalDistanceSquared = totalDistanceSquared + 1/( plyDistanceSqr )
+	end
+        return totalDistanceSquared 
     end
 
     function cfcRandomSpawn.getOptimalSpawnPosition()
