@@ -37,7 +37,7 @@ if mapHasCustomSpawns then
     end
 
     function cfcRandomSpawn.updateSpawnPointRankings()
-        local averagePlayerDistanceFromSpawns = {}
+        local playerIDSFromSpawns = {}
 
         for _, spawn in pairs( customSpawnsForMap ) do
             local playerNetForce = getPlayerForceFromCustomSpawn( spawn )
@@ -46,11 +46,11 @@ if mapHasCustomSpawns then
             spawnDistanceData["spawn"] = spawn
 
             spawnDistanceData["inverse-distance-squared"] = playerNetForce
-            table.insert( PlayerIDSFromSpawn, spawnDistanceData ) --ISD == Inverse Distance Squared
+            table.insert( playerIDSFromSpawn, spawnDistanceData ) --ISD == Inverse Distance Squared
         end
 
 
-        cfcRandomSpawn.spawnPointRankings = PlayerIDSFromSpawn
+        cfcRandomSpawn.spawnPointRankings = playerIDSFromSpawn
         table.SortByMember( cfcRandomSpawn.spawnPointRankings, "inverse-distance-squared", true )
     end
 
