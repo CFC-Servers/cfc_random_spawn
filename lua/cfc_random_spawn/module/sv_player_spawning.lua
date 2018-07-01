@@ -25,13 +25,12 @@ if mapHasCustomSpawns then
 		
         for _, ply in pairs( measurablePlayers ) do
             totalDistanceSquared = totalDistanceSquared + ply:GetPos():DistToSqr( spawn )
-        end
-
         return ( 1 / totalDistanceSquared )
     end
 
     function cfcRandomSpawn.getOptimalSpawnPosition()
-        return cfcRandomSpawn.spawnPointRankings[1]["spawn"]
+		local randomSpawn = math.random(1,4)
+        return cfcRandomSpawn.spawnPointRankings[randomSpawn]["spawn"]
     end
 
     function cfcRandomSpawn.updateSpawnPointRankings()
@@ -42,10 +41,11 @@ if mapHasCustomSpawns then
 
             local spawnDistanceData = {}
             spawnDistanceData["spawn"] = spawn
-            spawnDistanceData["inverse-distance-squared"] = playerNetForce
 
+            spawnDistanceData["inverse-distance-squared"] = playerNetForce
             table.insert( PlayerIDSFromSpawn, spawnDistanceData ) --ISD == Inverse Distance Squared
         end
+
 
         cfcRandomSpawn.spawnPointRankings = PlayerIDSFromSpawn
         table.SortByMember( cfcRandomSpawn.spawnPointRankings, "inverse-distance-squared", true )
@@ -59,8 +59,8 @@ if mapHasCustomSpawns then
 		
 		cfcRandomSpawn.updateSpawnPointRankings()
         local optimalSpawnPosition = cfcRandomSpawn.getOptimalSpawnPosition()
+
         ply:SetPos( optimalSpawnPosition )
-		
     end
 
     hook.Add( "PlayerSpawn", "CFC_PlayerSpawning", cfcRandomSpawn.handlePlayerSpawn )
