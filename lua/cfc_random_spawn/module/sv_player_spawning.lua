@@ -36,17 +36,21 @@ if mapHasCustomSpawns then
         return cfcRandomSpawn.spawnPointRankings[randomSpawn]["spawn"]
     end
 
-    function cfcRandomSpawn.updateSpawnPointRankings()
+    function cfcRandomSpawn.updateSpawnPointRankings( ply )
         local playerIDSFromSpawns = {}
+	local playerPVPStatus = ply:GetNWBool("CFC_PvP")
 
         for _, spawn in pairs( customSpawnsForMap ) do
-            local playerNetForce = getPlayerForceFromCustomSpawn( spawn )
+			
+	    if playerPVPStatus == spawn["pvp"]		
+                local playerNetForce = getPlayerForceFromCustomSpawn( spawn )
 
-            local spawnDistanceData = {}
-            spawnDistanceData["spawn"] = spawn
+                local spawnDistanceData = {}
+                spawnDistanceData["spawn"] = spawn
 
-            spawnDistanceData["inverse-distance-squared"] = playerNetForce
-            table.insert( playerIDSFromSpawn, spawnDistanceData ) --ISD == Inverse Distance Squared
+                spawnDistanceData["inverse-distance-squared"] = playerNetForce
+                table.insert( playerIDSFromSpawn, spawnDistanceData ) --ISD == Inverse Distance Squared
+	    end
         end
 
 
@@ -57,10 +61,10 @@ if mapHasCustomSpawns then
     --timer.Create( "CFC_UpdateOptimalSpawnPosition", 0.5, 0, cfcRandomSpawn.updateSpawnPointRankings )
 
     function cfcRandomSpawn.handlePlayerSpawn( ply )
-        if not (ply && IsValid( ply )) then return end
+        if not ( ply && IsValid( ply ) ) then return end
         if ply.LinkedSpawnPoint then return end
 		
-		cfcRandomSpawn.updateSpawnPointRankings()
+	cfcRandomSpawn.updateSpawnPointRankings( ply )
         local optimalSpawnPosition = cfcRandomSpawn.getOptimalSpawnPosition()
 
         ply:SetPos( optimalSpawnPosition )
