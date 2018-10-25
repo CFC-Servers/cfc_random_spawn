@@ -39,7 +39,7 @@ end
 
 function cfcRandomSpawn.getOptimalSpawnPosition()
     local randomSpawn = math.random( randMin, randMax )
-    return cfcRandomSpawn.spawnPointRankings[randomSpawn]["spawn"]
+    return cfcRandomSpawn.spawnPointRankings[randomSpawn]["spawn_pos"]
 end
 
 function cfcRandomSpawn.updateSpawnPointRankings( ply )
@@ -47,10 +47,13 @@ function cfcRandomSpawn.updateSpawnPointRankings( ply )
     local playerPVPStatus = ply:GetNWBool( "CFC_PvP_Mode", false )
 
     for _, spawn in pairs( customSpawnsForMap ) do
-        if playerPVPStatus and spawn["pvp"] then
-            local playerNetForce = getPlayerForceFromCustomSpawn( spawn["spawn"] )
+        local isPvpSpawn = spawn["isPvpSpawn"]        
+
+        if playerPVPStatus and isPvpSpawn then
+            local spawnPosition = spawn["spawn_pos"]
+            local playerNetForce = getPlayerForceFromCustomSpawn( spawnPosition )
             local spawnDistanceData = {}
-            spawnDistanceData["spawn"] = spawn["spawn"]
+            spawnDistanceData["spawn"] = spawnPosition
             spawnDistanceData["inverse-distance-squared"] = playerNetForce
 
             table.insert( playerIDSFromSpawn, spawnDistanceData ) --ISD == Inverse Distance Squared
