@@ -22,13 +22,13 @@ if mapHasCustomSpawns then
     local function getPlayerForceFromCustomSpawn( spawn )
         local totalDistanceSquared = 0
         local measurablePlayers = getMeasurablePlayers()
-        
+
         for _, ply in pairs( measurablePlayers ) do
         local plyDistanceSqr = ( ply:GetPos():DistToSqr( spawn ) )
         if plyDistanceSqr < 30 * 30 then plyDistanceSqr = 1 end
             totalDistanceSquared = totalDistanceSquared + 1/( plyDistanceSqr )
     end
-        return totalDistanceSquared 
+        return totalDistanceSquared
     end
 
     function cfcRandomSpawn.getOptimalSpawnPosition()
@@ -57,9 +57,9 @@ if mapHasCustomSpawns then
     -- timer.Create( "CFC_UpdateOptimalSpawnPosition", 0.5, 0, cfcRandomSpawn.updateSpawnPointRankings )
 
     function cfcRandomSpawn.handlePlayerSpawn( ply )
-        if not ( ply && IsValid( ply ) ) then return end
+        if not ( ply and IsValid( ply ) ) then return end
         if ply.LinkedSpawnPoint then return end
-        
+
         cfcRandomSpawn.updateSpawnPointRankings()
         local optimalSpawnPosition = cfcRandomSpawn.getOptimalSpawnPosition()
 
