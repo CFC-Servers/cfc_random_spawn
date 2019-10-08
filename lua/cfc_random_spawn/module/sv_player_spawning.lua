@@ -26,8 +26,9 @@ if mapHasCustomSpawns then
         for _, ply in pairs( measurablePlayers ) do
         local plyDistanceSqr = ( ply:GetPos():DistToSqr( spawn ) )
         if plyDistanceSqr < 30 * 30 then plyDistanceSqr = 1 end
-            totalDistanceSquared = totalDistanceSquared + 1/( plyDistanceSqr )
-    end
+            totalDistanceSquared = totalDistanceSquared + 1 / plyDistanceSqr
+        end
+
         return totalDistanceSquared
     end
 
@@ -37,8 +38,6 @@ if mapHasCustomSpawns then
     end
 
     function cfcRandomSpawn.updateSpawnPointRankings()
-        local averagePlayerDistanceFromSpawns = {}
-
         for _, spawn in pairs( customSpawnsForMap ) do
             local playerNetForce = getPlayerForceFromCustomSpawn( spawn )
 
