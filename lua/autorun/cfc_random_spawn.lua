@@ -37,7 +37,7 @@ if not frile or frile.VERSION < version then
             return
         end
 
-        local files, folders = file.Find( currentFolder .. "*", "LUA" )
+        local files, folders = file.Find( currentFolder .. " * ", "LUA" )
 
         if not ignoreFilesInFolder then
             for _, File in ipairs( files ) do
