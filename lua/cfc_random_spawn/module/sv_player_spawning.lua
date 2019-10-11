@@ -56,7 +56,7 @@ function cfcRandomSpawn.updateSpawnPointRankings( ply )
             spawnDistanceData["spawn"] = spawnPosition
             spawnDistanceData["inverse-distance-squared"] = playerNetForce
 
-            table.insert( playerIDSFromSpawn, spawnDistanceData ) --ISD == Inverse Distance Squared
+            table.insert( playerIDSFromSpawn, spawnDistanceData ) --IDS == Inverse Distance Squared
         end
         cfcRandomSpawn.spawnPointRankings = playerIDSFromSpawns
         table.SortByMember( cfcRandomSpawn.spawnPointRankings, "inverse-distance-squared", true )
