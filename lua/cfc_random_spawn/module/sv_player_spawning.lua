@@ -66,7 +66,7 @@ function cfcRandomSpawn.updateSpawnPointRankings( ply )
 end
 
 function cfcRandomSpawn.handlePlayerSpawn( ply )
-    if not ( ply && IsValid( ply ) ) then return end
+    if not ( ply and IsValid( ply ) ) then return end
     if ply.LinkedSpawnPoint then return end
 		
     cfcRandomSpawn.updateSpawnPointRankings( ply )
