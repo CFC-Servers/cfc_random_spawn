@@ -1,6 +1,6 @@
 CFCRandomSpawn = CFCRandomSpawn or {}
 
-local customSpawnsForMap = CFCRandomSpawn.config.CUSTOM_SPAWNS[game.GetMap()]
+local customSpawnsForMap = CFCRandomSpawn.Config.CUSTOM_SPAWNS[game.GetMap()]
 local mapHasCustomSpawns = customSpawnsForMap ~= nil
 
 hook.Remove( "PlayerSpawn", "CFC_PlayerSpawning" )
