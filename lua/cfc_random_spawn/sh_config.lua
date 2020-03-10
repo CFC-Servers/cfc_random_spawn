@@ -1,9 +1,8 @@
+CFCRandomSpawn.Config.MAXIMUM_DISTANCE_FROM_PLAYERS = 500 -- The maximum distance it checks for players for when you spawn_pos. You will automatically spawn where the least players are.
 
-cfcRandomSpawn.config.MAXIMUM_DISTANCE_FROM_PLAYERS = 500 -- The maximum distance it checks for players for when you spawn_pos. You will automatically spawn where the least players are.
+CFCRandomSpawn.Config.CUSTOM_SPAWNS = {}
 
-cfcRandomSpawn.config.CUSTOM_SPAWNS = {}
-cfcRandomSpawn.config.CUSTOM_SPAWNS["gm_bluehills_test3"] = {
-
+CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_bluehills_test3"] = {
     { ["spawn_pos"] = Vector( 1104.6744384766,  131.18112182617,  64.03125 ),        ["pvp_spawn"] = true },
     { ["spawn_pos"] = Vector( 385.55798339844,  157.09564208984,  64.03125 ),        ["pvp_spawn"] = true },
     { ["spawn_pos"] = Vector( 1272.7860107422,  -485.29537963867, 264.03125 ),       ["pvp_spawn"] = true },
@@ -20,5 +19,4 @@ cfcRandomSpawn.config.CUSTOM_SPAWNS["gm_bluehills_test3"] = {
     { ["spawn_pos"] = Vector( -974.1875,        130.53991699219,  128.03125 ),       ["pvp_spawn"] = true },
     { ["spawn_pos"] = Vector( -1357.5144042969, 1473.0662841797,  128.03125 ),       ["pvp_spawn"] = true },
     { ["spawn_pos"] = Vector( -1000.3621826172, 1044.5682373047,  464.03125 ),       ["pvp_spawn"] = true }
-
 }
