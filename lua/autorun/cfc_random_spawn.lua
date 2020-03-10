@@ -47,7 +47,7 @@ function CFCRandomSpawnInit.includeFolder( currentFolder, ignoreFilesInFolder, i
         return CFCRandomSpawnInit.includeFile( currentFolder .. "sh_CFCRandomSpawnInit.lua" )
     end
 
-    local files, folders = file.Find( currentFolder .. "*", "LUA" )
+    local files, folders = file.Find( currentFolder .. " * ", "LUA" )
 
     if not ignoreFilesInFolder then
         for _, filename in ipairs( files ) do
