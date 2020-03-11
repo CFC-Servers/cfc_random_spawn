@@ -24,6 +24,7 @@ end
 -- The best spawn point is the spawn point under the smallest sum of forces then. This is why we use physics terms here
 local distSqr = 900 -- ( 30^2 )
 local randMin, randMax = 1, 4
+
 local function getPlayerForceFromCustomSpawn( spawn )
     local totalDistanceSquared = 0
     local measurablePlayers = getMeasurablePlayers()
@@ -39,6 +40,7 @@ end
 
 function CFCRandomSpawn.getOptimalSpawnPosition()
     local randomSpawn = math.random( randMin, randMax )
+    PrintTable(CFCRandomSpawn.spawnPointRankings[randomSpawn])
     return CFCRandomSpawn.spawnPointRankings[randomSpawn]["spawn_pos"]
 end
 
@@ -47,22 +49,23 @@ function CFCRandomSpawn.updateSpawnPointRankings( ply )
     local playerPVPStatus = ply:GetNWBool( "CFC_PvP_Mode", false )
 
     for _, spawn in pairs( customSpawnsForMap ) do
-        local isPvpSpawn = spawn["isPvpSpawn"]
+        --local isPvpSpawn = spawn["pvp_spawn"]
 
-        if playerPVPStatus and isPvpSpawn then
-            local spawnPosition = spawn["spawn_pos"]
-            local playerNetForce = getPlayerForceFromCustomSpawn( spawnPosition )
-            local spawnDistanceData = {}
-            spawnDistanceData["spawn"] = spawnPosition
-            spawnDistanceData["inverse-distance-squared"] = playerNetForce
+        --if playerPVPStatus and isPvpSpawn then
+        local spawnPosition = spawn["spawn_pos"]
+        local playerNetForce = getPlayerForceFromCustomSpawn( spawnPosition )
+        local spawnDistanceData = {}
+        spawnDistanceData["spawn_pos"] = spawnPosition
+        spawnDistanceData["inverse-distance-squared"] = playerNetForce
 
-            table.insert( playerIDSFromSpawn, spawnDistanceData ) -- IDS == Inverse Distance Squared
-        end
+        table.insert( playerIDSFromSpawns, spawnDistanceData ) -- IDS == Inverse Distance Squared
+        --end
+
         CFCRandomSpawn.spawnPointRankings = playerIDSFromSpawns
         table.SortByMember( CFCRandomSpawn.spawnPointRankings, "inverse-distance-squared", true )
     end
 
-    -- timer.Create( "CFC_UpdateOptimalSpawnPosition", 0.5, 0, CFCRandomSpawn.updateSpawnPointRankings )
+    --timer.Create( "CFC_UpdateOptimalSpawnPosition", 0.5, 0, CFCRandomSpawn.updateSpawnPointRankings )
 end
 
 function CFCRandomSpawn.handlePlayerSpawn( ply )
@@ -76,4 +79,3 @@ function CFCRandomSpawn.handlePlayerSpawn( ply )
 end
 
 hook.Add( "PlayerSpawn", "CFC_PlayerSpawning", CFCRandomSpawn.handlePlayerSpawn )
-
