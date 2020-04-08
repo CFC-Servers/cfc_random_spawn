@@ -3,8 +3,6 @@ CFCRandomSpawn = CFCRandomSpawn or {}
 local customSpawnsForMap = CFCRandomSpawn.Config.CUSTOM_SPAWNS[game.GetMap()]
 local mapHasCustomSpawns = customSpawnsForMap ~= nil
 
-hook.Remove( "PlayerSpawn", "CFC_PlayerSpawning" )
-
 if not mapHasCustomSpawns then return end
 
 CFCRandomSpawn.spawnPointRankings = CFCRandomSpawn.spawnPointRankings or {}
@@ -40,26 +38,21 @@ end
 
 function CFCRandomSpawn.getOptimalSpawnPosition()
     local randomSpawn = math.random( randMin, randMax )
-    PrintTable(CFCRandomSpawn.spawnPointRankings[randomSpawn])
-    return CFCRandomSpawn.spawnPointRankings[randomSpawn]["spawn_pos"]
+    PrintTable( CFCRandomSpawn.spawnPointRankings[randomSpawn] )
+    return CFCRandomSpawn.spawnPointRankings[randomSpawn].spawnPos
 end
 
-function CFCRandomSpawn.updateSpawnPointRankings( ply )
+function CFCRandomSpawn.updateSpawnPointRankings()
     local playerIDSFromSpawns = {}
-    local playerPVPStatus = ply:GetNWBool( "CFC_PvP_Mode", false )
 
     for _, spawn in pairs( customSpawnsForMap ) do
-        --local isPvpSpawn = spawn["pvp_spawn"]
-
-        --if playerPVPStatus and isPvpSpawn then
-        local spawnPosition = spawn["spawn_pos"]
+        local spawnPosition = spawn.spawnPos
         local playerNetForce = getPlayerForceFromCustomSpawn( spawnPosition )
         local spawnDistanceData = {}
-        spawnDistanceData["spawn_pos"] = spawnPosition
+        spawnDistanceData.spawnPos = spawnPosition
         spawnDistanceData["inverse-distance-squared"] = playerNetForce
 
         table.insert( playerIDSFromSpawns, spawnDistanceData ) -- IDS == Inverse Distance Squared
-        --end
 
         CFCRandomSpawn.spawnPointRankings = playerIDSFromSpawns
         table.SortByMember( CFCRandomSpawn.spawnPointRankings, "inverse-distance-squared", true )
