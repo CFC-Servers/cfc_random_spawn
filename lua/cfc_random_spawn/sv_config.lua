@@ -65,20 +65,21 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_bluehills_test3"] = {
 --     { spawnPos = Vector( 2990, 8304, -264 ) } -- Angle( 0, 135, 0 )
 -- }
 
-CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_novenka"] = { -- straw's idea
-    { spawnPos = Vector( 8942, 7784,  -255 ) },
-    { spawnPos = Vector( 4475, 8858,   0 ) },
-    { spawnPos = Vector( 5666, 8235,  -255 ) },
-    { spawnPos = Vector( 6173, 10914, -255 ) },
-    { spawnPos = Vector( 3784, 11678,  539 ) },
-    { spawnPos = Vector( 5576, 6991,  -255 ) },
-    { spawnPos = Vector( 5445, 8799,   539 ) },
-    { spawnPos = Vector( 8997, 6626,  -255 ) },
-    { spawnPos = Vector( 7428, 11679,  539 ) },
-    { spawnPos = Vector( 3782, 8808,   539 ) },
-    { spawnPos = Vector( 7429, 9953,   539 ) },
-    { spawnPos = Vector( 5439, 7669,   539 ) },
-    { spawnPos = Vector( 9018, 10441, -255 ) },
-    { spawnPos = Vector( 5325, 7673,   539 ) },
-    { spawnPos = Vector( 4886, 11390, -255 ) }
+CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_novenka"] = { -- logica's idea
+{ spawnPos = Vector( 2429, 10122, -383 ) },
+{ spawnPos = Vector( 2001, 10004, -383 ) },
+{ spawnPos = Vector( 55, 7114, -383 ) },
+{ spawnPos = Vector( 370, 10212, -383 ) },
+{ spawnPos = Vector( -1042, 6989, -383 ) },
+{ spawnPos = Vector( -2099, 6968, -383 ) },
+{ spawnPos = Vector( -2488, 9141, -383 ) },
+{ spawnPos = Vector( -3002, 9288, -383 ) },
+{ spawnPos = Vector( -4002, 10304, -383 ) },
+{ spawnPos = Vector( -4034, 13423, -374 ) },
+{ spawnPos = Vector( -4045, 13617, -287 ) },
+{ spawnPos = Vector( -1633, 13434, -383 ) },
+{ spawnPos = Vector( -1964, 14862, -287 ) },
+{ spawnPos = Vector( -1981, 15103, -127 ) },
+{ spawnPos = Vector( 1484, 15109, -127 ) },
+{ spawnPos = Vector( 1593, 13764, -383 ) }
 }
