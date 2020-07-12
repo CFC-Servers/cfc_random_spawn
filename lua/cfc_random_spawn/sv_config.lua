@@ -22,7 +22,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_bluehills_test3"] = {
     { spawnPos = Vector( -1000.3621826172, 1044.5682373047,  464.03125 ) }
 }
 
-CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_novenka"] = { -- strawwagm_venka
+CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_novenka"] = {
     { spawnPos = Vector( 6052, 11677, -383 ), spawnAngle = Angle( 0, 0, -135 ), pvp = true },
     { spawnPos = Vector( 6364, 10733, -383 ), spawnAngle = Angle( 0, 0, -90 ), pvp = true },
     { spawnPos = Vector( 9024, 10741, -383 ), spawnAngle = Angle( 0, 0, -148 ), pvp = true },
