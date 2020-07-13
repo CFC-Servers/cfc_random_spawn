@@ -40,7 +40,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_novenka"] = {
     { spawnPos = Vector( 5578, 6911, -383 ), spawnAngle = Angle( 0, 45, 0 ), pvp = true },
     { spawnPos = Vector( 5121, 8820, -127 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },
     { spawnPos = Vector( 4475, 8824, -127 ), spawnAngle = Angle( 0, 59, 0 ), pvp = true },
-    { spawnPos = Vector( 4497, 9553, -127 ), spawnAngle = Angle( 0, 0, 8 ), pvp = true },
+    { spawnPos = Vector( 4497, 9553, -127 ), spawnAngle = Angle( 0, 8, 0 ), pvp = true },
     { spawnPos = Vector( 5654, 8670, -383 ), spawnAngle = Angle( 0, 0, 0 ), pvp = true },
     { spawnPos = Vector( 5694, 7802, -383 ), spawnAngle = Angle( 0, 0, 0 ), pvp = true }
 }
