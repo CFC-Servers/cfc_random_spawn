@@ -38,7 +38,6 @@ end
 
 function CFCRandomSpawn.getOptimalSpawnPosition()
     local randomSpawn = math.random( randMin, randMax )
-    PrintTable( CFCRandomSpawn.spawnPointRankings[randomSpawn] )
     return CFCRandomSpawn.spawnPointRankings[randomSpawn].spawnPos
 end
 
