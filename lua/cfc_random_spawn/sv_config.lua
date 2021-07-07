@@ -68,6 +68,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_excess_construct_13"] = {
     { spawnPos = Vector( -2718, -2746, 673 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },
     { spawnPos = Vector( -2816, 2270, 673 ), spawnAngle = Angle( 0, -45, 0 ), pvp = true }
 }
+
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_boreas"] = {
     { spawnPos = Vector( -3212, -7423, -6398 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },
     { spawnPos = Vector( -4573, -7599, -6387 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },
