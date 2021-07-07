@@ -68,3 +68,29 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_excess_construct_13"] = {
     { spawnPos = Vector( -2718, -2746, 673 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },
     { spawnPos = Vector( -2816, 2270, 673 ), spawnAngle = Angle( 0, -45, 0 ), pvp = true }
 }
+CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_boreas"] = {
+    { spawnPos = Vector( -3212, -7423, -6398 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },
+    { spawnPos = Vector( -4573, -7599, -6387 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },
+    { spawnPos = Vector( -3713, -8180, -6054 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },
+    { spawnPos = Vector( -5658, -5633, -6386 ), spawnAngle = Angle( 0, -45, 0 ), pvp = true },
+    { spawnPos = Vector( -2693, -8561, -6099 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },
+    { spawnPos = Vector( -5415, -5138, -6343 ), spawnAngle = Angle( 0, -20, 0 ), pvp = true },
+    { spawnPos = Vector( -5397, -4600, -6349 ), spawnAngle = Angle( 0, 19, 0 ), pvp = true },
+    { spawnPos = Vector( -6200, -5992, -6393 ), spawnAngle = Angle( 0, -45, 0 ), pvp = true },
+    { spawnPos = Vector( -1904, -8868, -5896 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },
+    { spawnPos = Vector( -1187, -8562, -6027 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },
+    { spawnPos = Vector( -6372, -4870, -6039 ), spawnAngle = Angle( 0, -8, 0 ), pvp = true },
+    { spawnPos = Vector( -5888, -4072, -6358 ), spawnAngle = Angle( 0, 45, 0 ), pvp = true },
+    { spawnPos = Vector( -657, -8198, -6357 ), spawnAngle = Angle( 0, 132, 0 ), pvp = true },
+    { spawnPos = Vector( 50, -7662, -6394 ), spawnAngle = Angle( 0, 135, 0 ), pvp = true },
+    { spawnPos = Vector( -4014, -2066, -6389 ), spawnAngle = Angle( 0, -90, 0 ), pvp = true },
+    { spawnPos = Vector( -756, -3021, -6347 ), spawnAngle = Angle( 0, -135, 0 ), pvp = true },
+    { spawnPos = Vector( -3419, -1789, -6391 ), spawnAngle = Angle( 0, -45, 0 ), pvp = true },
+    { spawnPos = Vector( -4690, -1758, -6378 ), spawnAngle = Angle( 0, -90, 0 ), pvp = true },
+    { spawnPos = Vector( -1083, -2322, -6393 ), spawnAngle = Angle( 0, 180, 0 ), pvp = true },
+    { spawnPos = Vector( 143, -3270, -6303 ), spawnAngle = Angle( 0, -92, 0 ), pvp = true },
+    { spawnPos = Vector( -2627, -1465, -6397 ), spawnAngle = Angle( 0, -90, 0 ), pvp = true },
+    { spawnPos = Vector( -5083, -1515, -6368 ), spawnAngle = Angle( 0, -90, 0 ), pvp = true },
+    { spawnPos = Vector( 985, -3124, -6293 ), spawnAngle = Angle( 0, -135, 0 ), pvp = true },
+
+}
