@@ -94,3 +94,21 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_boreas"] = {
     { spawnPos = Vector( -5083, -1515, -6368 ), spawnAngle = Angle( 0, -90, 0 ), pvp = true },
     { spawnPos = Vector( 985, -3124, -6293 ), spawnAngle = Angle( 0, -135, 0 ), pvp = true }
 }
+
+CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_mobenix_v3_final"] = {
+    { spawnPos = Vector( 2480, 267, -483 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },
+    { spawnPos = Vector( 3187, 367, -466 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },
+    { spawnPos = Vector( 1773, 1093, -462 ), spawnAngle = Angle( 0, -90, 0 ), pvp = true },
+    { spawnPos = Vector( 3100, 1415, 39 ), spawnAngle = Angle( 0, -45, 0 ), pvp = true },
+    { spawnPos = Vector( 3395, 1479, -447 ), spawnAngle = Angle( 0, -45, 0 ), pvp = true },
+    { spawnPos = Vector( 1644, 60, -439 ), spawnAngle = Angle( 0, 95, 0 ), pvp = true },
+    { spawnPos = Vector( 3767, 550, -455 ), spawnAngle = Angle( 0, 116, 0 ), pvp = true },
+    { spawnPos = Vector( 3305, 1938, -345 ), spawnAngle = Angle( 0, -45, 0 ), pvp = true },
+    { spawnPos = Vector( 4249, 542, -476 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },
+    { spawnPos = Vector( 830, 150, -404 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },
+    { spawnPos = Vector( 3860, 2175, -478 ), spawnAngle = Angle( 0, -45, 0 ), pvp = true },
+    { spawnPos = Vector( 588, 1074, -434 ), spawnAngle = Angle( 0, -45, 0 ), pvp = true },
+    { spawnPos = Vector( 4774, 625, -518 ), spawnAngle = Angle( 0, 135, 0 ), pvp = true },
+    { spawnPos = Vector( 4116, 2741, -404 ), spawnAngle = Angle( 0, -55, 0 ), pvp = true },
+    { spawnPos = Vector( 4777, 2081, -512 ), spawnAngle = Angle( 0, 160, 0 ), pvp = true }
+}
