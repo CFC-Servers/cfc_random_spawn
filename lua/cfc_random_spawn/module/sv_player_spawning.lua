@@ -38,7 +38,8 @@ end
 
 function CFCRandomSpawn.getOptimalSpawnPosition()
     local randomSpawn = math.random( randMin, randMax )
-    return CFCRandomSpawn.spawnPointRankings[randomSpawn].spawnPos
+    local spawnPoinTbl = CFCRandomSpawn.spawnPointRankings[randomSpawn]
+    return spawnPoinTbl.spawnPos, spawnPoinTbl.spawnAngle
 end
 
 function CFCRandomSpawn.updateSpawnPointRankings()
@@ -49,6 +50,7 @@ function CFCRandomSpawn.updateSpawnPointRankings()
         local playerNetForce = getPlayerForceFromCustomSpawn( spawnPosition )
         local spawnDistanceData = {}
         spawnDistanceData.spawnPos = spawnPosition
+        spawnDistanceData.spawnAngle = spawn.spawnAngle
         spawnDistanceData["inverse-distance-squared"] = playerNetForce
 
         table.insert( playerIDSFromSpawns, spawnDistanceData ) -- IDS == Inverse Distance Squared
@@ -65,9 +67,12 @@ function CFCRandomSpawn.handlePlayerSpawn( ply )
     if IsValid( ply.LinkedSpawnPoint ) then return end
 
     CFCRandomSpawn.updateSpawnPointRankings( ply )
-    local optimalSpawnPosition = CFCRandomSpawn.getOptimalSpawnPosition()
+    local optimalSpawnPosition, optimalSpawnAngles  = CFCRandomSpawn.getOptimalSpawnPosition()
 
     ply:SetPos( optimalSpawnPosition )
+    if optimalSpawnAngles then
+        ply:SetEyeAngles( optimalSpawnAngles )
+    end
 end
 
 hook.Add( "PlayerSpawn", "CFC_PlayerSpawning", CFCRandomSpawn.handlePlayerSpawn )
