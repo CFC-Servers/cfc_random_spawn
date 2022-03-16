@@ -105,7 +105,7 @@ function CFCRandomSpawn.updateSpawnPointRankings( ply )
 
     bestSpawns = getNearestSpawns( popularPoint, customSpawnsForMap )
 
-    for _, spawn in pairs( bestSpawns ) do
+    for _, spawn in ipairs( bestSpawns ) do
         local spawnPosition = spawn.spawnPos
         local playerNetForce = getPlayerForceFromCustomSpawn( spawnPosition, measurablePlayers )
         local spawnDistanceData = {}
