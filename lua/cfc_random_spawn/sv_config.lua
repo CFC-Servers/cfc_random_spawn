@@ -1,4 +1,3 @@
-
 CFCRandomSpawn.Config.MAXIMUM_DISTANCE_FROM_PLAYERS = 500 -- The maximum distance it checks for players for when you spawnPos. You will automatically spawn where the least players are.
 CFCRandomSpawn.Config.PVP_AGNOSTIC = true -- Should the addon ignore the pvp status of each spawn
 
