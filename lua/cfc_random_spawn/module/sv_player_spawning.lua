@@ -41,15 +41,15 @@ end
 local function getNearestSpawns( nearPos, spawns )
     local distSortedSpawns = sortSpawnsByDistance( nearPos, spawns )
     local bestSpawn = distSortedSpawns[1] -- get best spawn so the distance comparison isnt worthless
-    local operationCount = 0
     local nearestSpawns = {}
 
     for _, spawn in pairs( distSortedSpawns ) do
-        operationCount = operationCount + 1
         local distToFirstSqr = bestSpawn.spawnPos:DistToSqr( spawn.spawnPos ) -- will never run on every spawnpoint
-        local overCount = operationCount >= nearSpawnpointsMinCount
+        local overCount = _ >= nearSpawnpointsMinCount
         local overDistance = distToFirstSqr > nearSpawnpointsMinDistanceSqr
-        if overCount and overDistance then break
+
+        if overCount and overDistance then 
+            break
         else
             nearestSpawns[_] = spawn
         end
@@ -58,10 +58,10 @@ local function getNearestSpawns( nearPos, spawns )
 end
 
 local function getPopularPoint( players )
-    if players == nil then return Vector( 0 ) end
-    local average = Vector( 0 )
-    local playersCount = table.Count( players )
-    for _, currentPlayer in pairs( players ) do
+    if players == nil then return Vector() end
+    local average = Vector()
+    local playersCount = #players
+    for _, currentPlayer in ipairs( players ) do
         if IsValid( currentPlayer ) then
             average = average + currentPlayer:GetPos()
         end
