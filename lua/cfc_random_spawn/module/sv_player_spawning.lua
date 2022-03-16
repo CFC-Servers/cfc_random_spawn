@@ -48,17 +48,17 @@ local function getNearestSpawns( nearPos, spawns )
         local overCount = currOperation >= nearSpawnpointsMinCount
         local overDistance = distToFirstSqr > nearSpawnpointsMinDistanceSqr
 
-        if overCount and overDistance then
-            break
-        else
-            table.insert( nearestSpawns, spawn )
-        end
+        if overCount and overDistance then break end
+
+        table.insert( nearestSpawns, spawn )
     end
     return nearestSpawns
 end
 
+
+local origin = Vector()
 local function getPopularPoint( players )
-    if players == nil then return Vector() end
+    if not players then return origin end
     local average = Vector()
     local playersCount = #players
     for _, currentPlayer in ipairs( players ) do
