@@ -43,12 +43,12 @@ local function getNearestSpawns( nearPos, spawns )
     local bestSpawn = distSortedSpawns[1] -- get best spawn so the distance comparison isnt worthless
     local nearestSpawns = {}
 
-    for _, spawn in pairs( distSortedSpawns ) do
+    for currOperation, spawn in pairs( distSortedSpawns ) do
         local distToFirstSqr = bestSpawn.spawnPos:DistToSqr( spawn.spawnPos ) -- will never run on every spawnpoint
-        local overCount = _ >= nearSpawnpointsMinCount
+        local overCount = currOperation >= nearSpawnpointsMinCount
         local overDistance = distToFirstSqr > nearSpawnpointsMinDistanceSqr
 
-        if overCount and overDistance then 
+        if overCount and overDistance then
             break
         else
             table.insert( nearestSpawns, spawn )
