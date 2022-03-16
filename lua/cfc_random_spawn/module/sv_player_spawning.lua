@@ -51,7 +51,7 @@ local function getNearestSpawns( nearPos, spawns )
         if overCount and overDistance then 
             break
         else
-            nearestSpawns[_] = spawn
+            table.insert( nearestSpawns, spawn )
         end
     end
     return nearestSpawns
