@@ -1,3 +1,4 @@
+
 CFCRandomSpawn = CFCRandomSpawn or {}
 
 local customSpawnsForMap = CFCRandomSpawn.Config.CUSTOM_SPAWNS[game.GetMap()]
@@ -9,8 +10,8 @@ CFCRandomSpawn.spawnPointRankings = CFCRandomSpawn.spawnPointRankings or {}
 
 local function getMeasurablePlayers()
     local measurablePlayers = {}
-    for _, ply in pairs( player.GetHumans() ) do
-        if ( ply:Alive() ) then
+    for _, ply in pairs( player.GetAll() ) do
+        if ply:Alive() and not ply.isCFCRespawning then
             table.insert( measurablePlayers, ply )
         end
     end
@@ -18,14 +19,67 @@ local function getMeasurablePlayers()
     return measurablePlayers
 end
 
+
+-- Only use spawnpoints that are nearest to the most "popular" point
+-- This lets everyone spawn near the most active part of the server
+
+-- if count is hit and distance is not hit, more spawnpoints will be chosen & vice versa
+
+local nearSpawnpointsMinCount = 8 -- minimum count of spawnpoints that will be availiable 
+local nearSpawnpointsMinDistance = 2500 -- minimum size of area that spawnpoints will be chosen from
+
+local function sortSpawnsByDistance( comparePos, spawns ) 
+    table.sort( spawns, function( a, b ) -- sort by distance
+        local aDist = a.spawnPos:DistToSqr( comparePos )
+        local bDist = b.spawnPos:DistToSqr( comparePos )
+        return aDist < bDist 
+    end )
+    return spawns
+end
+
+local function getNearestSpawns( nearPos, spawns, minExtent, minDist )
+    local distSortedSpawns = sortSpawnsByDistance( nearPos, spawns )
+    local bestSpawn = distSortedSpawns[1] -- get best spawn so the distance comparison isnt worthless
+    local operationCount = 0
+    local nearestSpawns = {}
+
+    for _, spawn in pairs( distSortedSpawns ) do
+        operationCount = operationCount + 1
+        local distToFirst = bestSpawn.spawnPos:Distance( spawn.spawnPos ) -- will never run on every spawnpoint
+        local overCount = operationCount >= minExtent
+        local overDistance = distToFirst > minDist
+        if overCount and overDistance then break
+        else 
+            nearestSpawns[_] = spawn
+        end
+    end
+    return nearestSpawns
+end
+
+local function getPopularPoint( players )
+    if players == nil then return Vector( 0 ) end
+    local average = Vector( 0 )
+    local playersCount = table.Count( players )
+    for _, currentPlayer in pairs( players ) do
+        if IsValid( currentPlayer ) then
+            average = average + currentPlayer:GetPos()
+        end
+    end
+    average = average / playersCount
+    
+    debugoverlay.Cross( average, 200, 100, Color( 255, 255, 255 ), true )
+    
+    return average
+end
+
+
 -- This is operating on a model of spawn points and players as electrons putting a force on each other
 -- The best spawn point is the spawn point under the smallest sum of forces then. This is why we use physics terms here
 local distSqr = 900 -- ( 30^2 )
 local randMin, randMax = 1, 4
 
-local function getPlayerForceFromCustomSpawn( spawn )
+local function getPlayerForceFromCustomSpawn( spawn, measurablePlayers )
     local totalDistanceSquared = 0
-    local measurablePlayers = getMeasurablePlayers()
 
     for _, ply in pairs( measurablePlayers ) do
         local plyDistanceSqr = ( ply:GetPos():DistToSqr( spawn ) )
@@ -44,10 +98,15 @@ end
 
 function CFCRandomSpawn.updateSpawnPointRankings()
     local playerIDSFromSpawns = {}
+    local measurablePlayers = getMeasurablePlayers()
 
-    for _, spawn in pairs( customSpawnsForMap ) do
+    popularPoint = getPopularPoint( measurablePlayers )
+
+    bestSpawns = getNearestSpawns( popularPoint, customSpawnsForMap, nearSpawnpointsMinCount, nearSpawnpointsMinDistance )
+
+    for _, spawn in pairs( bestSpawns ) do
         local spawnPosition = spawn.spawnPos
-        local playerNetForce = getPlayerForceFromCustomSpawn( spawnPosition )
+        local playerNetForce = getPlayerForceFromCustomSpawn( spawnPosition, measurablePlayers )
         local spawnDistanceData = {}
         spawnDistanceData.spawnPos = spawnPosition
         spawnDistanceData.spawnAngle = spawn.spawnAngle
@@ -66,6 +125,8 @@ function CFCRandomSpawn.handlePlayerSpawn( ply )
     if not ( ply and IsValid( ply ) ) then return end
     if IsValid( ply.LinkedSpawnPoint ) then return end
 
+    ply.isCFCRespawning = true
+
     CFCRandomSpawn.updateSpawnPointRankings( ply )
     local optimalSpawnPosition, optimalSpawnAngles  = CFCRandomSpawn.getOptimalSpawnPosition()
 
@@ -73,6 +134,7 @@ function CFCRandomSpawn.handlePlayerSpawn( ply )
     if optimalSpawnAngles then
         ply:SetEyeAngles( optimalSpawnAngles )
     end
+    ply.isCFCRespawning = false
 end
 
 hook.Add( "PlayerSpawn", "CFC_PlayerSpawning", CFCRandomSpawn.handlePlayerSpawn )
