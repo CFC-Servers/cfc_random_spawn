@@ -8,10 +8,10 @@ if not mapHasCustomSpawns then return end
 
 CFCRandomSpawn.spawnPointRankings = CFCRandomSpawn.spawnPointRankings or {}
 
-local function getMeasurablePlayers()
+local function getMeasurablePlayers( respawner )
     local measurablePlayers = {}
-    for _, ply in pairs( player.GetAll() ) do
-        if ply:Alive() and not ply.isCFCRespawning then
+    for _, ply in pairs( player.GetHumans() ) do
+        if ply:Alive() and respawner ~= ply then
             table.insert( measurablePlayers, ply )
         end
     end
@@ -42,12 +42,13 @@ local function getNearestSpawns( nearPos, spawns, minExtent, minDist )
     local bestSpawn = distSortedSpawns[1] -- get best spawn so the distance comparison isnt worthless
     local operationCount = 0
     local nearestSpawns = {}
+    local minDistSqr = minDist ^ 2
 
     for _, spawn in pairs( distSortedSpawns ) do
         operationCount = operationCount + 1
-        local distToFirst = bestSpawn.spawnPos:Distance( spawn.spawnPos ) -- will never run on every spawnpoint
+        local distToFirstSqr = bestSpawn.spawnPos:DistToSqr( spawn.spawnPos ) -- will never run on every spawnpoint
         local overCount = operationCount >= minExtent
-        local overDistance = distToFirst > minDist
+        local overDistance = distToFirstSqr > minDistSqr
         if overCount and overDistance then break
         else 
             nearestSpawns[_] = spawn
@@ -67,7 +68,7 @@ local function getPopularPoint( players )
     end
     average = average / playersCount
     
-    debugoverlay.Cross( average, 200, 100, Color( 255, 255, 255 ), true )
+    -- debugoverlay.Cross( average, 200, 100, Color( 255, 255, 255 ), true )
     
     return average
 end
@@ -96,9 +97,9 @@ function CFCRandomSpawn.getOptimalSpawnPosition()
     return spawnPoinTbl.spawnPos, spawnPoinTbl.spawnAngle
 end
 
-function CFCRandomSpawn.updateSpawnPointRankings()
+function CFCRandomSpawn.updateSpawnPointRankings( ply )
     local playerIDSFromSpawns = {}
-    local measurablePlayers = getMeasurablePlayers()
+    local measurablePlayers = getMeasurablePlayers( ply )
 
     popularPoint = getPopularPoint( measurablePlayers )
 
@@ -125,8 +126,6 @@ function CFCRandomSpawn.handlePlayerSpawn( ply )
     if not ( ply and IsValid( ply ) ) then return end
     if IsValid( ply.LinkedSpawnPoint ) then return end
 
-    ply.isCFCRespawning = true
-
     CFCRandomSpawn.updateSpawnPointRankings( ply )
     local optimalSpawnPosition, optimalSpawnAngles  = CFCRandomSpawn.getOptimalSpawnPosition()
 
@@ -134,7 +133,6 @@ function CFCRandomSpawn.handlePlayerSpawn( ply )
     if optimalSpawnAngles then
         ply:SetEyeAngles( optimalSpawnAngles )
     end
-    ply.isCFCRespawning = false
 end
 
 hook.Add( "PlayerSpawn", "CFC_PlayerSpawning", CFCRandomSpawn.handlePlayerSpawn )
