@@ -25,32 +25,32 @@ end
 
 -- if count is hit and distance is not hit, more spawnpoints will be chosen & vice versa
 
-local nearSpawnpointsMinCount = 8 -- minimum count of spawnpoints that will be availiable 
+local nearSpawnpointsMinCount = 8 -- minimum count of spawnpoints that will be availiable
 local nearSpawnpointsMinDistance = 2500 -- minimum size of area that spawnpoints will be chosen from
+local nearSpawnpointsMinDistanceSqr = nearSpawnpointsMinDistance ^ 2
 
-local function sortSpawnsByDistance( comparePos, spawns ) 
+local function sortSpawnsByDistance( comparePos, spawns )
     table.sort( spawns, function( a, b ) -- sort by distance
         local aDist = a.spawnPos:DistToSqr( comparePos )
         local bDist = b.spawnPos:DistToSqr( comparePos )
-        return aDist < bDist 
+        return aDist < bDist
     end )
     return spawns
 end
 
-local function getNearestSpawns( nearPos, spawns, minExtent, minDist )
+local function getNearestSpawns( nearPos, spawns )
     local distSortedSpawns = sortSpawnsByDistance( nearPos, spawns )
     local bestSpawn = distSortedSpawns[1] -- get best spawn so the distance comparison isnt worthless
     local operationCount = 0
     local nearestSpawns = {}
-    local minDistSqr = minDist ^ 2
 
     for _, spawn in pairs( distSortedSpawns ) do
         operationCount = operationCount + 1
         local distToFirstSqr = bestSpawn.spawnPos:DistToSqr( spawn.spawnPos ) -- will never run on every spawnpoint
-        local overCount = operationCount >= minExtent
-        local overDistance = distToFirstSqr > minDistSqr
+        local overCount = operationCount >= nearSpawnpointsMinCount
+        local overDistance = distToFirstSqr > nearSpawnpointsMinDistanceSqr
         if overCount and overDistance then break
-        else 
+        else
             nearestSpawns[_] = spawn
         end
     end
@@ -67,9 +67,9 @@ local function getPopularPoint( players )
         end
     end
     average = average / playersCount
-    
+
     -- debugoverlay.Cross( average, 200, 100, Color( 255, 255, 255 ), true )
-    
+
     return average
 end
 
@@ -103,7 +103,7 @@ function CFCRandomSpawn.updateSpawnPointRankings( ply )
 
     popularPoint = getPopularPoint( measurablePlayers )
 
-    bestSpawns = getNearestSpawns( popularPoint, customSpawnsForMap, nearSpawnpointsMinCount, nearSpawnpointsMinDistance )
+    bestSpawns = getNearestSpawns( popularPoint, customSpawnsForMap )
 
     for _, spawn in pairs( bestSpawns ) do
         local spawnPosition = spawn.spawnPos
