@@ -13,7 +13,8 @@ Clone or download this repository into your `garrysmod/addons` folder and restar
 The config for this addon is located in the `cfc_random_spawn/lua/cfc_random_spawn/sv_config.lua` file.  
 Here you will find 2 config constants, and the spawn points table structure. The constants are as follows:
 - `DEFAULT_CENTER_CUTOFF` `(default 3000)` - Default cutoff range from the most popular pvp center, where players further away from this will be ignored. The system tries to place you closest to everyone else.
-- `SELECTION_SIZE` `(default 4)` - Max number of 'ideal' spawnpoints to select from randomly
+- `CLOSENESS_LIMIT` `(default 400)` - Will not choose spawnpoints that are within this many units of a valid player (i.e. a living pvper). 0 to disable.
+- `SELECTION_SIZE` `(default 8)` - Max number of 'ideal' spawnpoints to select from randomly
 - `IGNORE_BUILDERS` `(default true)` - Should 'center popularity' and player position average not care about builders? Requires a PvP addon which has a function of the form `PLAYER:isInPvp()`
 
 Adding spawnpoints is done as follows:

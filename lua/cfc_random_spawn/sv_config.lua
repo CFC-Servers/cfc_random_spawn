@@ -1,5 +1,6 @@
 CFCRandomSpawn.Config.DEFAULT_CENTER_CUTOFF = 3000 -- Default cutoff range from the most popular pvp center, where players further away from this will be ignored. The system tries to place you closest to everyone else.
-CFCRandomSpawn.Config.SELECTION_SIZE = 4 -- Max number of 'ideal' spawnpoints to select from randomly
+CFCRandomSpawn.Config.CLOSENESS_LIMIT = 400 -- Will not choose spawnpoints that are within this many units of a valid player (i.e. a living pvper). 0 to disable.
+CFCRandomSpawn.Config.SELECTION_SIZE = 8 -- Max number of 'ideal' spawnpoints to select from randomly
 CFCRandomSpawn.Config.IGNORE_BUILDERS = true -- Should 'center popularity' and player position average not care about builders? Requires a PvP addon which uses a function of the form PLAYER:isInPvp()
 
 CFCRandomSpawn.Config.CUSTOM_SPAWNS = {}

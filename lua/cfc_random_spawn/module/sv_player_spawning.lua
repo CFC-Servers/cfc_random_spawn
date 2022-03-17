@@ -11,6 +11,7 @@ local CENTER_CUTOFF = customSpawnConfigForMap.centerCutoff or CFCRandomSpawn.Con
 local CENTER_CUTOFF_SQR = CENTER_CUTOFF ^ 2
 local AVG_CUTOFF_SQR = CENTER_CUTOFF_SQR
 local SELECTION_SIZE = CFCRandomSpawn.Config.SELECTION_SIZE
+local CLOSENESS_LIMIT = CFCRandomSpawn.Config.CLOSENESS_LIMIT ^ 2
 local IGNORE_BUILDERS = CFCRandomSpawn.Config.IGNORE_BUILDERS
 
 do
@@ -100,6 +101,33 @@ local function getNearestSpawns( nearPos, spawns )
     return nearestSpawns
 end
 
+local function discardTooCloseSpawns( spawns, plys )
+    if CLOSENESS_LIMIT == 0 then return spawns end
+
+    local oldSpawns = spawns
+    local trimmedSpawns = {}
+    local count = 0
+
+    for _, spawn in ipairs( spawns ) do
+        local spawnData = spawn.spawnData or spawn -- unwrap dist data from getNearestSpawns()
+        local spawnPos = spawnData.spawnPos
+
+        for _, ply in ipairs( plys ) do
+            if ply:GetPos():DistToSqr( spawnPos ) < CLOSENESS_LIMIT then
+                goto skipRemainingCompares
+            end
+        end
+
+        count = count + 1
+        trimmedSpawns[count] = spawnData
+
+        ::skipRemainingCompares::
+    end
+
+    if count == 0 then return oldSpawns end -- Unfortunately, *all* spawns were too close. We gotta return something, though.
+
+    return trimmedSpawns
+end
 
 local function getPlyAvg( plys, centerPos )
     if not plys or not plys[1] then return centerPos or Vector() end
@@ -170,8 +198,10 @@ function CFCRandomSpawn.getOptimalSpawnPos( ply, overrideInd )
 
     AVG_CUTOFF_SQR = bestCenter.overrideCutoffSqr or CENTER_CUTOFF_SQR
 
-    local bestSpawns = getNearestSpawns( getPlyAvg( measurablePlayers, bestCenter.centerPos ), customSpawnsForMap )
-    local bestSpawn = bestSpawns[overrideInd or math.random( 1, #bestSpawns )].spawnData
+    local nearestSpawns = getNearestSpawns( getPlyAvg( measurablePlayers, bestCenter.centerPos ), customSpawnsForMap )
+    local bestSpawns = discardTooCloseSpawns( nearestSpawns, measurablePlayers )
+    local bestSpawn = bestSpawns[overrideInd or math.random( 1, #bestSpawns )]
+    bestSpawn = bestSpawn.spawnData or bestSpawn -- unwrap dist data from getNearestSpawns() if still wrapped
 
     return bestSpawn.spawnPos, bestSpawn.spawnAngle
 end
