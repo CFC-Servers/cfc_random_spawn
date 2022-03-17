@@ -1,135 +1,189 @@
-
 CFCRandomSpawn = CFCRandomSpawn or {}
 
-local customSpawnsForMap = CFCRandomSpawn.Config.CUSTOM_SPAWNS[game.GetMap()]
-local mapHasCustomSpawns = customSpawnsForMap ~= nil
+local customSpawnConfigForMap = CFCRandomSpawn.Config.CUSTOM_SPAWNS[game.GetMap()]
+local mapHasCustomSpawns = customSpawnConfigForMap ~= nil
 
 if not mapHasCustomSpawns then return end
 
-CFCRandomSpawn.spawnPointRankings = CFCRandomSpawn.spawnPointRankings or {}
+local customSpawnsForMap = customSpawnConfigForMap.spawnpoints
+local pvpCenters = customSpawnConfigForMap.pvpCenters
+local CENTER_CUTOFF = customSpawnConfigForMap.centerCutoff or CFCRandomSpawn.Config.DEFAULT_CENTER_CUTOFF
+local CENTER_CUTOFF_SQR = CENTER_CUTOFF ^ 2
+local AVG_CUTOFF_SQR = CENTER_CUTOFF_SQR
+local SELECTION_SIZE = CFCRandomSpawn.Config.SELECTION_SIZE
+local IGNORE_BUILDERS = CFCRandomSpawn.Config.IGNORE_BUILDERS
+
+do
+    if not pvpCenters or not pvpCenters[1] then
+        local avgSum = Vector()
+        local count = #customSpawnsForMap
+
+        for i = 1, count do
+            avgSum = avgSum + customSpawnsForMap[i]
+        end
+
+        pvpCenters = pvpCenters or {}
+        pvpCenters[1] = {
+            centerPos = avgSum / count
+        }
+
+        customSpawnConfigForMap.pvpCenters = pvpCenters
+    end
+
+    for _, centerData in pairs( pvpCenters ) do
+        local overrideCutoff = centerData.overrideCutoff
+
+        if overrideCutoff then
+            centerData.overrideCutoffSqr = overrideCutoff ^ 2
+        end
+    end
+end
+
+local function getPvpers()
+    local pvpers = {}
+    local count = 0
+
+    for _, ply in pairs( player.GetHumans() ) do
+        if ply.isInPvp and ply:isInPvp() then
+            count = count + 1
+            pvpers[count] = ply
+        end
+    end
+
+    return pvpers
+end
 
 local function getMeasurablePlayers( respawner )
     local measurablePlayers = {}
-    for _, ply in pairs( player.GetHumans() ) do
+    local humans = IGNORE_BUILDERS and getPvpers() or player.GetHumans()
+    local count = 0
+
+    for _, ply in pairs( humans ) do
         if ply:Alive() and respawner ~= ply then
-            table.insert( measurablePlayers, ply )
+            count = count + 1
+            measurablePlayers[count] = ply
         end
     end
 
     return measurablePlayers
 end
 
-
--- Only use spawnpoints that are nearest to the most "popular" point
--- This lets everyone spawn near the most active part of the server
-
--- if count is hit and distance is not hit, more spawnpoints will be chosen & vice versa
-
-local nearSpawnpointsMinCount = 8 -- minimum count of spawnpoints that will be availiable
-local nearSpawnpointsMinDistance = 2500 -- minimum size of area that spawnpoints will be chosen from
-local nearSpawnpointsMinDistanceSqr = nearSpawnpointsMinDistance ^ 2
-
-local function sortSpawnsByDistance( comparePos, spawns )
-    table.sort( spawns, function( a, b ) -- sort by distance
-        local aDist = a.spawnPos:DistToSqr( comparePos )
-        local bDist = b.spawnPos:DistToSqr( comparePos )
-        return aDist < bDist
-    end )
-    return spawns
-end
-
+-- Get the first SELECTION_SIZE spawns that are closest to nearPos and are within range of CENTER_CUTOFF_SQR
+-- Does manual comparisons instead of table.sort for efficiency
 local function getNearestSpawns( nearPos, spawns )
-    local distSortedSpawns = sortSpawnsByDistance( nearPos, spawns )
-    local bestSpawn = distSortedSpawns[1] -- get best spawn so the distance comparison isnt worthless
-    local nearestSpawns = {}
+    local nearestSpawns = {
+        { dist = math.huge, spawnData = spawns[1] }
+    }
 
-    for currOperation, spawn in pairs( distSortedSpawns ) do
-        local distToFirstSqr = bestSpawn.spawnPos:DistToSqr( spawn.spawnPos ) -- will never run on every spawnpoint
-        local overCount = currOperation >= nearSpawnpointsMinCount
-        local overDistance = distToFirstSqr > nearSpawnpointsMinDistanceSqr
+    for i, spawn in pairs( spawns ) do
+        local dist = nearPos:DistToSqr( spawn.spawnPos )
 
-        if overCount and overDistance then break end
+        for i2 = 1, SELECTION_SIZE do
+            local compareSpawn = nearestSpawns[i2]
 
-        table.insert( nearestSpawns, spawn )
+            if compareSpawn then
+                if dist < compareSpawn.dist then
+                    table.insert( nearestSpawns, i2, { dist = dist, spawnData = spawn } ) -- This spawn is closer, insert it
+
+                    nearestSpawns[SELECTION_SIZE + 1] = nil -- Ensure excess spawns are purged
+
+                    goto skipRemainingCompares
+                end
+            elseif dist < CENTER_CUTOFF_SQR then -- Nothing to compare against and this spawn is within the cutoff range
+                nerestSpawns[i2] = { dist = dist, spawnData = spawn }
+            end
+        end
+
+        ::skipRemainingCompares::
     end
+
     return nearestSpawns
 end
 
 
-local origin = Vector()
-local function getPopularPoint( players )
-    if not players then return origin end
-    local average = Vector()
-    local playersCount = #players
-    for _, currentPlayer in ipairs( players ) do
-        if IsValid( currentPlayer ) then
-            average = average + currentPlayer:GetPos()
+local function getPlyAvg( plys, centerPos )
+    if not plys or not plys[1] then return centerPos or Vector() end
+
+    local avgSum = Vector()
+    local count = 0
+
+    for _, ply in ipairs( plys ) do
+        local plyPos = ply:GetPos()
+
+        if centerPos then
+            if centerPos:DistToSqr( plyPos ) <= AVG_CUTOFF_SQR then
+                avgSum = avgSum + plyPos
+                count = count + 1
+            end
+        else
+            avgSum = avgSum + plyPos
+            count = count + 1
         end
     end
-    average = average / playersCount
 
-    -- debugoverlay.Cross( average, 200, 100, Color( 255, 255, 255 ), true )
+    if count == 0 then return centerPos end
 
-    return average
+    return avgSum / count
 end
-
 
 -- This is operating on a model of spawn points and players as electrons putting a force on each other
 -- The best spawn point is the spawn point under the smallest sum of forces then. This is why we use physics terms here
-local distSqr = 900 -- ( 30^2 )
-local randMin, randMax = 1, 4
+local FORCE_DIST_MIN_SQR = 30 ^ 2 -- Distances below this will be clamped to the maximum force of 1
 
-local function getPlayerForceFromCustomSpawn( spawn, measurablePlayers )
-    local totalDistanceSquared = 0
+local function getPlayerForceFromPoint( point, plys )
+    local totalForce = 0
 
-    for _, ply in pairs( measurablePlayers ) do
-        local plyDistanceSqr = ( ply:GetPos():DistToSqr( spawn ) )
-        if plyDistanceSqr < distSqr then plyDistanceSqr = 1 end
-        totalDistanceSquared = totalDistanceSquared + 1 / plyDistanceSqr
+    for _, ply in pairs( plys ) do
+        local plyDistanceSqr = ( ply:GetPos():DistToSqr( point ) )
+
+        if plyDistanceSqr < FORCE_DIST_MIN_SQR then plyDistanceSqr = 1 end
+
+        totalForce = totalForce + 1 / plyDistanceSqr
     end
 
-    return totalDistanceSquared
+    return totalForce
 end
 
-function CFCRandomSpawn.getOptimalSpawnPosition()
-    local randomSpawn = math.random( randMin, randMax )
-    local spawnPoinTbl = CFCRandomSpawn.spawnPointRankings[randomSpawn]
-    return spawnPoinTbl.spawnPos, spawnPoinTbl.spawnAngle
+-- Gets the most popular pvp center via the electron force model, to eliminate outliers
+local function getPopularCenter( plys )
+    local bestForce = -1
+    local bestCenter = { centerPos = Vector() }
+
+    if not pvpCenters[2] then return pvpCenters[1] end -- No need to make extra calculations if there's only one pvp center
+    if not plys or not plys[1] then return pvpCenters[1] end -- Use the first pvp center as the primary one if there are no pvpers
+
+    for i, center in ipairs( pvpCenters ) do
+        local force = getPlayerForceFromPoint( center.centerPos, plys )
+
+        if force > bestForce then
+            bestForce = force
+            bestCenter = center
+        end
+    end
+
+    return bestCenter
 end
 
-function CFCRandomSpawn.updateSpawnPointRankings( ply )
-    local playerIDSFromSpawns = {}
+function CFCRandomSpawn.getOptimalSpawnPos( ply, overrideInd )
     local measurablePlayers = getMeasurablePlayers( ply )
+    local bestCenter = getPopularCenter( measurablePlayers )
 
-    popularPoint = getPopularPoint( measurablePlayers )
+    AVG_CUTOFF_SQR = bestCenter.overrideCutoffSqr or CENTER_CUTOFF_SQR
 
-    bestSpawns = getNearestSpawns( popularPoint, customSpawnsForMap )
+    local bestSpawns = getNearestSpawns( getPlyAvg( measurablePlayers, bestCenter.centerPos ), customSpawnsForMap )
+    local bestSpawn = bestSpawns[overrideInd or math.random( 1, #bestSpawns )].spawnData
 
-    for _, spawn in ipairs( bestSpawns ) do
-        local spawnPosition = spawn.spawnPos
-        local playerNetForce = getPlayerForceFromCustomSpawn( spawnPosition, measurablePlayers )
-        local spawnDistanceData = {}
-        spawnDistanceData.spawnPos = spawnPosition
-        spawnDistanceData.spawnAngle = spawn.spawnAngle
-        spawnDistanceData["inverse-distance-squared"] = playerNetForce
-
-        table.insert( playerIDSFromSpawns, spawnDistanceData ) -- IDS == Inverse Distance Squared
-
-        CFCRandomSpawn.spawnPointRankings = playerIDSFromSpawns
-        table.SortByMember( CFCRandomSpawn.spawnPointRankings, "inverse-distance-squared", true )
-    end
-
-    --timer.Create( "CFC_UpdateOptimalSpawnPosition", 0.5, 0, CFCRandomSpawn.updateSpawnPointRankings )
+    return bestSpawn.spawnPos, bestSpawn.spawnAngle
 end
 
 function CFCRandomSpawn.handlePlayerSpawn( ply )
     if not ( ply and IsValid( ply ) ) then return end
-    if IsValid( ply.LinkedSpawnPoint ) then return end
+    if IsValid( ply.LinkedSpawnpoint ) then return end
 
-    CFCRandomSpawn.updateSpawnPointRankings( ply )
-    local optimalSpawnPosition, optimalSpawnAngles  = CFCRandomSpawn.getOptimalSpawnPosition()
+    local optimalSpawnPosition, optimalSpawnAngles  = CFCRandomSpawn.getOptimalSpawnPos( ply )
 
     ply:SetPos( optimalSpawnPosition )
+
     if optimalSpawnAngles then
         ply:SetEyeAngles( optimalSpawnAngles )
     end
