@@ -7,9 +7,10 @@ if not mapHasCustomSpawns then return end
 
 local customSpawnsForMap = customSpawnConfigForMap.spawnpoints or {}
 local pvpCenters = customSpawnConfigForMap.pvpCenters or {}
-local CENTER_CUTOFF = customSpawnConfigForMap.centerCutoff or CFCRandomSpawn.Config.DEFAULT_CENTER_CUTOFF
-local CENTER_CUTOFF_SQR = CENTER_CUTOFF ^ 2
-local AVG_CUTOFF_SQR = CENTER_CUTOFF_SQR
+local DEFAULT_CENTER_CUTOFF = customSpawnConfigForMap.centerCutoff or CFCRandomSpawn.Config.DEFAULT_CENTER_CUTOFF
+local DEFAULT_CENTER_CUTOFF_SQR = DEFAULT_CENTER_CUTOFF ^ 2
+local CENTER_CUTOFF = DEFAULT_CENTER_CUTOFF
+local CENTER_CUTOFF_SQR = DEFAULT_CENTER_CUTOFF_SQR
 local SELECTION_SIZE = CFCRandomSpawn.Config.SELECTION_SIZE
 local CLOSENESS_LIMIT = CFCRandomSpawn.Config.CLOSENESS_LIMIT ^ 2
 local IGNORE_BUILDERS = CFCRandomSpawn.Config.IGNORE_BUILDERS
@@ -154,7 +155,7 @@ local function getPlyAvg( plys, centerPos )
         local plyPos = ply:GetPos()
 
         if centerPos then
-            if centerPos:DistToSqr( plyPos ) <= AVG_CUTOFF_SQR then
+            if centerPos:DistToSqr( plyPos ) <= CENTER_CUTOFF_SQR then
                 avgSum = avgSum + plyPos
                 count = count + 1
             end
@@ -187,19 +188,35 @@ local function getPlayerForceFromPoint( point, plys )
     return totalForce
 end
 
+-- Players within the point's radius each provide a score of 1, while players outside the radius provide a score that falls off quadratically
+local function getPlayerPopularityFromPoint( point, plys, radiusSqr )
+    local totalScore = 0
+    radiusSqr = radiusSqr or DEFAULT_CENTER_CUTOFF_SQR
+
+    for _, ply in pairs( plys ) do
+        local plyDistanceSqr = ( ply:GetPos():DistToSqr( point ) )
+
+        if plyDistanceSqr < radiusSqr then plyDistanceSqr = radiusSqr end
+
+        totalScore = totalScore + radiusSqr / plyDistanceSqr
+    end
+
+    return totalScore
+end
+
 -- Gets the most popular pvp center via the electron force model, to eliminate outliers
 local function getPopularCenter( plys )
-    local bestForce = -1
+    local bestScore = -1
     local bestCenter = { centerPos = Vector() }
 
     if not pvpCenters[2] then return pvpCenters[1] end -- No need to make extra calculations if there's only one pvp center
     if not plys or not plys[1] then return pvpCenters[1] end -- Use the first pvp center as the primary one if there are no pvpers
 
     for i, center in ipairs( pvpCenters ) do
-        local force = getPlayerForceFromPoint( center.centerPos, plys )
+        local score = getPlayerPopularityFromPoint( center.centerPos, plys, center.overrideCutoffSqr )
 
-        if force > bestForce then
-            bestForce = force
+        if score > bestScore then
+            bestScore = score
             bestCenter = center
         end
     end
@@ -212,7 +229,8 @@ function CFCRandomSpawn.getOptimalSpawnPos( ply, overrideInd )
     local allLivingPlys = getLivingPlayers( ply )
     local bestCenter = getPopularCenter( measurablePlayers )
 
-    AVG_CUTOFF_SQR = bestCenter.overrideCutoffSqr or CENTER_CUTOFF_SQR
+    CENTER_CUTOFF = bestCenter.overrideCutoff or DEFAULT_CENTER_CUTOFF
+    CENTER_CUTOFF_SQR = bestCenter.overrideCutoffSqr or DEFAULT_CENTER_CUTOFF_SQR
 
     local nearestSpawns = getNearestSpawns( getPlyAvg( measurablePlayers, bestCenter.centerPos ), customSpawnsForMap )
     local bestSpawns = discardTooCloseSpawns( nearestSpawns, allLivingPlys )
