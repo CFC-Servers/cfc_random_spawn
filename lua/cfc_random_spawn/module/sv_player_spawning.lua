@@ -5,8 +5,8 @@ local mapHasCustomSpawns = customSpawnConfigForMap ~= nil
 
 if not mapHasCustomSpawns then return end
 
-local customSpawnsForMap = customSpawnConfigForMap.spawnpoints
-local pvpCenters = customSpawnConfigForMap.pvpCenters
+local customSpawnsForMap = customSpawnConfigForMap.spawnpoints or {}
+local pvpCenters = customSpawnConfigForMap.pvpCenters or {}
 local CENTER_CUTOFF = customSpawnConfigForMap.centerCutoff or CFCRandomSpawn.Config.DEFAULT_CENTER_CUTOFF
 local CENTER_CUTOFF_SQR = CENTER_CUTOFF ^ 2
 local AVG_CUTOFF_SQR = CENTER_CUTOFF_SQR
