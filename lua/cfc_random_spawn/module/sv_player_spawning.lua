@@ -69,6 +69,21 @@ local function getMeasurablePlayers( respawner )
     return measurablePlayers
 end
 
+local function getLivingPlayers( respawner )
+    local livingPlayers = {}
+    local humans = player.GetHumans()
+    local count = 0
+
+    for _, ply in pairs( humans ) do
+        if ply:Alive() and respawner ~= ply then
+            count = count + 1
+            livingPlayers[count] = ply
+        end
+    end
+
+    return livingPlayers
+end
+
 -- Get the first SELECTION_SIZE spawns that are closest to nearPos and are within range of CENTER_CUTOFF_SQR
 -- Does manual comparisons instead of table.sort for efficiency
 local function getNearestSpawns( nearPos, spawns )
@@ -194,12 +209,13 @@ end
 
 function CFCRandomSpawn.getOptimalSpawnPos( ply, overrideInd )
     local measurablePlayers = getMeasurablePlayers( ply )
+    local allLivingPlys = getLivingPlayers( ply )
     local bestCenter = getPopularCenter( measurablePlayers )
 
     AVG_CUTOFF_SQR = bestCenter.overrideCutoffSqr or CENTER_CUTOFF_SQR
 
     local nearestSpawns = getNearestSpawns( getPlyAvg( measurablePlayers, bestCenter.centerPos ), customSpawnsForMap )
-    local bestSpawns = discardTooCloseSpawns( nearestSpawns, measurablePlayers )
+    local bestSpawns = discardTooCloseSpawns( nearestSpawns, allLivingPlys )
     local bestSpawn = bestSpawns[overrideInd or math.random( 1, #bestSpawns )]
     bestSpawn = bestSpawn.spawnData or bestSpawn -- unwrap dist data from getNearestSpawns() if still wrapped
 
