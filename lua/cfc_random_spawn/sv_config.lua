@@ -9,7 +9,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS = {}
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_bluehills_test3"] = {
     centerCutoff = 2000,
     pvpCenters = {
-        { centerPos = Vector( 292, -1.687, 265.938 ), overrideCutoff = nil }
+        { centerPos = Vector( 292, -1, 265 ), overrideCutoff = nil }
     },
     spawnpoints = {
         { spawnPos = Vector( 1104.6744384766,  131.18112182617,  64.03125 ) },
@@ -34,7 +34,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_bluehills_test3"] = {
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_novenka"] = {
     centerCutoff = 4000,
     pvpCenters = {
-        { centerPos = Vector( 7062.906, 8592.719, -246.125 ), overrideCutoff = nil }
+        { centerPos = Vector( 7062, 8592, -246 ), overrideCutoff = nil }
     },
     spawnpoints = {
         { spawnPos = Vector( 6052, 11677, -383 ), spawnAngle = Angle( 0, -135, 0 ), pvp = true },
@@ -63,7 +63,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_novenka"] = {
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_excess_construct_13"] = {
     centerCutoff = 2000,
     pvpCenters = {
-        { centerPos = Vector( -2217.281, -133.062, 673.813 ), overrideCutoff = nil }
+        { centerPos = Vector( -2217, -133, 673 ), overrideCutoff = nil }
     },
     spawnpoints = {
         { spawnPos = Vector( -1483, -50, 673 ), spawnAngle = Angle( 0, 180, 0 ), pvp = true },
@@ -93,9 +93,9 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_excess_construct_13"] = {
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_boreas"] = {
     centerCutoff = 3500,
     pvpCenters = {
-        { centerPos = Vector( -1983.062, -6900.937, -6423.969 ), overrideCutoff = nil },
-        { centerPos = Vector( -4926.625, -5020.094, -6373.344 ), overrideCutoff = nil },
-        { centerPos = Vector( -1963.531, -2343.344, -6392.75 ), overrideCutoff = nil }
+        { centerPos = Vector( -1983, -6900, -6423 ), overrideCutoff = nil },
+        { centerPos = Vector( -4926, -5020, -6373 ), overrideCutoff = nil },
+        { centerPos = Vector( -1963, -2343, -6392 ), overrideCutoff = nil }
     },
     spawnpoints = {
         { spawnPos = Vector( -3212, -7423, -6398 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },
@@ -269,7 +269,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_mobenix_v3_final"] = {
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_freespace_13"] = {
     centerCutoff = 3000,
     pvpCenters = {
-        { centerPos = Vector( -2374.25, -40.344, -14580.281 ), overrideCutoff = nil }
+        { centerPos = Vector( -2374, -40, -14580 ), overrideCutoff = nil }
     },
     spawnpoints = {
         { spawnPos = Vector( -1313, 25, -14566 ), spawnAngle = Angle( 0, 180, 0 ), pvp = true },
