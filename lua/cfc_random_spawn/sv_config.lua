@@ -8,6 +8,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS = {}
 
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_bluehills_test3"] = {
     centerCutoff = 2000,
+    centerUpdateInterval = nil,
     pvpCenters = {
         { centerPos = Vector( 292, -1, 265 ), overrideCutoff = nil }
     },
@@ -33,6 +34,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_bluehills_test3"] = {
 
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_novenka"] = {
     centerCutoff = 4000,
+    centerUpdateInterval = nil,
     pvpCenters = {
         { centerPos = Vector( 7062, 8592, -246 ), overrideCutoff = nil }
     },
@@ -62,6 +64,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_novenka"] = {
 
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_excess_construct_13"] = {
     centerCutoff = 2000,
+    centerUpdateInterval = nil,
     pvpCenters = {
         { centerPos = Vector( -2217, -133, 673 ), overrideCutoff = nil }
     },
@@ -92,6 +95,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_excess_construct_13"] = {
 
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_boreas"] = {
     centerCutoff = 3500,
+    centerUpdateInterval = nil,
     pvpCenters = {
         { centerPos = Vector( -1983, -6900, -6423 ), overrideCutoff = nil },
         { centerPos = Vector( -4926, -5020, -6373 ), overrideCutoff = nil },
@@ -126,6 +130,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_boreas"] = {
 
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_mobenix_v3_final"] = {
     centerCutoff = 4500,
+    centerUpdateInterval = nil,
     pvpCenters = {
         { centerPos = Vector( 3271, 2177, -382 ), overrideCutoff = 3000 },
         { centerPos = Vector( -742, 1255, -236 ), overrideCutoff = 2000 },
@@ -268,6 +273,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_mobenix_v3_final"] = {
 
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_freespace_13"] = {
     centerCutoff = 3000,
+    centerUpdateInterval = nil,
     pvpCenters = {
         { centerPos = Vector( -2374, -40, -14580 ), overrideCutoff = nil }
     },
