@@ -14,7 +14,8 @@ The config for this addon is located in the `cfc_random_spawn/lua/cfc_random_spa
 Here you will find 2 config constants, and the spawn points table structure. The constants are as follows:
 - `DEFAULT_CENTER_CUTOFF` `(default 3000)` - Default cutoff range from the most popular pvp center, where players further away from this will be ignored. The system tries to place you closest to everyone else.
 - `CLOSENESS_LIMIT` `(default 400)` - Will not choose spawnpoints that are within this many units of a valid player (i.e. a living pvper). 0 to disable.
-- `SELECTION_SIZE` `(default 8)` - Max number of 'ideal' spawnpoints to select from randomly
+- `SELECTION_SIZE` `(default 8)` - Max number of 'ideal' spawnpoints to select from randomly.
+- `CENTER_UPDATE_INTERVAL` `(default 60)` - The gap (in seconds) between each center popularity update. If set to 0, will update on every respawn.
 - `IGNORE_BUILDERS` `(default true)` - Should 'center popularity' and player position average not care about builders? Requires a PvP addon which has a function of the form `PLAYER:isInPvp()`
 
 Adding spawnpoints is done as follows:
