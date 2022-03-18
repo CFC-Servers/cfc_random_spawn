@@ -13,7 +13,9 @@ local CENTER_CUTOFF = DEFAULT_CENTER_CUTOFF
 local CENTER_CUTOFF_SQR = DEFAULT_CENTER_CUTOFF_SQR
 local SELECTION_SIZE = CFCRandomSpawn.Config.SELECTION_SIZE
 local CLOSENESS_LIMIT = CFCRandomSpawn.Config.CLOSENESS_LIMIT ^ 2
+local CENTER_UPDATE_INTERVAL = CFCRandomSpawn.Config.CENTER_UPDATE_INTERVAL
 local IGNORE_BUILDERS = CFCRandomSpawn.Config.IGNORE_BUILDERS
+local CENTER_UPDATE_ON_RESPAWN = CENTER_UPDATE_INTERVAL <= 0
 
 do
     if not pvpCenters or not pvpCenters[1] then
@@ -39,7 +41,12 @@ do
             centerData.overrideCutoffSqr = overrideCutoff ^ 2
         end
     end
+
+    CFCRandomSpawn.mostPopularCenter = pvpCenters[1]
 end
+
+local mostPopularCenter = CFCRandomSpawn.mostPopularCenter
+local centerWasDefaulted = false
 
 local function getPvpers()
     local pvpers = {}
@@ -227,12 +234,16 @@ end
 function CFCRandomSpawn.getOptimalSpawnPos( ply, overrideInd )
     local measurablePlayers = getMeasurablePlayers( ply )
     local allLivingPlys = getLivingPlayers( ply )
-    local bestCenter = getPopularCenter( measurablePlayers )
 
-    CENTER_CUTOFF = bestCenter.overrideCutoff or DEFAULT_CENTER_CUTOFF
-    CENTER_CUTOFF_SQR = bestCenter.overrideCutoffSqr or DEFAULT_CENTER_CUTOFF_SQR
+    if CENTER_UPDATE_ON_RESPAWN then
+        mostPopularCenter = getPopularCenter( measurablePlayers ) or pvpCenters[1]
+        CFCRandomSpawn.mostPopularCenter = mostPopularCenter
 
-    local nearestSpawns = getNearestSpawns( getPlyAvg( measurablePlayers, bestCenter.centerPos ), customSpawnsForMap )
+        CENTER_CUTOFF = mostPopularCenter.overrideCutoff or DEFAULT_CENTER_CUTOFF
+        CENTER_CUTOFF_SQR = mostPopularCenter.overrideCutoffSqr or DEFAULT_CENTER_CUTOFF_SQR
+    end
+
+    local nearestSpawns = getNearestSpawns( getPlyAvg( measurablePlayers, mostPopularCenter.centerPos ), customSpawnsForMap )
     local bestSpawns = discardTooCloseSpawns( nearestSpawns, allLivingPlys )
     local bestSpawn = bestSpawns[overrideInd or math.random( 1, #bestSpawns )]
     bestSpawn = bestSpawn.spawnData or bestSpawn -- unwrap dist data from getNearestSpawns() if still wrapped
@@ -253,4 +264,27 @@ function CFCRandomSpawn.handlePlayerSpawn( ply )
     end
 end
 
-hook.Add( "PlayerSpawn", "CFC_PlayerSpawning", CFCRandomSpawn.handlePlayerSpawn )
+hook.Add( "PlayerSpawn", "CFC_RandomSpawn_ChooseOptimalSpawnpoint", CFCRandomSpawn.handlePlayerSpawn )
+
+
+if not CENTER_UPDATE_ON_RESPAWN then
+    timer.Create( "CFC_RandomSpawn_CalculateMostPopularPvpCenter", CENTER_UPDATE_INTERVAL, 0, function()
+        local measurablePlayers = getMeasurablePlayers()
+
+        if measurablePlayers[1] then
+            mostPopularCenter = getPopularCenter( measurablePlayers ) or pvpCenters[1]
+            centerWasDefaulted = false
+        else
+            -- There are no measureable players, so reset back to what should be the intended main pvp area
+            if centerWasDefaulted then return end -- Redundancy check
+
+            mostPopularCenter = pvpCenters[1]
+            centerWasDefaulted = true
+        end
+
+        CFCRandomSpawn.mostPopularCenter = mostPopularCenter
+
+        CENTER_CUTOFF = mostPopularCenter.overrideCutoff or DEFAULT_CENTER_CUTOFF
+        CENTER_CUTOFF_SQR = mostPopularCenter.overrideCutoffSqr or DEFAULT_CENTER_CUTOFF_SQR
+    end )
+end
