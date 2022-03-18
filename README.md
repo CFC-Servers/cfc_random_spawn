@@ -35,6 +35,7 @@ Adding spawnpoints is done as follows:
   ```
   Where 
   - `centerCutoff` overrides `DEFAULT_CENTER_CUTOFF` for this map
+  - `centerUpdateInterval` overrives `CENTER_UPDATE_INTERVAL` for this map
   - **pvpCenters**: defines one or more central positions where pvp most often takes place around, with the first one being the fallback if there are no pvpers. If none are defined, will default to the average position of all spawnpoints for this map.
     - `centerPos` is the position for the pvp center
     - `overrideCutoff` overrides the map/default cutoff value for obtaining the average player position near this specific pvp center, useful for maps with many centers that vary heavily in size
