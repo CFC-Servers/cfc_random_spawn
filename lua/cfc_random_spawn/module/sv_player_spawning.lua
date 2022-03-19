@@ -253,7 +253,7 @@ end
 
 function CFCRandomSpawn.handlePlayerSpawn( ply )
     if not ( ply and IsValid( ply ) ) then return end
-    if IsValid( ply.LinkedSpawnpoint ) then return end
+    if IsValid( ply.LinkedSpawnPoint ) then return end
 
     local optimalSpawnPosition, optimalSpawnAngles  = CFCRandomSpawn.getOptimalSpawnPos( ply )
 
