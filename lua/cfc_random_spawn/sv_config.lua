@@ -360,6 +360,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_trainconstruct2"] = {
         { spawnPos = Vector( 11630, -1668, 26 ), spawnAngle = Angle( 0, -135, 0 ), pvp = true }
     }
 }
+
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_obselisk"] = {
     centerCutoff = 3000,
     centerUpdateInterval = 30,
