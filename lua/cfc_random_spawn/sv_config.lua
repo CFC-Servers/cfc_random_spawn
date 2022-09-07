@@ -148,7 +148,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_mobenix_v3_final"] = {
         { spawnPos = Vector( 4249, 542, -469 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },
         { spawnPos = Vector( 3766, 551, -453 ), spawnAngle = Angle( 0, 115, 0 ), pvp = true },
         { spawnPos = Vector( 3670, 1824, -454 ), spawnAngle = Angle( 0, -35, 0 ), pvp = true },
-        { spawnPos = Vector( 4116, 2738, -407 ), spawnAngle = Angle( 0, -54, 0 ), pvp = true },
+        { spawnPos = Vector( 4116, 2738, -422 ), spawnAngle = Angle( 0, -54, 0 ), pvp = true },
         { spawnPos = Vector( 6014, 2900, -453 ), spawnAngle = Angle( 0, 97, 0 ), pvp = true },
         { spawnPos = Vector( 3099, 1416, 48 ), spawnAngle = Angle( 0, -45, 0 ), pvp = true },
         { spawnPos = Vector( 5048, 3585, -537 ), spawnAngle = Angle( 0, -51, 0 ), pvp = true },
