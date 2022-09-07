@@ -16,7 +16,7 @@ Here you will find 2 config constants, and the spawn points table structure. The
 - `CLOSENESS_LIMIT` `(default 400)` - Will not choose spawnpoints that are within this many units of a valid player (i.e. a living pvper). 0 to disable.
 - `SELECTION_SIZE` `(default 8)` - Max number of 'ideal' spawnpoints to select from randomly.
 - `CENTER_UPDATE_INTERVAL` `(default 60)` - The gap (in seconds) between each center popularity update. If set to 0, will update on every respawn.
-- `IGNORE_BUILDERS` `(default true)` - Should 'center popularity' and player position average not care about builders? Requires a PvP addon which has a function of the form `PLAYER:isInPvp()`
+- `IGNORE_BUILDERS` `(default true)` - Should 'center popularity' and player position average not care about builders? Requires a PvP addon which has a function of the form `PLAYER:IsInPvp()`
 
 Adding spawnpoints is done as follows:
 - Create an entry to the `CUSTOM_SPAWNS` table for the map of your choosing, as follows:

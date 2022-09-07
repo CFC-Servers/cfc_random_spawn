@@ -53,7 +53,7 @@ local function getPvpers()
     local count = 0
 
     for _, ply in pairs( player.GetHumans() ) do
-        if ply.isInPvp and ply:isInPvp() then
+        if ply.IsInPvp and ply:IsInPvp() then
             count = count + 1
             pvpers[count] = ply
         end
