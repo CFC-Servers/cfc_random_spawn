@@ -64,12 +64,10 @@ end
 local function getMeasurablePlayers( respawner )
     local measurablePlayers = {}
     local humans = IGNORE_BUILDERS and getPvpers() or player.GetHumans()
-    local count = 0
 
     for _, ply in pairs( humans ) do
         if ply:Alive() and respawner ~= ply then
-            count = count + 1
-            measurablePlayers[count] = ply
+            table.insert( measurablePlayers, ply )
         end
     end
 
