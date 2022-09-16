@@ -50,7 +50,7 @@ local centerWasDefaulted = false
 local function getPvpers()
     local pvpers = {}
 
-    for _, ply in pairs( player.GetHumans() ) do
+    for _, ply in pairs( player.GetAll() ) do
         if not ply.IsInPvp or ply:IsInPvp() then
             table.insert( pvpers, ply )
         end
@@ -61,7 +61,7 @@ end
 
 local function getMeasurablePlayers()
     local measurablePlayers = {}
-    local humans = IGNORE_BUILDERS and getPvpers() or player.GetHumans()
+    local humans = IGNORE_BUILDERS and getPvpers() or player.GetAll()
 
     for _, ply in pairs( humans ) do
         if ply:Alive() then
