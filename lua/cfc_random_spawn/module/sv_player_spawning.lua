@@ -50,7 +50,7 @@ local centerWasDefaulted = false
 function CFCRandomSpawn.refreshMapInfo()
     mostPopularCenter = CFCRandomSpawn.mostPopularCenter
     customSpawnConfigForMap = CFCRandomSpawn.Config.CUSTOM_SPAWNS[game.GetMap()]
-    mapHasCustomSpawns = customSpawnConfigForMap ~= nil
+    mapHasCustomSpawns = next( customSpawnConfigForMap )
 
     if not mapHasCustomSpawns then return end
     customSpawnsForMap = customSpawnConfigForMap.spawnpoints or {}
