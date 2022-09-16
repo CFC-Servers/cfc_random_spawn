@@ -128,25 +128,26 @@ local function discardTooCloseSpawns( spawns, plys )
 
     local oldSpawns = spawns
     local trimmedSpawns = {}
-    local count = 0
 
     for _, spawn in ipairs( spawns ) do
         local spawnData = spawn.spawnData or spawn -- unwrap dist data from getNearestSpawns()
         local spawnPos = spawnData.spawnPos
 
+        local plyTooClose = false
+
         for _, ply in ipairs( plys ) do
             if ply:GetPos():DistToSqr( spawnPos ) < CLOSENESS_LIMIT then
-                goto skipRemainingCompares
+                plyTooClose = true
+                break
             end
         end
 
-        count = count + 1
-        trimmedSpawns[count] = spawnData
-
-        ::skipRemainingCompares::
+        if not plyTooClose then
+            table.insert( trimmedSpawns, spawnData )
+        end
     end
 
-    if count == 0 then return oldSpawns end -- Unfortunately, *all* spawns were too close. We gotta return something, though.
+    if #trimmedSpawns == 0 then return oldSpawns end -- Unfortunately, *all* spawns were too close. We gotta return something, though.
 
     return trimmedSpawns
 end
