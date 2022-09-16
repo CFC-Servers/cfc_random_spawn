@@ -61,12 +61,12 @@ local function getPvpers()
     return pvpers
 end
 
-local function getMeasurablePlayers( respawner )
+local function getMeasurablePlayers()
     local measurablePlayers = {}
     local humans = IGNORE_BUILDERS and getPvpers() or player.GetHumans()
 
     for _, ply in pairs( humans ) do
-        if ply:Alive() and respawner ~= ply then
+        if ply:Alive() then
             table.insert( measurablePlayers, ply )
         end
     end
@@ -198,8 +198,8 @@ local function getPopularCenter( plys )
     return bestCenter
 end
 
-function CFCRandomSpawn.getOptimalSpawnPos( ply )
-    local measurablePlayers = getMeasurablePlayers( ply )
+function CFCRandomSpawn.getOptimalSpawnPos()
+    local measurablePlayers = getMeasurablePlayers()
     local allLivingPlys = getLivingPlayers()
 
     if CENTER_UPDATE_ON_RESPAWN then
