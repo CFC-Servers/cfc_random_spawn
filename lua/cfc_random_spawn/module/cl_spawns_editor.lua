@@ -8,6 +8,7 @@ local lineColor = Color( 0, 255, 0 )
 local centerColor = Color( 255, 0, 0 )
 local centerPointColor = Color( 255, 145, 0 )
 local shownClearWarning = false
+local minDeletionRange = 5000
 local spawnTable = {}
 
 local function requestSpawnPoints()
@@ -99,13 +100,19 @@ local function removeSpawn( ply )
     if not spawnTable.spawnpoints then return end
 
     local nearPos = ply:GetPos()
+    local spawnpoints = spawnTable.spawnpoints
 
-    for i, spawn in ipairs( spawnTable.spawnpoints ) do
-        if 200 > nearPos:Distance( spawn.spawnPos ) then
-            table.remove( spawnTable.spawnpoints, i )
-            return
-        end
+    table.sort( spawnpoints, function( a, b )
+        return nearPos:DistToSqr( a.spawnPos ) < nearPos:DistToSqr( b.spawnPos )
+    end )
+
+    if spawnTable.spawnpoints[1].spawnPos:DistToSqr( ply:GetPos() ) > minDeletionRange then
+        print( "You are too far away from the nearest spawn point, please move closer to it." )
+        return
     end
+
+    table.remove( spawnTable.spawnpoints, 1 )
+    sendConfigChangesToServer()
 end
 
 concommand.Add( "cfc_spawneditor_spawndel", removeSpawn, _, "Removes the nearest spawn point" )
@@ -125,13 +132,18 @@ local function removePvpCenter( ply )
     if not spawnTable.pvpCenters then spawnTable.pvpCenters = {} end
 
     local nearPos = ply:GetPos()
+    local pvpCenters = spawnTable.pvpCenters
 
-    for i, spawn in ipairs( spawnTable.pvpCenters ) do
-        if 200 > nearPos:Distance( spawn.centerPos ) then
-            table.remove( spawnTable.pvpCenters, i )
-            return
-        end
+    table.sort( pvpCenters, function( a, b )
+        return nearPos:DistToSqr( a.centerPos ) < nearPos:DistToSqr( b.centerPos )
+    end )
+
+    if spawnTable.pvpCenters[1].centerPos:DistToSqr( ply:GetPos() ) > minDeletionRange then
+        print( "You are too far away from the nearest pvp center, please move closer to it." )
+        return
     end
+
+    table.remove( spawnTable.pvpCenters, 1 )
     sendConfigChangesToServer()
 end
 
