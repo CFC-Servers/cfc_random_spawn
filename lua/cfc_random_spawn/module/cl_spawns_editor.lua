@@ -7,6 +7,7 @@ local boxColor = Color( 0, 255, 0 )
 local lineColor = Color( 0, 255, 0 )
 local centerColor = Color( 255, 0, 0 )
 local centerPointColor = Color( 255, 145, 0 )
+local shownClearWarning = false
 local spawnTable = {}
 
 local function requestSpawnPoints()
@@ -123,3 +124,45 @@ local function removePvpCenter( ply )
 end
 
 concommand.Add( "cfc_spawn_editor_delpvpcenter", removePvpCenter, _, "Removes the nearest pvp center" )
+
+local function printSpawnTable()
+    if not canRunCommand() then return end
+
+    if not shownClearWarning then
+        print( "Make sure to first run clean in console so you can copy paste everything easily, run again to run command." )
+        shownClearWarning = true
+        return
+    end
+
+    local tab = "   "
+
+    local mainString = string.format( [[CFCRandomSpawn.Config.CUSTOM_SPAWNS["%s"] = {%s]], game.GetMap(), "\n" )
+    mainString = mainString .. tab .. "pvpCenters = {\n"
+
+    for _, center in ipairs( spawnTable.pvpCenters ) do
+        mainString = mainString .. tab .. tab .. "{ "
+        mainString = mainString .. string.format( "centerPos = Vector( %s, %s, %s )", center.centerPos.x, center.centerPos.y, center.centerPos.z )
+        mainString = mainString .. " },\n"
+    end
+
+    mainString = mainString .. tab .. "},\n"
+    mainString = mainString .. tab .. "spawnpoints = {\n"
+
+    for _, spawn in ipairs( spawnTable.spawnpoints ) do
+        mainString = mainString .. tab .. tab .. "{ "
+        mainString = mainString .. string.format( "spawnPos = Vector( %s, %s, %s ),", spawn.spawnPos.x, spawn.spawnPos.y, spawn.spawnPos.z )
+        mainString = mainString .. string.format( " spawnAngle = Angle( %s, %s, %s )", spawn.spawnAngle.p, spawn.spawnAngle.y, spawn.spawnAngle.r )
+        mainString = mainString .. " },\n"
+    end
+
+    mainString = mainString .. tab .. "},\n"
+    mainString = mainString .. "}"
+
+    local lines = string.Explode( "\n", mainString )
+
+    for _, line in ipairs( lines ) do
+        print( line )
+    end
+end
+
+concommand.Add( "cfc_spawn_editor_printspawns", printSpawnTable, _, "Prints the spawn table to the console for easy exporting." )
