@@ -105,3 +105,19 @@ local function addPvpCenter( ply )
 end
 
 concommand.Add( "cfc_spawn_editor_addpvpcenter", addPvpCenter, _, "Adds a pvp center at your location" )
+
+local function removePvpCenter( ply )
+    if not canRunCommand() then return end
+    if not spawnTable.pvpCenters then spawnTable.pvpCenters = {} end
+
+    local nearPos = ply:GetPos()
+
+    for i, spawn in ipairs( spawnTable.pvpCenters ) do
+        if 200 > nearPos:Distance( spawn.centerPos ) then
+            table.remove( spawnTable.pvpCenters, i )
+            return
+        end
+    end
+end
+
+concommand.Add( "cfc_spawn_editor_delpvpcenter", removePvpCenter, _, "Removes the nearest pvp center" )
