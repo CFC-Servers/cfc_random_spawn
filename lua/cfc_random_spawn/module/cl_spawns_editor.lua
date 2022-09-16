@@ -125,6 +125,24 @@ end
 
 concommand.Add( "cfc_spawn_editor_delpvpcenter", removePvpCenter, _, "Removes the nearest pvp center" )
 
+local function setCenterCutoff( _, _, args )
+    if not canRunCommand() then return end
+    if not spawnTable.pvpCenters then spawnTable.pvpCenters = {} end
+
+    local cutoff = tonumber( args[1] )
+    if not cutoff then
+        print( "Please provide a number for the cutoff." )
+        return
+    end
+
+    if spawnTable.centerCutoff then
+        print( "Overwriting old cutoff of " .. spawnTable.centerCutoff )
+    end
+    spawnTable.centerCutoff = cutoff
+end
+
+concommand.Add( "cfc_spawn_editor_setcutoff", setCenterCutoff, _, "Sets the cutoff for pvp centers, requires a number." )
+
 local function printSpawnTable()
     if not canRunCommand() then return end
 
@@ -165,4 +183,4 @@ local function printSpawnTable()
     end
 end
 
-concommand.Add( "cfc_spawn_editor_printspawns", printSpawnTable, _, "Prints the spawn table to the console for easy exporting." )
+concommand.Add( "cfc_spawn_editor_export", printSpawnTable, _, "Prints the spawn table to the console for easy exporting." )
