@@ -48,13 +48,13 @@ local mostPopularCenter = CFCRandomSpawn.mostPopularCenter
 local centerWasDefaulted = false
 
 local function getPvpers()
+    if not CFCPvp then return player.GetHumans() end
+
     local pvpers = {}
-    local count = 0
 
     for _, ply in pairs( player.GetHumans() ) do
-        if ply.IsInPvp and ply:IsInPvp() then
-            count = count + 1
-            pvpers[count] = ply
+        if ply:IsInPvp() then
+            table.insert( pvpers, ply )
         end
     end
 
