@@ -8,6 +8,8 @@ local lineColor = Color( 0, 255, 0 )
 local centerColor = Color( 255, 0, 0 )
 local centerPointColor = Color( 255, 145, 0 )
 local shownClearWarning = false
+local shownSpawnCountWarning = false
+local suggestedSpawnCount = 25
 local clearCode = tostring( math.random( 1000, 9999 ) )
 local minDeletionRange = 5000
 local spawnTable = {}
@@ -171,6 +173,13 @@ concommand.Add( "cfc_spawneditor_cutoff", setCenterCutoff, _, "Sets the cutoff f
 
 local function printSpawnTable()
     if not canRunCommand() then return end
+
+    local spawnpointCount = spawnTable.spawnpoints and #spawnTable.spawnpoints or 0
+    if not shownSpawnCountWarning and suggestedSpawnCount > spawnpointCount then
+        print( "You have " .. spawnpointCount .. " spawns, it is recommended to have at least " .. suggestedSpawnCount .. " spawns! run again to ignore message." )
+        shownSpawnCountWarning = true
+        return
+    end
 
     if not shownClearWarning then
         print( "Make sure to first run clean in console so you can copy paste everything easily, run again to run command." )
