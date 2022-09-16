@@ -49,42 +49,36 @@ local centerWasDefaulted = false
 
 local function getPvpers()
     local pvpers = {}
-    local count = 0
 
-    for _, ply in pairs( player.GetHumans() ) do
-        if ply.IsInPvp and ply:IsInPvp() then
-            count = count + 1
-            pvpers[count] = ply
+    for _, ply in pairs( player.GetAll() ) do
+        if not ply.IsInPvp or ply:IsInPvp() then
+            table.insert( pvpers, ply )
         end
     end
 
     return pvpers
 end
 
-local function getMeasurablePlayers( respawner )
+local function getMeasurablePlayers()
     local measurablePlayers = {}
-    local humans = IGNORE_BUILDERS and getPvpers() or player.GetHumans()
-    local count = 0
+    local humans = IGNORE_BUILDERS and getPvpers() or player.GetAll()
 
     for _, ply in pairs( humans ) do
-        if ply:Alive() and respawner ~= ply then
-            count = count + 1
-            measurablePlayers[count] = ply
+        if ply:Alive() then
+            table.insert( measurablePlayers, ply )
         end
     end
 
     return measurablePlayers
 end
 
-local function getLivingPlayers( respawner )
+local function getLivingPlayers()
     local livingPlayers = {}
-    local humans = player.GetHumans()
-    local count = 0
+    local humans = player.GetAll()
 
     for _, ply in pairs( humans ) do
-        if ply:Alive() and respawner ~= ply then
-            count = count + 1
-            livingPlayers[count] = ply
+        if ply:Alive() then
+            table.insert( livingPlayers, ply )
         end
     end
 
@@ -92,61 +86,51 @@ local function getLivingPlayers( respawner )
 end
 
 -- Get the first SELECTION_SIZE spawns that are closest to nearPos and are within range of CENTER_CUTOFF_SQR
--- Does manual comparisons instead of table.sort for efficiency
 local function getNearestSpawns( nearPos, spawns )
-    local nearestSpawns = {
-        { dist = math.huge, spawnData = spawns[1] }
-    }
-
-    for _, spawn in pairs( spawns ) do
+    local tempDistanceTable = {}
+    for _, spawn in ipairs( spawns ) do
         local dist = nearPos:DistToSqr( spawn.spawnPos )
-
-        for i2 = 1, SELECTION_SIZE do
-            local compareSpawn = nearestSpawns[i2]
-
-            if compareSpawn then
-                if dist < compareSpawn.dist then
-                    table.insert( nearestSpawns, i2, { dist = dist, spawnData = spawn } ) -- This spawn is closer, insert it
-
-                    nearestSpawns[SELECTION_SIZE + 1] = nil -- Ensure excess spawns are purged
-
-                    goto skipRemainingCompares
-                end
-            elseif dist < CENTER_CUTOFF_SQR then -- Nothing to compare against and this spawn is within the cutoff range
-                nerestSpawns[i2] = { dist = dist, spawnData = spawn }
-            end
+        if dist < CENTER_CUTOFF_SQR then
+            table.insert( tempDistanceTable, { spawn = spawn, dist = dist } )
         end
-
-        ::skipRemainingCompares::
     end
+
+    table.sort( tempDistanceTable, function( a, b ) return a.dist < b.dist end )
+
+    local nearestSpawns = {}
+    for i = 1, SELECTION_SIZE do
+        if tempDistanceTable[i] then
+            table.insert( nearestSpawns, tempDistanceTable[i].spawn )
+        end
+    end
+
+    if #nearestSpawns == 0 then return spawns end -- If there are no good near points, just return all possible spawnpoints.
 
     return nearestSpawns
 end
 
-local function discardTooCloseSpawns( spawns, plys )
+local function findFreeSpawnPoints( spawns, plys )
     if CLOSENESS_LIMIT == 0 then return spawns end
 
-    local oldSpawns = spawns
     local trimmedSpawns = {}
-    local count = 0
 
     for _, spawn in ipairs( spawns ) do
-        local spawnData = spawn.spawnData or spawn -- unwrap dist data from getNearestSpawns()
-        local spawnPos = spawnData.spawnPos
+        local spawnPos = spawn.spawnPos
+        local plyTooClose = false
 
         for _, ply in ipairs( plys ) do
             if ply:GetPos():DistToSqr( spawnPos ) < CLOSENESS_LIMIT then
-                goto skipRemainingCompares
+                plyTooClose = true
+                break
             end
         end
 
-        count = count + 1
-        trimmedSpawns[count] = spawnData
-
-        ::skipRemainingCompares::
+        if not plyTooClose then
+            table.insert( trimmedSpawns, spawn )
+        end
     end
 
-    if count == 0 then return oldSpawns end -- Unfortunately, *all* spawns were too close. We gotta return something, though.
+    if #trimmedSpawns == 0 then return spawns end -- If all spawnpoints are full, just return all of them. Super rare case.
 
     return trimmedSpawns
 end
@@ -212,9 +196,9 @@ local function getPopularCenter( plys )
     return bestCenter
 end
 
-function CFCRandomSpawn.getOptimalSpawnPos( ply, overrideInd )
-    local measurablePlayers = getMeasurablePlayers( ply )
-    local allLivingPlys = getLivingPlayers( ply )
+function CFCRandomSpawn.getOptimalSpawnPos()
+    local measurablePlayers = getMeasurablePlayers()
+    local allLivingPlys = getLivingPlayers()
 
     if CENTER_UPDATE_ON_RESPAWN then
         mostPopularCenter = getPopularCenter( measurablePlayers ) or pvpCenters[1]
@@ -224,10 +208,9 @@ function CFCRandomSpawn.getOptimalSpawnPos( ply, overrideInd )
         CENTER_CUTOFF_SQR = mostPopularCenter.overrideCutoffSqr or DEFAULT_CENTER_CUTOFF_SQR
     end
 
-    local nearestSpawns = getNearestSpawns( getPlyAvg( measurablePlayers, mostPopularCenter.centerPos ), customSpawnsForMap )
-    local bestSpawns = discardTooCloseSpawns( nearestSpawns, allLivingPlys )
-    local bestSpawn = bestSpawns[overrideInd or math.random( 1, #bestSpawns )]
-    bestSpawn = bestSpawn.spawnData or bestSpawn -- unwrap dist data from getNearestSpawns() if still wrapped
+    local freeSpawns = findFreeSpawnPoints( customSpawnsForMap, allLivingPlys )
+    local nearestSpawns = getNearestSpawns( getPlyAvg( measurablePlayers, mostPopularCenter.centerPos ), freeSpawns )
+    local bestSpawn = nearestSpawns[math.random( 1, #nearestSpawns )]
 
     return bestSpawn.spawnPos, bestSpawn.spawnAngle
 end
@@ -236,7 +219,7 @@ function CFCRandomSpawn.handlePlayerSpawn( ply )
     if not ( ply and IsValid( ply ) ) then return end
     if IsValid( ply.LinkedSpawnPoint ) then return end
 
-    local optimalSpawnPosition, optimalSpawnAngles  = CFCRandomSpawn.getOptimalSpawnPos( ply )
+    local optimalSpawnPosition, optimalSpawnAngles = CFCRandomSpawn.getOptimalSpawnPos()
 
     ply:SetPos( optimalSpawnPosition )
 
