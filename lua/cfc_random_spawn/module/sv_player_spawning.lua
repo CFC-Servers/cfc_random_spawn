@@ -212,7 +212,7 @@ local function getPopularCenter( plys )
     return bestCenter
 end
 
-function CFCRandomSpawn.getOptimalSpawnPos( ply, overrideInd )
+function CFCRandomSpawn.getOptimalSpawnPos( ply )
     local measurablePlayers = getMeasurablePlayers( ply )
     local allLivingPlys = getLivingPlayers( ply )
 
@@ -226,7 +226,7 @@ function CFCRandomSpawn.getOptimalSpawnPos( ply, overrideInd )
 
     local nearestSpawns = getNearestSpawns( getPlyAvg( measurablePlayers, mostPopularCenter.centerPos ), customSpawnsForMap )
     local bestSpawns = discardTooCloseSpawns( nearestSpawns, allLivingPlys )
-    local bestSpawn = bestSpawns[overrideInd or math.random( 1, #bestSpawns )]
+    local bestSpawn = bestSpawns[math.random( 1, #bestSpawns )]
     bestSpawn = bestSpawn.spawnData or bestSpawn -- unwrap dist data from getNearestSpawns() if still wrapped
 
     return bestSpawn.spawnPos, bestSpawn.spawnAngle
