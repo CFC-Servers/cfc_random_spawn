@@ -126,7 +126,6 @@ end
 local function discardTooCloseSpawns( spawns, plys )
     if CLOSENESS_LIMIT == 0 then return spawns end
 
-    local oldSpawns = spawns
     local trimmedSpawns = {}
 
     for _, spawn in ipairs( spawns ) do
@@ -147,7 +146,7 @@ local function discardTooCloseSpawns( spawns, plys )
         end
     end
 
-    if #trimmedSpawns == 0 then return oldSpawns end -- Unfortunately, *all* spawns were too close. We gotta return something, though.
+    if #trimmedSpawns == 0 then return spawns end -- Unfortunately, *all* spawns were too close. We gotta return something, though.
 
     return trimmedSpawns
 end
