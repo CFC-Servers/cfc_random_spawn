@@ -117,7 +117,6 @@ local function discardTooCloseSpawns( spawns, plys )
 
     for _, spawn in ipairs( spawns ) do
         local spawnPos = spawn.spawnPos
-
         local plyTooClose = false
 
         for _, ply in ipairs( plys ) do
