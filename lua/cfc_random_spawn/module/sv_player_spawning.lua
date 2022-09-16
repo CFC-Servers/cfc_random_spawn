@@ -3,8 +3,6 @@ CFCRandomSpawn = CFCRandomSpawn or {}
 local customSpawnConfigForMap = CFCRandomSpawn.Config.CUSTOM_SPAWNS[game.GetMap()]
 local mapHasCustomSpawns = customSpawnConfigForMap ~= nil
 
-if not mapHasCustomSpawns then return end
-
 local customSpawnsForMap = customSpawnConfigForMap.spawnpoints or {}
 local pvpCenters = customSpawnConfigForMap.pvpCenters or {}
 local DEFAULT_CENTER_CUTOFF = customSpawnConfigForMap.centerCutoff or CFCRandomSpawn.Config.DEFAULT_CENTER_CUTOFF
@@ -16,13 +14,13 @@ local CENTER_UPDATE_INTERVAL = customSpawnConfigForMap.centerUpdateInterval or C
 local IGNORE_BUILDERS = CFCRandomSpawn.Config.IGNORE_BUILDERS
 local CENTER_UPDATE_ON_RESPAWN = CENTER_UPDATE_INTERVAL <= 0
 
-do
+local function calculatePvpCenters()
     if not pvpCenters or not pvpCenters[1] then
         local avgSum = Vector()
         local count = #customSpawnsForMap
 
-        for i = 1, count do
-            avgSum = avgSum + customSpawnsForMap[i]
+        for _, spawn in pairs( customSpawnsForMap ) do
+            avgSum = avgSum + spawn.spawnPos
         end
 
         pvpCenters = pvpCenters or {}
@@ -44,8 +42,30 @@ do
     CFCRandomSpawn.mostPopularCenter = pvpCenters[1]
 end
 
+calculatePvpCenters()
+
 local mostPopularCenter = CFCRandomSpawn.mostPopularCenter
 local centerWasDefaulted = false
+
+function CFCRandomSpawn.updateMapSpawns()
+    mostPopularCenter = CFCRandomSpawn.mostPopularCenter
+    customSpawnConfigForMap = CFCRandomSpawn.Config.CUSTOM_SPAWNS[game.GetMap()]
+    mapHasCustomSpawns = customSpawnConfigForMap ~= nil
+
+    if not mapHasCustomSpawns then return end
+    customSpawnsForMap = customSpawnConfigForMap.spawnpoints or {}
+    pvpCenters = customSpawnConfigForMap.pvpCenters or {}
+    DEFAULT_CENTER_CUTOFF = customSpawnConfigForMap.centerCutoff or CFCRandomSpawn.Config.DEFAULT_CENTER_CUTOFF
+    DEFAULT_CENTER_CUTOFF_SQR = DEFAULT_CENTER_CUTOFF ^ 2
+    CENTER_CUTOFF_SQR = DEFAULT_CENTER_CUTOFF_SQR
+    SELECTION_SIZE = CFCRandomSpawn.Config.SELECTION_SIZE
+    CLOSENESS_LIMIT = CFCRandomSpawn.Config.CLOSENESS_LIMIT ^ 2
+    CENTER_UPDATE_INTERVAL = customSpawnConfigForMap.centerUpdateInterval or CFCRandomSpawn.Config.CENTER_UPDATE_INTERVAL
+    IGNORE_BUILDERS = CFCRandomSpawn.Config.IGNORE_BUILDERS
+    CENTER_UPDATE_ON_RESPAWN = CENTER_UPDATE_INTERVAL <= 0
+
+    calculatePvpCenters()
+end
 
 local function getPvpers()
     local pvpers = {}
@@ -233,6 +253,7 @@ function CFCRandomSpawn.getOptimalSpawnPos( ply, overrideInd )
 end
 
 function CFCRandomSpawn.handlePlayerSpawn( ply )
+    if not mapHasCustomSpawns then return end
     if not ( ply and IsValid( ply ) ) then return end
     if IsValid( ply.LinkedSpawnPoint ) then return end
 
@@ -250,6 +271,7 @@ hook.Add( "PlayerSpawn", "CFC_RandomSpawn_ChooseOptimalSpawnpoint", CFCRandomSpa
 
 if not CENTER_UPDATE_ON_RESPAWN then
     timer.Create( "CFC_RandomSpawn_CalculateMostPopularPvpCenter", CENTER_UPDATE_INTERVAL, 0, function()
+        if not mapHasCustomSpawns then return end
         local measurablePlayers = getMeasurablePlayers()
 
         if measurablePlayers[1] then

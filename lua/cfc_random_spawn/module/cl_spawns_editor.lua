@@ -32,6 +32,12 @@ local function canRunCommand()
     return true
 end
 
+local function sendConfigChangesToServer()
+    net.Start( "CFC_SpawnEditor_UpdateSpawnPoints" )
+    net.WriteTable( spawnTable )
+    net.SendToServer()
+end
+
 hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", function()
     if not spawnEditorEnabled then return end
 
@@ -69,7 +75,10 @@ local function toggleEditor( ply )
     end
     spawnEditorEnabled = not spawnEditorEnabled
     if spawnEditorEnabled then
+        print( "Editor turned on!" )
         requestSpawnPoints()
+    else
+        print( "Editor turned off!" )
     end
 end
 
@@ -79,7 +88,8 @@ local function addSpawn( ply )
     if not canRunCommand() then return end
     if not spawnTable.spawnpoints then spawnTable.spawnpoints = {} end
 
-    table.insert( spawnTable.spawnpoints, { spawnPos = math.Round( ply:GetPos() ), spawnAngle = Angle( 0, math.Round( ply:EyeAngles().yaw ), 0 ) } )
+    table.insert( spawnTable.spawnpoints, { spawnPos = ply:GetPos(), spawnAngle = Angle( 0, math.Round( ply:EyeAngles().yaw ), 0 ) } )
+    sendConfigChangesToServer()
 end
 
 concommand.Add( "cfc_spawn_editor_addspawn", addSpawn, _, "Adds a spawn point at your location" )
@@ -104,7 +114,8 @@ local function addPvpCenter( ply )
     if not canRunCommand() then return end
     if not spawnTable.pvpCenters then spawnTable.pvpCenters = {} end
 
-    table.insert( spawnTable.pvpCenters, { centerPos = math.Round( ply:GetPos() ) } )
+    table.insert( spawnTable.pvpCenters, { centerPos = ply:GetPos() } )
+    sendConfigChangesToServer()
 end
 
 concommand.Add( "cfc_spawn_editor_addpvpcenter", addPvpCenter, _, "Adds a pvp center at your location" )
@@ -121,6 +132,7 @@ local function removePvpCenter( ply )
             return
         end
     end
+    sendConfigChangesToServer()
 end
 
 concommand.Add( "cfc_spawn_editor_delpvpcenter", removePvpCenter, _, "Removes the nearest pvp center" )
@@ -139,6 +151,7 @@ local function setCenterCutoff( _, _, args )
         print( "Overwriting old cutoff of " .. spawnTable.centerCutoff )
     end
     spawnTable.centerCutoff = cutoff
+    sendConfigChangesToServer()
 end
 
 concommand.Add( "cfc_spawn_editor_setcutoff", setCenterCutoff, _, "Sets the cutoff for pvp centers, requires a number." )
