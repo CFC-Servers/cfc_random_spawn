@@ -106,7 +106,7 @@ local function getNearestSpawns( nearPos, spawns )
 
     local nearestSpawns = {}
     for i = 1, SELECTION_SIZE do
-        table.insert( nearestSpawns, tempDistanceTable[i] )
+        table.insert( nearestSpawns, tempDistanceTable[i].spawn )
     end
 
     return nearestSpawns
@@ -215,7 +215,6 @@ function CFCRandomSpawn.getOptimalSpawnPos( ply )
     local nearestSpawns = getNearestSpawns( getPlyAvg( measurablePlayers, mostPopularCenter.centerPos ), customSpawnsForMap )
     local bestSpawns = discardTooCloseSpawns( nearestSpawns, allLivingPlys )
     local bestSpawn = bestSpawns[math.random( 1, #bestSpawns )]
-    bestSpawn = bestSpawn.spawnData or bestSpawn -- unwrap dist data from getNearestSpawns() if still wrapped
 
     return bestSpawn.spawnPos, bestSpawn.spawnAngle
 end
