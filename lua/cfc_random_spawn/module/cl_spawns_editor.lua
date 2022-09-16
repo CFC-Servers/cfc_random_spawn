@@ -76,7 +76,7 @@ local function addSpawn( ply )
     if not canRunCommand() then return end
     if not spawnTable.spawnpoints then spawnTable.spawnpoints = {} end
 
-    table.insert( spawnTable.spawnpoints, { spawnPos = ply:GetPos(), spawnAngle = Angle( 0, math.Round( ply:EyeAngles().yaw ), 0 ) } )
+    table.insert( spawnTable.spawnpoints, { spawnPos = math.Round( ply:GetPos() ), spawnAngle = Angle( 0, math.Round( ply:EyeAngles().yaw ), 0 ) } )
 end
 
 concommand.Add( "cfc_spawn_editor_addspawn", addSpawn, _, "Adds a spawn point at your location" )
@@ -101,7 +101,7 @@ local function addPvpCenter( ply )
     if not canRunCommand() then return end
     if not spawnTable.pvpCenters then spawnTable.pvpCenters = {} end
 
-    table.insert( spawnTable.pvpCenters, { centerPos = ply:GetPos() } )
+    table.insert( spawnTable.pvpCenters, { centerPos = math.Round( ply:GetPos() ) } )
 end
 
 concommand.Add( "cfc_spawn_editor_addpvpcenter", addPvpCenter, _, "Adds a pvp center at your location" )
