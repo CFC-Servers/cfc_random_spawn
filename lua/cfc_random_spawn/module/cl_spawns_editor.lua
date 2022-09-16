@@ -26,7 +26,7 @@ local function canRunCommand()
         return false
     end
     if not spawnEditorEnabled then
-        print( "Spawn editor is not enabled, enable it using cfc_spawn_editor_toggle." )
+        print( "Spawn editor is not enabled, enable it using cfc_spawneditor_toggle." )
         return false
     end
     return true
@@ -82,7 +82,7 @@ local function toggleEditor( ply )
     end
 end
 
-concommand.Add( "cfc_spawn_editor_toggle", toggleEditor, _, "Toggles the spawn editor" )
+concommand.Add( "cfc_spawneditor_toggle", toggleEditor, _, "Toggles the spawn editor" )
 
 local function addSpawn( ply )
     if not canRunCommand() then return end
@@ -92,7 +92,7 @@ local function addSpawn( ply )
     sendConfigChangesToServer()
 end
 
-concommand.Add( "cfc_spawn_editor_addspawn", addSpawn, _, "Adds a spawn point at your location" )
+concommand.Add( "cfc_spawneditor_spawnadd", addSpawn, _, "Adds a spawn point at your location" )
 
 local function removeSpawn( ply )
     if not canRunCommand() then return end
@@ -108,7 +108,7 @@ local function removeSpawn( ply )
     end
 end
 
-concommand.Add( "cfc_spawn_editor_delspawn", removeSpawn, _, "Removes the nearest spawn point" )
+concommand.Add( "cfc_spawneditor_spawndel", removeSpawn, _, "Removes the nearest spawn point" )
 
 local function addPvpCenter( ply )
     if not canRunCommand() then return end
@@ -118,7 +118,7 @@ local function addPvpCenter( ply )
     sendConfigChangesToServer()
 end
 
-concommand.Add( "cfc_spawn_editor_addpvpcenter", addPvpCenter, _, "Adds a pvp center at your location" )
+concommand.Add( "cfc_spawneditor_centeradd", addPvpCenter, _, "Adds a pvp center at your location" )
 
 local function removePvpCenter( ply )
     if not canRunCommand() then return end
@@ -135,7 +135,7 @@ local function removePvpCenter( ply )
     sendConfigChangesToServer()
 end
 
-concommand.Add( "cfc_spawn_editor_delpvpcenter", removePvpCenter, _, "Removes the nearest pvp center" )
+concommand.Add( "cfc_spawneditor_centerdel", removePvpCenter, _, "Removes the nearest pvp center" )
 
 local function setCenterCutoff( _, _, args )
     if not canRunCommand() then return end
@@ -154,7 +154,7 @@ local function setCenterCutoff( _, _, args )
     sendConfigChangesToServer()
 end
 
-concommand.Add( "cfc_spawn_editor_setcutoff", setCenterCutoff, _, "Sets the cutoff for pvp centers, requires a number." )
+concommand.Add( "cfc_spawneditor_cutoff", setCenterCutoff, _, "Sets the cutoff for pvp centers, requires a number." )
 
 local function printSpawnTable()
     if not canRunCommand() then return end
@@ -199,4 +199,4 @@ local function printSpawnTable()
     end
 end
 
-concommand.Add( "cfc_spawn_editor_export", printSpawnTable, _, "Prints the spawn table to the console for easy exporting." )
+concommand.Add( "cfc_spawneditor_export", printSpawnTable, _, "Prints the spawn table to the console for easy exporting." )
