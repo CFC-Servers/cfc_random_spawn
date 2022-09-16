@@ -50,10 +50,12 @@ hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", f
         for _, center in ipairs( spawnTable.pvpCenters ) do
             local centerPos = center.centerPos
 
-            render.DrawWireframeSphere( centerPos, 5, 20, 20, centerColor, false )
             if centerCutoff > LocalPlayer():GetPos():Distance( centerPos ) then
                 render.DrawLine( centerPos - Vector( 0, 0, centerCutoff ), centerPos + Vector( 0, 0, centerCutoff ), centerColor, true )
                 render.DrawWireframeSphere( centerPos, centerCutoff, 75, 75, centerPointColor, true )
+                render.DrawWireframeSphere( centerPos, 5, 20, 20, centerColor, false )
+            else
+                render.DrawWireframeSphere( centerPos, 40, 20, 20, centerColor, false )
             end
         end
     end
