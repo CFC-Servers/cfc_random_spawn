@@ -110,7 +110,7 @@ local function getNearestSpawns( nearPos, spawns )
     return nearestSpawns
 end
 
-local function discardTooCloseSpawns( spawns, plys )
+local function findFreeSpawnPoints( spawns, plys )
     if CLOSENESS_LIMIT == 0 then return spawns end
 
     local trimmedSpawns = {}
@@ -209,9 +209,9 @@ function CFCRandomSpawn.getOptimalSpawnPos()
         CENTER_CUTOFF_SQR = mostPopularCenter.overrideCutoffSqr or DEFAULT_CENTER_CUTOFF_SQR
     end
 
-    local nearestSpawns = getNearestSpawns( getPlyAvg( measurablePlayers, mostPopularCenter.centerPos ), customSpawnsForMap )
-    local bestSpawns = discardTooCloseSpawns( nearestSpawns, allLivingPlys )
-    local bestSpawn = bestSpawns[math.random( 1, #bestSpawns )]
+    local freeSpawns = findFreeSpawnPoints( customSpawnsForMap, allLivingPlys )
+    local nearestSpawns = getNearestSpawns( getPlyAvg( measurablePlayers, mostPopularCenter.centerPos ), freeSpawns )
+    local bestSpawn = bestSpawns[math.random( 1, #nearestSpawns )]
 
     return bestSpawn.spawnPos, bestSpawn.spawnAngle
 end
