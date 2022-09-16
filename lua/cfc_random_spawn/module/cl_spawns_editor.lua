@@ -1,17 +1,18 @@
-local spawnEditorEnabled = false
-local emptyAngle = Angle()
-local playerMins = Vector( -16, -16, 0 )
-local playerMaxs = Vector( 16, 16, 72 )
-local eyeHeight = 55
 local boxColor = Color( 0, 255, 0 )
 local lineColor = Color( 0, 255, 0 )
 local centerColor = Color( 255, 0, 0 )
 local centerPointColor = Color( 255, 145, 0 )
+local minDeletionRange = 5000
+local suggestedSpawnCount = 25
+local eyeHeight = 55
+local playerMins = Vector( -16, -16, 0 )
+local playerMaxs = Vector( 16, 16, 72 )
+
+local spawnEditorEnabled = false
+local emptyAngle = Angle()
 local shownClearWarning = false
 local shownSpawnCountWarning = false
-local suggestedSpawnCount = 25
 local clearCode = tostring( math.random( 1000, 9999 ) )
-local minDeletionRange = 5000
 local spawnTable = {}
 
 local function requestSpawnPoints()
