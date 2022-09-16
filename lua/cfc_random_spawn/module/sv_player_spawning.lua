@@ -94,30 +94,19 @@ end
 -- Get the first SELECTION_SIZE spawns that are closest to nearPos and are within range of CENTER_CUTOFF_SQR
 -- Does manual comparisons instead of table.sort for efficiency
 local function getNearestSpawns( nearPos, spawns )
-    local nearestSpawns = {
-        { dist = math.huge, spawnData = spawns[1] }
-    }
-
-    for _, spawn in pairs( spawns ) do
+    local tempDistanceTable = {}
+    for _, spawn in ipairs( spawns ) do
         local dist = nearPos:DistToSqr( spawn.spawnPos )
-
-        for i2 = 1, SELECTION_SIZE do
-            local compareSpawn = nearestSpawns[i2]
-
-            if compareSpawn then
-                if dist < compareSpawn.dist then
-                    table.insert( nearestSpawns, i2, { dist = dist, spawnData = spawn } ) -- This spawn is closer, insert it
-
-                    nearestSpawns[SELECTION_SIZE + 1] = nil -- Ensure excess spawns are purged
-
-                    goto skipRemainingCompares
-                end
-            elseif dist < CENTER_CUTOFF_SQR then -- Nothing to compare against and this spawn is within the cutoff range
-                nerestSpawns[i2] = { dist = dist, spawnData = spawn }
-            end
+        if dist < CENTER_CUTOFF_SQR then
+            table.insert( tempDistanceTable, { spawn = spawn, dist = dist } )
         end
+    end
 
-        ::skipRemainingCompares::
+    table.sort( tempDistanceTable, function( a, b ) return a.dist < b.dist end )
+
+    local nearestSpawns = {}
+    for i = 1, SELECTION_SIZE do
+        table.insert( nearestSpawns, tempDistanceTable[i] )
     end
 
     return nearestSpawns
@@ -129,8 +118,7 @@ local function discardTooCloseSpawns( spawns, plys )
     local trimmedSpawns = {}
 
     for _, spawn in ipairs( spawns ) do
-        local spawnData = spawn.spawnData or spawn -- unwrap dist data from getNearestSpawns()
-        local spawnPos = spawnData.spawnPos
+        local spawnPos = spawn.spawnPos
 
         local plyTooClose = false
 
@@ -142,7 +130,7 @@ local function discardTooCloseSpawns( spawns, plys )
         end
 
         if not plyTooClose then
-            table.insert( trimmedSpawns, spawnData )
+            table.insert( trimmedSpawns, spawn )
         end
     end
 
