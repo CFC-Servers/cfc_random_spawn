@@ -117,11 +117,17 @@ local function findFreeSpawnPoints( spawns, plys )
 
     for _, spawn in ipairs( spawns ) do
         local spawnPos = spawn.spawnPos
+        local plyTooClose = false
+
         for _, ply in ipairs( plys ) do
             if ply:GetPos():DistToSqr( spawnPos ) < CLOSENESS_LIMIT then
-                table.insert( trimmedSpawns, spawn )
+                plyTooClose = true
                 break
             end
+        end
+
+        if not plyTooClose then
+            table.insert( trimmedSpawns, spawn )
         end
     end
 
