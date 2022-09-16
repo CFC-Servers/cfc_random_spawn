@@ -53,7 +53,7 @@ Features:
 - To add / remove spawns `cfc_spawn_editor_addspawn` / `cfc_spawn_editor_delspawn`
 - To add / remove pvp centers `cfc_spawn_editor_addcenter` / `cfc_spawn_editor_delcenter`
 - To change the cutoff radius for the current map `cfc_spawn_editor_setcutoff`
-- To easily export the current map's spawnpoints to the config file `cfc_spawn_editor_export`
+- To export the current map's spawnpoints to console use `cfc_spawn_editor_export`, you can then paste this into sv_config.lua
 
 Visual appearance:
 ![image](https://user-images.githubusercontent.com/69946827/190715330-645c7701-953d-452e-aa52-9908e479eecf.png)
