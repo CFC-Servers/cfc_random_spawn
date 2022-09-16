@@ -168,25 +168,28 @@ local function printSpawnTable()
     local tab = "   "
 
     local mainString = string.format( [[CFCRandomSpawn.Config.CUSTOM_SPAWNS["%s"] = {%s]], game.GetMap(), "\n" )
-    mainString = mainString .. tab .. "pvpCenters = {\n"
 
-    for _, center in ipairs( spawnTable.pvpCenters ) do
-        mainString = mainString .. tab .. tab .. "{ "
-        mainString = mainString .. string.format( "centerPos = Vector( %s, %s, %s )", center.centerPos.x, center.centerPos.y, center.centerPos.z )
-        mainString = mainString .. " },\n"
+    if istable( spawnTable.pvpCenters ) then
+        mainString = mainString .. tab .. "pvpCenters = {\n"
+        for _, center in ipairs( spawnTable.pvpCenters ) do
+            mainString = mainString .. tab .. tab .. "{ "
+            mainString = mainString .. string.format( "centerPos = Vector( %s, %s, %s )", center.centerPos.x, center.centerPos.y, center.centerPos.z )
+            mainString = mainString .. " },\n"
+        end
+        mainString = mainString .. tab .. "},\n"
     end
 
-    mainString = mainString .. tab .. "},\n"
-    mainString = mainString .. tab .. "spawnpoints = {\n"
-
-    for _, spawn in ipairs( spawnTable.spawnpoints ) do
-        mainString = mainString .. tab .. tab .. "{ "
-        mainString = mainString .. string.format( "spawnPos = Vector( %s, %s, %s ),", spawn.spawnPos.x, spawn.spawnPos.y, spawn.spawnPos.z )
-        mainString = mainString .. string.format( " spawnAngle = Angle( %s, %s, %s )", spawn.spawnAngle.p, spawn.spawnAngle.y, spawn.spawnAngle.r )
-        mainString = mainString .. " },\n"
+    if istable( spawnTable.spawnpoints ) then
+        mainString = mainString .. tab .. "spawnpoints = {\n"
+        for _, spawn in ipairs( spawnTable.spawnpoints ) do
+            mainString = mainString .. tab .. tab .. "{ "
+            mainString = mainString .. string.format( "spawnPos = Vector( %s, %s, %s ),", spawn.spawnPos.x, spawn.spawnPos.y, spawn.spawnPos.z )
+            mainString = mainString .. string.format( " spawnAngle = Angle( %s, %s, %s )", spawn.spawnAngle.p, spawn.spawnAngle.y, spawn.spawnAngle.r )
+            mainString = mainString .. " },\n"
+        end
+        mainString = mainString .. tab .. "},\n"
     end
 
-    mainString = mainString .. tab .. "},\n"
     mainString = mainString .. "}"
 
     local lines = string.Explode( "\n", mainString )
