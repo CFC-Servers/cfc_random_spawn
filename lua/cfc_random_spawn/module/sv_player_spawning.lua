@@ -211,7 +211,7 @@ function CFCRandomSpawn.getOptimalSpawnPos()
 
     local freeSpawns = findFreeSpawnPoints( customSpawnsForMap, allLivingPlys )
     local nearestSpawns = getNearestSpawns( getPlyAvg( measurablePlayers, mostPopularCenter.centerPos ), freeSpawns )
-    local bestSpawn = bestSpawns[math.random( 1, #nearestSpawns )]
+    local bestSpawn = nearestSpawns[math.random( 1, #nearestSpawns )]
 
     return bestSpawn.spawnPos, bestSpawn.spawnAngle
 end
