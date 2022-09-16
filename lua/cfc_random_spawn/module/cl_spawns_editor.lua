@@ -8,6 +8,7 @@ local lineColor = Color( 0, 255, 0 )
 local centerColor = Color( 255, 0, 0 )
 local centerPointColor = Color( 255, 145, 0 )
 local shownClearWarning = false
+local clearCode = tostring( math.random( 1000, 9999 ) )
 local minDeletionRange = 5000
 local spawnTable = {}
 
@@ -212,3 +213,21 @@ local function printSpawnTable()
 end
 
 concommand.Add( "cfc_spawneditor_export", printSpawnTable, _, "Prints the spawn table to the console for easy exporting." )
+
+local function clearAll( _, _, args )
+    if not canRunCommand() then return end
+
+    if clearCode ~= args[1] then
+        print( "Please provide the correct code to clear all spawns. The code is: " .. clearCode )
+        return
+    end
+
+    clearCode = tostring( math.random( 1000, 9999 ) )
+
+    spawnTable = {}
+    sendConfigChangesToServer()
+
+    print( "Cleared all spawns!" )
+end
+
+concommand.Add( "cfc_spawneditor_clearall", clearAll, _, "Clears all spawn points and pvp centers. Dangerous." )
