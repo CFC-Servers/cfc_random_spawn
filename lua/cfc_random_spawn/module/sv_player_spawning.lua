@@ -76,7 +76,7 @@ end
 
 local function getLivingPlayers( respawner )
     local livingPlayers = {}
-    local humans = player.GetHumans()
+    local humans = player.GetAll()
     local count = 0
 
     for _, ply in pairs( humans ) do
@@ -104,7 +104,9 @@ local function getNearestSpawns( nearPos, spawns )
 
     local nearestSpawns = {}
     for i = 1, SELECTION_SIZE do
-        table.insert( nearestSpawns, tempDistanceTable[i].spawn )
+        if tempDistanceTable[i] then
+            table.insert( nearestSpawns, tempDistanceTable[i].spawn )
+        end
     end
 
     return nearestSpawns
