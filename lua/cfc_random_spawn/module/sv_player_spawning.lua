@@ -86,7 +86,6 @@ local function getLivingPlayers()
 end
 
 -- Get the first SELECTION_SIZE spawns that are closest to nearPos and are within range of CENTER_CUTOFF_SQR
--- Does manual comparisons instead of table.sort for efficiency
 local function getNearestSpawns( nearPos, spawns )
     local tempDistanceTable = {}
     for _, spawn in ipairs( spawns ) do
