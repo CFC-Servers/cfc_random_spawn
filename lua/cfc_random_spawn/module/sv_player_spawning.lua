@@ -107,6 +107,8 @@ local function getNearestSpawns( nearPos, spawns )
         end
     end
 
+    if #nearestSpawns == 0 then return spawns end -- If there are no good near points, just return all possible spawnpoints.
+
     return nearestSpawns
 end
 
@@ -131,7 +133,7 @@ local function findFreeSpawnPoints( spawns, plys )
         end
     end
 
-    if #trimmedSpawns == 0 then return spawns end -- Unfortunately, *all* spawns were too close. We gotta return something, though.
+    if #trimmedSpawns == 0 then return spawns end -- If all spawnpoints are full, just return all of them. Super rare case.
 
     return trimmedSpawns
 end
