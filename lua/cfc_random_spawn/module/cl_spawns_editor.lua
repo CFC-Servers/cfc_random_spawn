@@ -18,14 +18,6 @@ net.Receive( "CFC_SpawnEditor_SendSpawnPoints", function()
     spawnTable = net.ReadTable()
 end )
 
-concommand.Add( "cfc_spawn_editor", function( ply )
-    if not ply:IsAdmin() then return end
-    spawnEditorEnabled = not spawnEditorEnabled
-    if spawnEditorEnabled then
-        requestSpawnPoints()
-    end
-end )
-
 hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", function()
     if not spawnEditorEnabled then return end
 
@@ -53,3 +45,50 @@ hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", f
         end
     end
 end )
+
+local function toggleEditor( ply )
+    if not ply:IsAdmin() then return end
+    spawnEditorEnabled = not spawnEditorEnabled
+    if spawnEditorEnabled then
+        requestSpawnPoints()
+    end
+end
+
+concommand.Add( "cfc_spawn_editor_toggle", toggleEditor, _, "Toggles the spawn editor" )
+
+local function addSpawn( ply )
+    if not spawnEditorEnabled then return end
+    if not ply:IsAdmin() then return end
+    if not spawnTable.spawnpoints then spawnTable.spawnpoints = {} end
+
+    table.insert( spawnTable.spawnpoints, { spawnPos = ply:GetPos(), spawnAngle = Angle( 0, math.Round( ply:EyeAngles().yaw ), 0 ) } )
+end
+
+concommand.Add( "cfc_spawn_editor_addspawn", addSpawn, _, "Adds a spawn point at your location" )
+
+local function removeSpawn( ply )
+    if not spawnEditorEnabled then return end
+    if not ply:IsAdmin() then return end
+    if not spawnTable.spawnpoints then return end
+
+    local nearPos = ply:GetPos()
+
+    for i, spawn in ipairs( spawnTable.spawnpoints ) do
+        if 200 > nearPos:Distance( spawn.spawnPos ) then
+            table.remove( spawnTable.spawnpoints, i )
+            return
+        end
+    end
+end
+
+concommand.Add( "cfc_spawn_editor_delspawn", removeSpawn, _, "Removes the nearest spawn point" )
+
+local function addPvpCenter( ply )
+    if not spawnEditorEnabled then return end
+    if not ply:IsAdmin() then return end
+    if not spawnTable.pvpCenters then spawnTable.pvpCenters = {} end
+
+    table.insert( spawnTable.pvpCenters, { centerPos = ply:GetPos() } )
+end
+
+concommand.Add( "cfc_spawn_editor_addpvpcenter", addPvpCenter, _, "Adds a pvp center at your location" )
