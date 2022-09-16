@@ -18,6 +18,19 @@ net.Receive( "CFC_SpawnEditor_SendSpawnPoints", function()
     spawnTable = net.ReadTable()
 end )
 
+local function canRunCommand()
+    local ply = LocalPlayer()
+    if not ply:IsAdmin() then
+        print( "Sorry only admins can run this command." )
+        return false
+    end
+    if not spawnEditorEnabled then
+        print( "Spawn editor is not enabled, enable it using cfc_spawn_editor_toggle." )
+        return false
+    end
+    return true
+end
+
 hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", function()
     if not spawnEditorEnabled then return end
 
@@ -47,7 +60,10 @@ hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", f
 end )
 
 local function toggleEditor( ply )
-    if not ply:IsAdmin() then return end
+    if not ply:IsAdmin() then
+        print( "Sorry only admins can run this command." )
+        return
+    end
     spawnEditorEnabled = not spawnEditorEnabled
     if spawnEditorEnabled then
         requestSpawnPoints()
@@ -57,8 +73,7 @@ end
 concommand.Add( "cfc_spawn_editor_toggle", toggleEditor, _, "Toggles the spawn editor" )
 
 local function addSpawn( ply )
-    if not spawnEditorEnabled then return end
-    if not ply:IsAdmin() then return end
+    if not canRunCommand() then return end
     if not spawnTable.spawnpoints then spawnTable.spawnpoints = {} end
 
     table.insert( spawnTable.spawnpoints, { spawnPos = ply:GetPos(), spawnAngle = Angle( 0, math.Round( ply:EyeAngles().yaw ), 0 ) } )
@@ -67,8 +82,7 @@ end
 concommand.Add( "cfc_spawn_editor_addspawn", addSpawn, _, "Adds a spawn point at your location" )
 
 local function removeSpawn( ply )
-    if not spawnEditorEnabled then return end
-    if not ply:IsAdmin() then return end
+    if not canRunCommand() then return end
     if not spawnTable.spawnpoints then return end
 
     local nearPos = ply:GetPos()
@@ -84,8 +98,7 @@ end
 concommand.Add( "cfc_spawn_editor_delspawn", removeSpawn, _, "Removes the nearest spawn point" )
 
 local function addPvpCenter( ply )
-    if not spawnEditorEnabled then return end
-    if not ply:IsAdmin() then return end
+    if not canRunCommand() then return end
     if not spawnTable.pvpCenters then spawnTable.pvpCenters = {} end
 
     table.insert( spawnTable.pvpCenters, { centerPos = ply:GetPos() } )
