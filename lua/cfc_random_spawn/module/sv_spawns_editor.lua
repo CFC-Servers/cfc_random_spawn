@@ -17,7 +17,7 @@ net.Receive( "CFC_SpawnEditor_UpdateSpawnPoints", function( _, ply )
     if not ply:IsAdmin() then return end
     local newSpawnTable = net.ReadTable()
     if not newSpawnTable then return end
-    PrintTable( newSpawnTable )
+
     CFCRandomSpawn.Config.CUSTOM_SPAWNS[game.GetMap()] = newSpawnTable
-    CFCRandomSpawn.updateMapSpawns()
+    CFCRandomSpawn.refreshMapInfo()
 end )

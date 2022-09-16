@@ -1,7 +1,7 @@
 CFCRandomSpawn = CFCRandomSpawn or {}
 
-local customSpawnConfigForMap = CFCRandomSpawn.Config.CUSTOM_SPAWNS[game.GetMap()]
-local mapHasCustomSpawns = customSpawnConfigForMap ~= nil
+local customSpawnConfigForMap = CFCRandomSpawn.Config.CUSTOM_SPAWNS[game.GetMap()] or {}
+local mapHasCustomSpawns = next( customSpawnConfigForMap )
 
 local customSpawnsForMap = customSpawnConfigForMap.spawnpoints or {}
 local pvpCenters = customSpawnConfigForMap.pvpCenters or {}
@@ -47,7 +47,7 @@ calculatePvpCenters()
 local mostPopularCenter = CFCRandomSpawn.mostPopularCenter
 local centerWasDefaulted = false
 
-function CFCRandomSpawn.updateMapSpawns()
+function CFCRandomSpawn.refreshMapInfo()
     mostPopularCenter = CFCRandomSpawn.mostPopularCenter
     customSpawnConfigForMap = CFCRandomSpawn.Config.CUSTOM_SPAWNS[game.GetMap()]
     mapHasCustomSpawns = customSpawnConfigForMap ~= nil
