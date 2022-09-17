@@ -1,7 +1,7 @@
 CFCRandomSpawn.Config.DEFAULT_CENTER_CUTOFF = 3000 -- Default cutoff range from the most popular pvp center, where players further away from this will be ignored. The system tries to place you closest to everyone else.
 CFCRandomSpawn.Config.CLOSENESS_LIMIT = 400 -- Will not choose spawnpoints that are within this many units of a valid player (i.e. a living pvper). 0 to disable.
 CFCRandomSpawn.Config.SELECTION_SIZE = 16 -- Max number of 'ideal' spawnpoints to select from randomly.
-CFCRandomSpawn.Config.CENTER_UPDATE_INTERVAL = 60 -- The gap (in seconds) between each center popularity update. If set to 0, will update on every respawn.
+CFCRandomSpawn.Config.CENTER_UPDATE_INTERVAL = 120 -- The gap (in seconds) between each center popularity update. If set to 0, will update on every respawn.
 CFCRandomSpawn.Config.IGNORE_BUILDERS = true -- Should 'center popularity' and player position average not care about builders? Requires a PvP addon which uses a function of the form PLAYER:IsInPvp()
 
 CFCRandomSpawn.Config.CUSTOM_SPAWNS = {}
@@ -401,7 +401,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_trainconstruct2"] = {
 
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_obselisk"] = {
     centerCutoff = 3000,
-    centerUpdateInterval = 30,
+    centerUpdateInterval = nil,
     pvpCenters = {
         { centerPos = Vector( -3981, -762, -1344 ), overrideCutoff = 3000 },
         { centerPos = Vector( -5558, 56, -1344 ), overrideCutoff = 3000 },
@@ -452,7 +452,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_obselisk"] = {
 
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_tubeway_circuit_v1"] = {
     centerCutoff = 3000,
-    centerUpdateInterval = 30,
+    centerUpdateInterval = nil,
     pvpCenters = {
         { centerPos = Vector( 3865, 2426, 0 ), overrideCutoff = 3000 },
         { centerPos = Vector( 1209, 2068, 0 ), overrideCutoff = 3000 },
@@ -528,7 +528,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_tubeway_circuit_v1"] = {
 
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_heartland"] = {
     centerCutoff = 3000,
-    centerUpdateInterval = 30,
+    centerUpdateInterval = nil,
     pvpCenters = {
         { centerPos = Vector( -18, -437, 36 ), overrideCutoff = 2250 },
         { centerPos = Vector( -2933, 444, 137 ), overrideCutoff = 2250 },
@@ -648,7 +648,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_heartland"] = {
 
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_city25"] = {
     centerCutoff = 3000,
-    centerUpdateInterval = 30,
+    centerUpdateInterval = nil,
     pvpCenters = {
         { centerPos = Vector( -818, -1090, 114 ), overrideCutoff = 2250 },
         { centerPos = Vector( -246, -3494, 87 ), overrideCutoff = 1250 },
