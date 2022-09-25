@@ -7,4 +7,4 @@ jobs:
   Lint:
     uses: FPtje/GLuaFixer/.github/workflows/glualint.yml
     with:
-      config: "CFC-Servers/github_action_workflows/.github/workflows/lint_glua.yml@feature/shareable"
+      config: "https://github.com/CFC-Servers/cfc_configs/blob/master/gluafixer/glualint.json"
