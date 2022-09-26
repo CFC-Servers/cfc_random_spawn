@@ -30,10 +30,12 @@ local function canRunCommand()
         print( "Sorry only admins can run this command." )
         return false
     end
+
     if not spawnEditorEnabled then
         print( "Spawn editor is not enabled, enable it using cfc_spawneditor_toggle." )
         return false
     end
+
     return true
 end
 
