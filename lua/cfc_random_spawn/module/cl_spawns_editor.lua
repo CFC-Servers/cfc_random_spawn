@@ -55,6 +55,7 @@ hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", f
             local spawnPos = spawn.spawnPos
             local spawnAngle = spawn.spawnAngle
             render.DrawWireframeBox( spawnPos, spawnAngle or emptyAngle, playerMins, playerMaxs, boxColor, false )
+
             local linePos = spawnPos + Vector( 0, 0, eyeHeight )
             render.DrawLine( linePos , linePos + spawnAngle:Forward() * 50, lineColor, false )
         end
@@ -80,6 +81,7 @@ local function toggleEditor( ply )
         print( "Sorry only admins can run this command." )
         return
     end
+
     spawnEditorEnabled = not spawnEditorEnabled
     if spawnEditorEnabled then
         print( "Editor turned on!" )
