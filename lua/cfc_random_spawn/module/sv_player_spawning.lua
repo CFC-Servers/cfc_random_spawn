@@ -124,7 +124,8 @@ local function getNearestSpawns( nearPos, spawns )
         end
     end
 
-    if #nearestSpawns == 0 then return spawns end -- If there are no good near points, just return all possible spawnpoints.
+    -- If there are no good near points, just return all possible spawnpoints.
+    if #nearestSpawns == 0 then return spawns end
 
     return nearestSpawns
 end
