@@ -44,6 +44,20 @@ Adding spawnpoints is done as follows:
     - `spawnAngle` is the view angle for the spawn
     - `pvp` is the pvp status of the spawn (currently does nothing)
 
+## Customizing spawnpoints
+
+This addon provides a tool to help you create and remove spawnpoints.
+To enable this tool run `cfc_spawneditor_toggle` in console.
+
+Features:
+- To add / remove spawns `cfc_spawneditor_spawnadd` / `cfc_spawneditor_spawndel`
+- To add / remove pvp centers `cfc_spawneditor_centeradd` / `cfc_spawneditor_centerdel`
+- To change the cutoff radius for the current map `cfc_spawneditor_cutoff`
+- To export the current map's spawnpoints to console use `cfc_spawneditor_export`, you can then paste this into sv_config.lua
+
+Visual appearance:
+![image](https://user-images.githubusercontent.com/69946827/190715330-645c7701-953d-452e-aa52-9908e479eecf.png)
+
 ## Limitations
 This addon is not finished, the following is required for completion:
 - Currently `pvp` in the spawns table does nothing.
