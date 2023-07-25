@@ -1113,3 +1113,38 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_ultrabox_optimized"] = {
         { spawnPos = Vector( 11189, -9185, 203 ), spawnAngle = Angle( 0, -90, 0 ), pvp = true }
     }
 }
+CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_genesis"] = {
+   pvpCenters = {
+      { centerPos = Vector( 1512.8956298828, -9011.0732421875, -8802.4755859375 ), overrideCutoff = 3500 },
+      { centerPos = Vector( -11442.022460938, 12961.649414063, -8063.96875 ), overrideCutoff = 5000 },
+   },
+   spawnpoints = {
+      { spawnPos = Vector( -11287.846679688, 14391.890625, -8191.96875 ), spawnAngle = Angle( 0, 137, 0 ) },
+      { spawnPos = Vector( -11296.994140625, 14111.6015625, -8191.96875 ), spawnAngle = Angle( 0, 137, 0 ) },
+      { spawnPos = Vector( -11826.508789063, 14140.971679688, -8191.96875 ), spawnAngle = Angle( 0, 88, 0 ) },
+      { spawnPos = Vector( -11912.559570313, 14036.107421875, -8191.96875 ), spawnAngle = Angle( 0, 179, 0 ) },
+      { spawnPos = Vector( -12194.313476563, 13736.583007813, -8191.96875 ), spawnAngle = Angle( 0, 90, 0 ) },
+      { spawnPos = Vector( -12875.649414063, 13758.489257813, -8191.96875 ), spawnAngle = Angle( 0, 90, 0 ) },
+      { spawnPos = Vector( -13558.616210938, 13768.690429688, -8191.96875 ), spawnAngle = Angle( 0, 89, 0 ) },
+      { spawnPos = Vector( 1053.7541503906, -8355.802734375, -8831.96875 ), spawnAngle = Angle( 0, -43, 0 ) },
+      { spawnPos = Vector( 2018.8579101563, -8370.6650390625, -8831.96875 ), spawnAngle = Angle( 0, -126, 0 ) },
+      { spawnPos = Vector( 1059.3046875, -8909.9462890625, -8831.96875 ), spawnAngle = Angle( 0, -1, 0 ) },
+      { spawnPos = Vector( 1069.5010986328, -9100.4423828125, -8831.96875 ), spawnAngle = Angle( 0, 0, 0 ) },
+      { spawnPos = Vector( 2028.6948242188, -8885.099609375, -8831.96875 ), spawnAngle = Angle( 0, 178, 0 ) },
+      { spawnPos = Vector( 2009.0509033203, -9107.791015625, -8831.96875 ), spawnAngle = Angle( 0, 178, 0 ) },
+      { spawnPos = Vector( 1460.3089599609, -10276.32421875, -8831.96875 ), spawnAngle = Angle( 0, 90, 0 ) },
+      { spawnPos = Vector( 1505.8081054688, -10271.072265625, -8831.96875 ), spawnAngle = Angle( 0, 90, 0 ) },
+      { spawnPos = Vector( 1552.7921142578, -10271.384765625, -8831.96875 ), spawnAngle = Angle( 0, 89, 0 ) },
+      { spawnPos = Vector( 1465.5562744141, -10316.184570313, -8831.96875 ), spawnAngle = Angle( 0, 91, 0 ) },
+      { spawnPos = Vector( 1515.5532226563, -10315.6328125, -8831.96875 ), spawnAngle = Angle( 0, 91, 0 ) },
+      { spawnPos = Vector( 1617.7912597656, -10267.32421875, -8831.96875 ), spawnAngle = Angle( 0, 91, 0 ) },
+      { spawnPos = Vector( 1555.55078125, -10315.19140625, -8831.96875 ), spawnAngle = Angle( 0, 91, 0 ) },
+      { spawnPos = Vector( 1615.5471191406, -10314.529296875, -8831.96875 ), spawnAngle = Angle( 0, 91, 0 ) },
+      { spawnPos = Vector( -10425.706054688, 14715.400390625, -8191.96875 ), spawnAngle = Angle( 0, 93, 0 ) },
+      { spawnPos = Vector( -9917.9111328125, 14398.76171875, -8191.96875 ), spawnAngle = Angle( 0, 46, 0 ) },
+      { spawnPos = Vector( -9201.9326171875, 14409.186523438, -8191.96875 ), spawnAngle = Angle( 0, 34, 0 ) },
+      { spawnPos = Vector( -9173.8359375, 13871.100585938, -8191.96875 ), spawnAngle = Angle( 0, 37, 0 ) },
+      { spawnPos = Vector( -11832.204101563, 14044.196289063, -7983.96875 ), spawnAngle = Angle( 0, 136, 0 ) },
+      { spawnPos = Vector( -11904.173828125, 13730.263671875, -8191.96875 ), spawnAngle = Angle( 0, 131, 0 ) },
+   },
+}
