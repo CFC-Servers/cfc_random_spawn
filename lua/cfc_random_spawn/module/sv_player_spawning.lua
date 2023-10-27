@@ -14,8 +14,11 @@ local CENTER_UPDATE_INTERVAL = customSpawnConfigForMap.centerUpdateInterval or C
 local IGNORE_BUILDERS = CFCRandomSpawn.Config.IGNORE_BUILDERS
 local CENTER_UPDATE_ON_RESPAWN = CENTER_UPDATE_INTERVAL <= 0
 
-local DYNAMIC_CENTER_MINDIST = 1750 -- getDynamicPvpCenter starts at this radius
-local DYNAMIC_CENTER_MINSPAWNS = 10 -- getDynamicPvpCenter needs at least this many spawns inside the radius 
+local DYNAMIC_CENTER_MINSIZE = 1750 -- getDynamicPvpCenter starts at this radius
+local DYNAMIC_CENTER_MAXSIZE = 3750 -- no bigger than this radius
+local DYNAMIC_CENTER_MINSPAWNS = 10 -- getDynamicPvpCenter needs at least this many spawns inside the radius
+local DYNAMIC_CENTER_MAXSPAWNS = 30 -- max possible spawns, stops lag when plys spawn
+local DYNAMIC_CENTER_SPAWNCOUNTMATCHPVPERS = true -- pvp center gets bigger when more people are pvping
 
 local function defaultPvpCenter()
     if pvpCenters[1] then return pvpCenters[1] end
@@ -116,11 +119,11 @@ local function getNearestSpawn( nearPos, spawns )
     return nearestSpawn
 end
 
-local function spawnsSortedByDistTo( nearPos, spawns )
+local function spawnsSortedByDistTo( nearPos, spawns, radiusSqr )
     local sortedSpawnsAndDistances = {}
     for _, spawn in ipairs( spawns ) do
         local dist = nearPos:DistToSqr( spawn.spawnPos )
-        if dist < CENTER_CUTOFF_SQR then
+        if dist < radiusSqr then
             table.insert( sortedSpawnsAndDistances, { spawn = spawn, dist = dist } )
         end
     end
@@ -131,7 +134,7 @@ end
 
 -- Get the first SELECTION_SIZE spawns that are closest to nearPos and are within range of CENTER_CUTOFF_SQR
 local function getNearestSpawns( nearPos, spawns )
-    local sortedSpawns = spawnsSortedByDistTo( nearPos, spawns )
+    local sortedSpawns = spawnsSortedByDistTo( nearPos, spawns, CENTER_CUTOFF_SQR )
 
     local nearestSpawns = {}
     for i = 1, SELECTION_SIZE do
@@ -219,31 +222,46 @@ local function getDynamicPvpCenter( measurablePlayers )
         playersAveragePos = playersAveragePos + ply:GetPos()
     end
 
-    playersAveragePos = playersAveragePos / #measurablePlayers
+    local measurablePlysCount = #measurablePlayers
+    playersAveragePos = playersAveragePos / measurablePlysCount
 
     local closestSpawnToAverage = getNearestSpawn( playersAveragePos, customSpawnsForMap )
+    local closestsPos = closestSpawnToAverage.spawnPos
     -- use nearest spawnpoint as a sanity point
     local dynamicPvpCenter = {}
-    dynamicPvpCenter.centerPos = closestSpawnToAverage.spawnPos
+    dynamicPvpCenter.centerPos = closestsPos
 
-    -- sorted spawns for cutoff dist stuff
-    local spawnsSortedToClosest = spawnsSortedByDistTo( dynamicPvpCenter.centerPos, customSpawnsForMap )
+    -- sorted spawns for center's size stuff, this handles max size for us
+    local spawnsSortedToClosest = spawnsSortedByDistTo( closestsPos, customSpawnsForMap, DYNAMIC_CENTER_MAXSIZE^2 )
 
-    -- now determine the cutoff dist
-    local cutoffDistSqr = DYNAMIC_CENTER_MINDIST^2
-    local foundCount = 0
+    -- allow this to adapt to pvper count
+    local minSpawns = DYNAMIC_CENTER_MINSPAWNS
+    if DYNAMIC_CENTER_SPAWNCOUNTMATCHPVPERS then
+        minSpawns = math.Clamp( measurablePlysCount, DYNAMIC_CENTER_MINSPAWNS, DYNAMIC_CENTER_MAXSPAWNS )
+    end
+
+    -- now determine the center's size
+    local dynamicCenterSizeSqr = DYNAMIC_CENTER_MINSIZE^2
+    local spawnCount = 0
     for _, spawnAndDist in ipairs( spawnsSortedToClosest ) do
-        foundCount = foundCount + 1
-        if spawnAndDist.dist > cutoffDistSqr and foundCount >= DYNAMIC_CENTER_MINSPAWNS then
-            cutoffDistSqr = spawnAndDist.dist
+        spawnCount = spawnCount + 1
+        if spawnCount > DYNAMIC_CENTER_MAXSPAWNS then
+            break
+        end
+
+        local currDistSqr = spawnAndDist.spawn.spawnPos:DistToSqr( closestsPos )
+        local further = currDistSqr > dynamicCenterSizeSqr
+        local enoughInside = spawnCount >= minSpawns
+
+        dynamicCenterSizeSqr = currDistSqr
+
+        if further and enoughInside then
             break
         end
     end
 
-    dynamicPvpCenter.overrideCutoff = math.sqrt( cutoffDistSqr )
-    dynamicPvpCenter.overrideCutoffSqr = cutoffDistSqr
-
-    debugoverlay.Sphere( closestSpawnToAverage.spawnPos, dynamicPvpCenter.overrideCutoff, 10, color_white )
+    dynamicPvpCenter.overrideCutoff = math.sqrt( dynamicCenterSizeSqr )
+    dynamicPvpCenter.overrideCutoffSqr = dynamicCenterSizeSqr
 
     return dynamicPvpCenter
 end
@@ -271,8 +289,6 @@ end
 local function updatePopularCenter( measurablePlayers )
     if CFCRandomSpawn.doDynamicCenters then
         mostPopularCenter = getDynamicPvpCenter( measurablePlayers )
-        PrintTable( mostPopularCenter )
-        print( "a" )
     else
         mostPopularCenter = getPopularCenter( measurablePlayers )
     end
