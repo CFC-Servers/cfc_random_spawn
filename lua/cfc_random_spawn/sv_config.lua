@@ -1162,3 +1162,24 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_marsh"] = {
    },
 }
 
+CFCRandomSpawn.Config.CUSTOM_SPAWNS["tdm_outercanals"] = {
+   spawnpoints = {
+      { spawnPos = Vector( -5039.6015625, -1056.828125, 144.03125 ), spawnAngle = Angle( 0, -1, 0 ) },
+      { spawnPos = Vector( -4615.9638671875, -1059.5240478516, 144.03125 ), spawnAngle = Angle( 0, 179, 0 ) },
+      { spawnPos = Vector( -4610.29296875, -280.0266418457, 144.03125 ), spawnAngle = Angle( 0, 180, 0 ) },
+      { spawnPos = Vector( -5050.8759765625, -89.168037414551, 144.03125 ), spawnAngle = Angle( 0, 42, 0 ) },
+      { spawnPos = Vector( -4604.5268554688, -89.001335144043, 144.03125 ), spawnAngle = Angle( 0, -180, 0 ) },
+      { spawnPos = Vector( -6180.0932617188, -87.284698486328, 0.03125 ), spawnAngle = Angle( 0, 90, 0 ) },
+      { spawnPos = Vector( -5048.4233398438, 346.46997070313, 144.03125 ), spawnAngle = Angle( 0, -39, 0 ) },
+      { spawnPos = Vector( -4619.3681640625, 351.33639526367, 144.03125 ), spawnAngle = Angle( 0, -136, 0 ) },
+      { spawnPos = Vector( -6180.8232421875, 343.8522644043, 0.03125 ), spawnAngle = Angle( 0, -90, 0 ) },
+      { spawnPos = Vector( -6944.0073242188, -94.408203125, 0.03125 ), spawnAngle = Angle( 0, 44, 0 ) },
+      { spawnPos = Vector( -6811.4775390625, 351.80010986328, 0.03125 ), spawnAngle = Angle( 0, -58, 0 ) },
+      { spawnPos = Vector( -5047.2119140625, 1250.9129638672, 144.03125 ), spawnAngle = Angle( 0, -1, 0 ) },
+      { spawnPos = Vector( -4619.5209960938, 1243.8271484375, 144.03125 ), spawnAngle = Angle( 0, 180, 0 ) },
+      { spawnPos = Vector( -5055.2329101563, 802.72833251953, 144.03125 ), spawnAngle = Angle( 0, -1, 0 ) },
+      { spawnPos = Vector( -4602.2724609375, 793.09448242188, 144.03125 ), spawnAngle = Angle( 0, 179, 0 ) },
+      { spawnPos = Vector( -4619.525390625, -609.44512939453, 144.03125 ), spawnAngle = Angle( 0, -179, 0 ) },
+      { spawnPos = Vector( -5051.91796875, -609.69854736328, 144.03125 ), spawnAngle = Angle( 0, 0, 0 ) },
+   },
+}
