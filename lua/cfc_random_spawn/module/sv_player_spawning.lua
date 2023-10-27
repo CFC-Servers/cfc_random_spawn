@@ -19,10 +19,10 @@ local DYNAMIC_CENTER_MAXSIZE = 3750 -- no bigger than this radius
 local DYNAMIC_CENTER_MINSPAWNS = 10 -- getDynamicPvpCenter needs at least this many spawns inside the radius
 local DYNAMIC_CENTER_MAXSPAWNS = 30 -- max possible spawns, stops lag when plys spawn
 local DYNAMIC_CENTER_SPAWNCOUNTMATCHPVPERS = true -- pvp center gets bigger when more people are pvping
+local DYNAMIC_CENTER_IMPERFECT = true
 
 local function defaultPvpCenter()
     if pvpCenters[1] then return pvpCenters[1] end
-
 end
 
 local function loadPvpCenters()
@@ -225,13 +225,20 @@ local function getDynamicPvpCenter( measurablePlayers )
     local measurablePlysCount = #measurablePlayers
     playersAveragePos = playersAveragePos / measurablePlysCount
 
+    -- add some randomness
+    if DYNAMIC_CENTER_IMPERFECT then
+        local offset = VectorRand() * 800
+        offset.z = 0
+        playersAveragePos = playersAveragePos + offset
+    end
+
     local closestSpawnToAverage = getNearestSpawn( playersAveragePos, customSpawnsForMap )
     local closestsPos = closestSpawnToAverage.spawnPos
     -- use nearest spawnpoint as a sanity point
     local dynamicPvpCenter = {}
     dynamicPvpCenter.centerPos = closestsPos
 
-    -- sorted spawns for center's size stuff, this handles max size for us
+    -- sorted spawns, for center's size stuff, this handles max size for us
     local spawnsSortedToClosest = spawnsSortedByDistTo( closestsPos, customSpawnsForMap, DYNAMIC_CENTER_MAXSIZE^2 )
 
     -- allow this to adapt to pvper count
@@ -241,7 +248,8 @@ local function getDynamicPvpCenter( measurablePlayers )
     end
 
     -- now determine the center's size
-    local dynamicCenterSizeSqr = DYNAMIC_CENTER_MINSIZE^2
+    local minSizeSqr = DYNAMIC_CENTER_MINSIZE^2
+    local dynamicCenterSizeSqr = minSizeSqr
     local spawnCount = 0
     for _, spawnAndDist in ipairs( spawnsSortedToClosest ) do
         spawnCount = spawnCount + 1
@@ -250,12 +258,15 @@ local function getDynamicPvpCenter( measurablePlayers )
         end
 
         local currDistSqr = spawnAndDist.spawn.spawnPos:DistToSqr( closestsPos )
-        local further = currDistSqr > dynamicCenterSizeSqr
+
+        if currDistSqr > dynamicCenterSizeSqr then
+            dynamicCenterSizeSqr = currDistSqr
+        end
+
+        local bigEnough = currDistSqr > minSizeSqr
         local enoughInside = spawnCount >= minSpawns
 
-        dynamicCenterSizeSqr = currDistSqr
-
-        if further and enoughInside then
+        if bigEnough and enoughInside then
             break
         end
     end
