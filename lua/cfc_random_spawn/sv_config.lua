@@ -1181,5 +1181,11 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["tdm_outercanals"] = {
       { spawnPos = Vector( -4602.2724609375, 793.09448242188, 144.03125 ), spawnAngle = Angle( 0, 179, 0 ) },
       { spawnPos = Vector( -4619.525390625, -609.44512939453, 144.03125 ), spawnAngle = Angle( 0, -179, 0 ) },
       { spawnPos = Vector( -5051.91796875, -609.69854736328, 144.03125 ), spawnAngle = Angle( 0, 0, 0 ) },
+      { spawnPos = Vector( -5328.9702148438, -300.24740600586, 319.48724365234 ), spawnAngle = Angle( 0, 41, 0 ) },
+      { spawnPos = Vector( -7645.5600585938, 346.32293701172, 0.03125 ), spawnAngle = Angle( 0, -89, 0 ) },
+      { spawnPos = Vector( -7962.4584960938, 350.94552612305, 0.03125 ), spawnAngle = Angle( 0, -90, 0 ) },
+      { spawnPos = Vector( -7970.048828125, -101.80089569092, 0.031219482421875 ), spawnAngle = Angle( 0, 91, 0 ) },
+      { spawnPos = Vector( -7647.9926757813, -80.346748352051, 0.031219482421875 ), spawnAngle = Angle( 0, 91, 0 ) },
+      { spawnPos = Vector( -7142.73828125, -92.118957519531, 0.03125 ), spawnAngle = Angle( 0, 89, 0 ) },
    },
 }
