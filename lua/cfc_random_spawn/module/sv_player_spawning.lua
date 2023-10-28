@@ -17,9 +17,9 @@ local CENTER_UPDATE_ON_RESPAWN = CENTER_UPDATE_INTERVAL <= 0
 local DYNAMIC_CENTER_MINSIZE = 1750 -- getDynamicPvpCenter starts at this radius
 local DYNAMIC_CENTER_MAXSIZE = 3750 -- no bigger than this radius
 local DYNAMIC_CENTER_MINSPAWNS = 10 -- getDynamicPvpCenter needs at least this many spawns inside the radius
-local DYNAMIC_CENTER_MAXSPAWNS = 30 -- max possible spawns, stops lag when plys spawn
+local DYNAMIC_CENTER_MAXSPAWNS = 30 -- max possible spawns
 local DYNAMIC_CENTER_SPAWNCOUNTMATCHPVPERS = true -- pvp center gets bigger when more people are pvping
-local DYNAMIC_CENTER_IMPERFECT = true
+local DYNAMIC_CENTER_IMPERFECT = true -- throw a bit of randomness in, makes pvp less stiff.
 
 local function defaultPvpCenter()
     if pvpCenters[1] then return pvpCenters[1] end
