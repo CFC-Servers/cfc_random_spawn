@@ -132,10 +132,9 @@ end
 local cachedSpawnsInsideCenter    = nil
 local nextSpawnsInsideCenterCache = 0
 
--- TODO, make findFreeSpawnPoint not table.remove, so we can make this hold onto the cache for longer.
 local function spawnsInsidePvpCenterCached( spawns )
     if cachedSpawnsInsideCenter and nextSpawnsInsideCenterCache > CurTime() then return cachedSpawnsInsideCenter end
-    nextSpawnsInsideCenterCache = CurTime() + 1
+    nextSpawnsInsideCenterCache = CurTime() + 7.5
 
     local centerPos = CFCRandomSpawn.mostPopularCenter.centerPos
     local sortedSpawns = spawnsSortedByDistTo( centerPos, spawns, CENTER_CUTOFF_SQR )
@@ -173,9 +172,11 @@ local function findFreeSpawnPoint( spawns, plys )
         table.insert( playerPositions, ply:GetPos() )
     end
 
-    for _=1, #spawns do
-        local randomIndex = math.random( 1, #spawns )
-        local spawn = spawns[randomIndex]
+    local spawnsCopy = table.Copy( spawns )
+
+    for _ = 1, #spawnsCopy do
+        local randomIndex = math.random( 1, #spawnsCopy )
+        local spawn = spawnsCopy[randomIndex]
         local spawnPos = spawn.spawnPos
         local isFree = spawnIsFree( spawnPos, playerPositions )
 
@@ -184,9 +185,8 @@ local function findFreeSpawnPoint( spawns, plys )
             return spawn
         else
             -- remove this spawn!
-            -- TODO, operate on the table randomly instead of this lil bit of jankiness.
-            spawns[randomIndex] = spawns[#spawns]
-            spawns[#spawns] = nil
+            spawnsCopy[randomIndex] = spawnsCopy[#spawnsCopy]
+            spawnsCopy[#spawnsCopy] = nil
         end
     end
 
