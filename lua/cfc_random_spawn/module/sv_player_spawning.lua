@@ -173,7 +173,7 @@ local function findFreeSpawnPoint( spawns, plys )
         table.insert( playerPositions, ply:GetPos() )
     end
 
-    for _, _ in pairs( spawns ) do
+    for _=1, #spawns do
         local randomIndex = math.random( 1, #spawns )
         local spawn = spawns[randomIndex]
         local spawnPos = spawn.spawnPos
@@ -185,7 +185,8 @@ local function findFreeSpawnPoint( spawns, plys )
         else
             -- remove this spawn!
             -- TODO, operate on the table randomly instead of this lil bit of jankiness.
-            table.remove( spawns, randomIndex )
+            spawns[randomIndex] = spawns[#spawns]
+            spawns[#spawns] = nil
         end
     end
 
