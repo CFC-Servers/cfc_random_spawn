@@ -97,7 +97,12 @@ local function addSpawn( ply )
     if not canRunCommand() then return end
     if not spawnTable.spawnpoints then spawnTable.spawnpoints = {} end
 
-    table.insert( spawnTable.spawnpoints, { spawnPos = ply:GetPos(), spawnAngle = Angle( 0, math.Round( ply:EyeAngles().yaw ), 0 ) } )
+    local pos = ply:GetPos()
+    pos = Vector( math.Round( pos.x ), math.Round( pos.y ), math.Round( pos.z ) )
+
+    local eyeAngles = ply:EyeAngles():SnapTo( "y", 11.25 ) -- 11.25 * 32 == 360
+
+    table.insert( spawnTable.spawnpoints, { spawnPos = pos, spawnAngle = Angle( 0, math.Round( eyeAngles.yaw ), 0 ) } )
     sendConfigChangesToServer()
 end
 
