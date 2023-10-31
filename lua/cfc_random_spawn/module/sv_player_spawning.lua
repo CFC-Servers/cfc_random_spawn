@@ -22,7 +22,7 @@ local DYNAMIC_CENTER_SPAWNCOUNTMATCHPVPERS = true -- pvp center gets bigger when
 local DYNAMIC_CENTER_IMPERFECT = true -- throw a bit of randomness in, makes pvp less stiff.
 
 local function defaultPvpCenter()
-    if pvpCenters[1] then return pvpCenters[1] end
+    return pvpCenters[1]
 end
 
 local function loadPvpCenters()
@@ -113,8 +113,6 @@ local function getNearestSpawn( nearPos, spawns )
             nearestSpawn = spawn
         end
     end
-
-    if not nearestSpawn then return spawns[1] end
 
     return nearestSpawn
 end
