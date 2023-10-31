@@ -12,7 +12,6 @@ local SELECTION_SIZE = CFCRandomSpawn.Config.SELECTION_SIZE
 local CLOSENESS_LIMIT = CFCRandomSpawn.Config.CLOSENESS_LIMIT ^ 2
 local CENTER_UPDATE_INTERVAL = customSpawnConfigForMap.centerUpdateInterval or CFCRandomSpawn.Config.CENTER_UPDATE_INTERVAL
 local IGNORE_BUILDERS = CFCRandomSpawn.Config.IGNORE_BUILDERS
-local CENTER_UPDATE_ON_RESPAWN = CENTER_UPDATE_INTERVAL <= 0
 
 local DYNAMIC_CENTER_MINSIZE = 1750 -- getDynamicPvpCenter starts at this radius
 local DYNAMIC_CENTER_MAXSIZE = 3750 -- no bigger than this radius
@@ -60,7 +59,6 @@ function CFCRandomSpawn.refreshMapInfo()
     CLOSENESS_LIMIT = CFCRandomSpawn.Config.CLOSENESS_LIMIT ^ 2
     CENTER_UPDATE_INTERVAL = customSpawnConfigForMap.centerUpdateInterval or CFCRandomSpawn.Config.CENTER_UPDATE_INTERVAL
     IGNORE_BUILDERS = CFCRandomSpawn.Config.IGNORE_BUILDERS
-    CENTER_UPDATE_ON_RESPAWN = CENTER_UPDATE_INTERVAL <= 0
 
     loadPvpCenters()
 end
@@ -131,71 +129,79 @@ local function spawnsSortedByDistTo( nearPos, spawns, radiusSqr )
 end
 
 -- Get the first SELECTION_SIZE spawns that are closest to nearPos and are within range of CENTER_CUTOFF_SQR
-local function getNearestSpawns( nearPos, spawns )
-    local sortedSpawns = spawnsSortedByDistTo( nearPos, spawns, CENTER_CUTOFF_SQR )
+local cachedSpawnsInsideCenter    = nil
+local nextSpawnsInsideCenterCache = 0
 
-    local nearestSpawns = {}
+-- TODO, make findFreeSpawnPoint not table.remove, so we can make this hold onto the cache for longer.
+local function spawnsInsidePvpCenterCached( spawns )
+    if cachedSpawnsInsideCenter and nextSpawnsInsideCenterCache > CurTime() then return cachedSpawnsInsideCenter end
+    nextSpawnsInsideCenterCache = CurTime() + 1
+
+    local centerPos = CFCRandomSpawn.mostPopularCenter.centerPos
+    local sortedSpawns = spawnsSortedByDistTo( centerPos, spawns, CENTER_CUTOFF_SQR )
+
+    local spawnsInsideCenter = {}
     for i = 1, SELECTION_SIZE do
         if sortedSpawns[i] then
-            table.insert( nearestSpawns, sortedSpawns[i].spawn )
+            table.insert( spawnsInsideCenter, sortedSpawns[i].spawn )
         end
     end
 
     -- If there are no good near points, just return all possible spawnpoints.
-    if #nearestSpawns == 0 then return spawns end
+    if #spawnsInsideCenter == 0 then
+        cachedSpawnsInsideCenter = spawns
+        return spawns
+    end
 
-    return nearestSpawns
+    cachedSpawnsInsideCenter = spawnsInsideCenter
+    return spawnsInsideCenter
 end
 
-local function findFreeSpawnPoints( spawns, plys )
-    if CLOSENESS_LIMIT == 0 then return spawns end
-
-    local trimmedSpawns = {}
-
-    for _, spawn in ipairs( spawns ) do
-        local spawnPos = spawn.spawnPos
-        local plyTooClose = false
-
-        for _, ply in ipairs( plys ) do
-            if ply:GetPos():DistToSqr( spawnPos ) < CLOSENESS_LIMIT then
-                plyTooClose = true
-                break
-            end
-        end
-
-        if not plyTooClose then
-            table.insert( trimmedSpawns, spawn )
+local function spawnIsFree( spawn, playerPositions )
+    for _, playerPos in ipairs( playerPositions ) do
+        if playerPos:DistToSqr( spawn ) < CLOSENESS_LIMIT then
+            return
         end
     end
 
-    if #trimmedSpawns == 0 then return spawns end -- If all spawnpoints are full, just return all of them. Super rare case.
+    return true
+end
 
-    return trimmedSpawns
+local function findFreeSpawnPoint( spawns, plys )
+    local playerPositions = {}
+    for _, ply in ipairs( plys ) do
+        table.insert( playerPositions, ply:GetPos() )
+    end
+
+    for _, _ in pairs( spawns ) do
+        local randomIndex = math.random( 1, #spawns )
+        local spawn = spawns[randomIndex]
+        local spawnPos = spawn.spawnPos
+        local isFree = spawnIsFree( spawnPos, playerPositions )
+
+        if isFree then
+            -- this spawn is good!
+            return spawn
+        else
+            -- remove this spawn!
+            -- TODO, operate on the table randomly instead of this lil bit of jankiness.
+            table.remove( spawns, randomIndex )
+        end
+    end
+
+    return customSpawnsForMap[ math.random( 1, #customSpawnsForMap ) ] -- If all spawnpoints are full, just return a random spawn anywhere in the map. Super rare case.
 end
 
 local function getPlyAvg( plys, centerPos )
     if not plys or not plys[1] then return centerPos or Vector() end
 
     local avgSum = Vector()
-    local count = 0
 
     for _, ply in ipairs( plys ) do
-        local plyPos = ply:GetPos()
-
-        if centerPos then
-            if centerPos:DistToSqr( plyPos ) <= CENTER_CUTOFF_SQR then
-                avgSum = avgSum + plyPos
-                count = count + 1
-            end
-        else
-            avgSum = avgSum + plyPos
-            count = count + 1
-        end
+        avgSum = avgSum + ply:GetPos()
     end
 
-    if count == 0 then return centerPos end
-
-    return avgSum / count
+    return avgSum / #plys
 end
 
 -- Players within the point's radius each provide a score of 1, while players outside the radius provide a score that falls off quadratically
@@ -215,13 +221,9 @@ local function getPlayerPopularityFromPoint( point, plys, radiusSqr )
 end
 
 local function getDynamicPvpCenter( measurablePlayers )
-    local playersAveragePos = Vector( 0, 0, 0 )
-    for _, ply in ipairs( measurablePlayers ) do
-        playersAveragePos = playersAveragePos + ply:GetPos()
-    end
+    local playersAveragePos = getPlyAvg( measurablePlayers, nil )
 
     local measurablePlysCount = #measurablePlayers
-    playersAveragePos = playersAveragePos / measurablePlysCount
 
     -- add some randomness
     if DYNAMIC_CENTER_IMPERFECT then
@@ -231,13 +233,13 @@ local function getDynamicPvpCenter( measurablePlayers )
     end
 
     local closestSpawnToAverage = getNearestSpawn( playersAveragePos, customSpawnsForMap )
-    local closestsPos = closestSpawnToAverage.spawnPos
+    local fauxPvpcenterPos = closestSpawnToAverage.spawnPos
     -- use nearest spawnpoint as a sanity point
     local dynamicPvpCenter = {}
-    dynamicPvpCenter.centerPos = closestsPos
+    dynamicPvpCenter.centerPos = fauxPvpcenterPos
 
     -- sorted spawns, for center's size stuff, this handles max size for us
-    local spawnsSortedToClosest = spawnsSortedByDistTo( closestsPos, customSpawnsForMap, DYNAMIC_CENTER_MAXSIZE^2 )
+    local spawnsSortedToClosest = spawnsSortedByDistTo( fauxPvpcenterPos, customSpawnsForMap, DYNAMIC_CENTER_MAXSIZE^2 )
 
     -- allow this to adapt to pvper count
     local minSpawns = DYNAMIC_CENTER_MINSPAWNS
@@ -255,7 +257,7 @@ local function getDynamicPvpCenter( measurablePlayers )
             break
         end
 
-        local currDistSqr = spawnAndDist.spawn.spawnPos:DistToSqr( closestsPos )
+        local currDistSqr = spawnAndDist.spawn.spawnPos:DistToSqr( fauxPvpcenterPos )
 
         if currDistSqr > dynamicCenterSizeSqr then
             dynamicCenterSizeSqr = currDistSqr
@@ -275,8 +277,8 @@ local function getDynamicPvpCenter( measurablePlayers )
     return dynamicPvpCenter
 end
 
--- Gets the most popular pvp center via the electron force model, to eliminate outliers
-local function getPopularCenter( plys )
+-- Gets the most populated pvp center via the electron force model, to eliminate outliers
+local function getMostPopulatedCenter( plys )
     local bestScore = -1
     local bestCenter = { centerPos = Vector() }
 
@@ -299,8 +301,9 @@ local function updatePopularCenter( measurablePlayers )
     if CFCRandomSpawn.doDynamicCenters then
         mostPopularCenter = getDynamicPvpCenter( measurablePlayers )
     else
-        mostPopularCenter = getPopularCenter( measurablePlayers )
+        mostPopularCenter = getMostPopulatedCenter( measurablePlayers )
     end
+
     CFCRandomSpawn.mostPopularCenter = mostPopularCenter
 
     CENTER_CUTOFF = mostPopularCenter.overrideCutoff or DEFAULT_CENTER_CUTOFF
@@ -311,15 +314,14 @@ function CFCRandomSpawn.getOptimalSpawnPos()
     local measurablePlayers = getMeasurablePlayers()
     local allLivingPlys = getLivingPlayers()
 
-    if CENTER_UPDATE_ON_RESPAWN or not CFCRandomSpawn.mostPopularCenter then
+    if not CFCRandomSpawn.mostPopularCenter then
         updatePopularCenter( measurablePlayers )
     end
 
-    local freeSpawns = findFreeSpawnPoints( customSpawnsForMap, allLivingPlys )
-    local nearestSpawns = getNearestSpawns( getPlyAvg( measurablePlayers, CFCRandomSpawn.mostPopularCenter.centerPos ), freeSpawns )
-    local bestSpawn = nearestSpawns[math.random( 1, #nearestSpawns )]
+    local spawnsInsideCenter = spawnsInsidePvpCenterCached( customSpawnsForMap )
+    local randomFreeSpawn = findFreeSpawnPoint( spawnsInsideCenter, allLivingPlys )
 
-    return bestSpawn.spawnPos, bestSpawn.spawnAngle
+    return randomFreeSpawn.spawnPos, randomFreeSpawn.spawnAngle
 end
 
 function CFCRandomSpawn.handlePlayerSpawn( ply )
@@ -338,12 +340,9 @@ end
 
 hook.Add( "PlayerSpawn", "CFC_RandomSpawn_ChooseOptimalSpawnpoint", CFCRandomSpawn.handlePlayerSpawn )
 
+timer.Create( "CFC_RandomSpawn_CalculateMostPopularPvpCenter", CENTER_UPDATE_INTERVAL, 0, function()
+    if not mapHasCustomSpawns then return end
+    local measurablePlayers = getMeasurablePlayers()
 
-if not CENTER_UPDATE_ON_RESPAWN then
-    timer.Create( "CFC_RandomSpawn_CalculateMostPopularPvpCenter", CENTER_UPDATE_INTERVAL, 0, function()
-        if not mapHasCustomSpawns then return end
-        local measurablePlayers = getMeasurablePlayers()
-
-        updatePopularCenter( measurablePlayers )
-    end )
-end
+    updatePopularCenter( measurablePlayers )
+end )
