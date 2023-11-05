@@ -239,7 +239,7 @@ local function getMostEnclosedSpawn( spawns )
     local spawnsWithCounts = {}
     for _, spawn in ipairs( freeSpawns ) do
         local entsThatPlyWillLoad = ents.FindInPVS( spawn.spawnPos )
-        spawnsWithCounts[ #entsThatPlyWillLoad ] = spawn
+        spawnsWithCounts[#entsThatPlyWillLoad] = spawn
 
         if #entsThatPlyWillLoad < 250 then break end -- this one is fine, just break here.
     end
