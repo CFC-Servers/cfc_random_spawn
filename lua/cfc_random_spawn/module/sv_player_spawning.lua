@@ -199,9 +199,9 @@ local function findFreeSpawnPoint( spawns, plys )
 end
 
 -- for below func
-local roofUpOffset = Vector( 0, 0, 2000 )
+local roofUpOffset = Vector( 0, 0, 500 )
 
--- find generally indoor spawns
+-- find spawns that are roofed
 local function getRoofedSpawns( spawns )
     local spawnsUnderARoof = {}
     local roofTrace = {
