@@ -20,7 +20,7 @@ local DYNAMIC_CENTER_MAXSPAWNS = 30 -- max possible spawns
 local DYNAMIC_CENTER_SPAWNCOUNTMATCHPVPERS = true -- pvp center gets bigger when more people are pvping
 local DYNAMIC_CENTER_IMPERFECT = true -- throw a bit of randomness in, makes pvp less stiff.
 
-local PlayersWhoHaveSpawned = {}
+local playersWhoHaveSpawned = {}
 
 local function defaultPvpCenter()
     return pvpCenters[1]
@@ -404,8 +404,8 @@ function CFCRandomSpawn.handlePlayerSpawn( ply )
     if IsValid( ply.LinkedSpawnPoint ) then return end
 
     timer.Simple( 0, function()
-        local needsACarefulFirstSpawn = not PlayersWhoHaveSpawned[ply] and #player.GetAll() > 20
-        PlayersWhoHaveSpawned[ply] = true
+        local needsACarefulFirstSpawn = not playersWhoHaveSpawned[ply] and #player.GetAll() > 20
+        playersWhoHaveSpawned[ply] = true
 
         local optimalSpawnPosition, optimalSpawnAngles = nil, nil
         if needsACarefulFirstSpawn then -- need a careful spawn, player might crash out if we just put them anywhere
