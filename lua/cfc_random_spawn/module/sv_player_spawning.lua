@@ -198,10 +198,11 @@ local function findFreeSpawnPoint( spawns, plys )
     return customSpawnsForMap[math.random( 1, #customSpawnsForMap )] -- If all spawnpoints are full, just return a random spawn anywhere in the map. Super rare case.
 end
 
+-- for below func
 local roofUpOffset = Vector( 0, 0, 2000 )
 
 -- find generally indoor spawns
-local function getEnclosedSpawns( spawns )
+local function getRoofedSpawns( spawns )
     local spawnsUnderARoof = {}
     local roofTrace = {
         mask = MASK_SOLID_BRUSHONLY
@@ -221,7 +222,8 @@ local function getEnclosedSpawns( spawns )
     return spawnsUnderARoof
 end
 
-local function getMostEnclosedSpawn( spawns )
+-- find spawn that's least likely to spawn-in crash a player
+local function getACheapSpawn( spawns )
     local alivePlayers = getLivingPlayers()
     local playerPositions = {}
     for _, ply in ipairs( alivePlayers ) do
@@ -242,10 +244,10 @@ local function getMostEnclosedSpawn( spawns )
         local entsThatPlyWillLoad = ents.FindInPVS( spawn.spawnPos )
         spawnsWithCounts[#entsThatPlyWillLoad] = spawn
 
-        if #entsThatPlyWillLoad < 250 then break end -- this one is fine, just break here.
+        if #entsThatPlyWillLoad < 250 then break end -- this one is fine, we dont need the most perfect spawn, just one that doesn't crash.
     end
 
-    -- find the spawn least likely to crash player
+    -- ok which one is the least expensive
     local leastEntCount = math.huge
     local smallestCountSpawn
     for entCountInSpawnsPvs, spawn in pairs( spawnsWithCounts ) do
@@ -390,15 +392,15 @@ function CFCRandomSpawn.getOptimalSpawnPos()
     return randomFreeSpawn.spawnPos, randomFreeSpawn.spawnAngle
 end
 
-function CFCRandomSpawn.getMostEnclosedSpawnPos()
+function CFCRandomSpawn.getCheapSpawn()
     if not CFCRandomSpawn.spawnsUnderARoof then
-        CFCRandomSpawn.spawnsUnderARoof = getEnclosedSpawns( customSpawnsForMap )
+        CFCRandomSpawn.spawnsUnderARoof = getRoofedSpawns( customSpawnsForMap )
     end
 
     -- use spawns under a roof if we can, because this function is pretty expensive, 
     -- finds all entities in every spawnpoint's PVS, we want to run it on as few spawns as possible.
-    local mostEnclosedSpawn = getMostEnclosedSpawn( CFCRandomSpawn.spawnsUnderARoof )
-    return mostEnclosedSpawn.spawnPos, mostEnclosedSpawn.spawnAngle
+    local aCheapSpawn = getACheapSpawn( CFCRandomSpawn.spawnsUnderARoof )
+    return aCheapSpawn.spawnPos, aCheapSpawn.spawnAngle
 end
 
 function CFCRandomSpawn.handlePlayerSpawn( ply )
@@ -412,7 +414,7 @@ function CFCRandomSpawn.handlePlayerSpawn( ply )
 
         local optimalSpawnPosition, optimalSpawnAngles = nil, nil
         if needsACarefulFirstSpawn then -- need a careful spawn, player might crash out if we just put them anywhere
-            optimalSpawnPosition, optimalSpawnAngles = CFCRandomSpawn.getMostEnclosedSpawnPos()
+            optimalSpawnPosition, optimalSpawnAngles = CFCRandomSpawn.getCheapSpawn()
         else
             optimalSpawnPosition, optimalSpawnAngles = CFCRandomSpawn.getOptimalSpawnPos()
         end
