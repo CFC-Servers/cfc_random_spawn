@@ -62,6 +62,7 @@ function CFCRandomSpawn.refreshMapInfo()
     CENTER_UPDATE_INTERVAL = customSpawnConfigForMap.centerUpdateInterval or CFCRandomSpawn.Config.CENTER_UPDATE_INTERVAL
     IGNORE_BUILDERS = CFCRandomSpawn.Config.IGNORE_BUILDERS
 
+    -- purge this since it could now be outdated
     CFCRandomSpawn.spawnsUnderARoof = nil
 
     loadPvpCenters()
@@ -394,6 +395,8 @@ function CFCRandomSpawn.getMostEnclosedSpawnPos()
         CFCRandomSpawn.spawnsUnderARoof = getEnclosedSpawns( customSpawnsForMap )
     end
 
+    -- use spawns under a roof if we can, because this function is pretty expensive, 
+    -- finds all entities in every spawnpoint's PVS, we want to run it on as few spawns as possible.
     local mostEnclosedSpawn = getMostEnclosedSpawn( CFCRandomSpawn.spawnsUnderARoof )
     return mostEnclosedSpawn.spawnPos, mostEnclosedSpawn.spawnAngle
 end
