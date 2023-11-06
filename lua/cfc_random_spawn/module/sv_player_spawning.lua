@@ -13,10 +13,10 @@ local CLOSENESS_LIMIT = CFCRandomSpawn.Config.CLOSENESS_LIMIT ^ 2
 local CENTER_UPDATE_INTERVAL = customSpawnConfigForMap.centerUpdateInterval or CFCRandomSpawn.Config.CENTER_UPDATE_INTERVAL
 local IGNORE_BUILDERS = CFCRandomSpawn.Config.IGNORE_BUILDERS
 
-local DYNAMIC_CENTER_MINSIZE = 1750 -- getDynamicPvpCenter starts at this radius
-local DYNAMIC_CENTER_MAXSIZE = 3750 -- no bigger than this radius
+local DYNAMIC_CENTER_MINSIZE = 2000 -- getDynamicPvpCenter starts at this radius
+local DYNAMIC_CENTER_MAXSIZE = 4000 -- no bigger than this radius
 local DYNAMIC_CENTER_MINSPAWNS = 10 -- getDynamicPvpCenter needs at least this many spawns inside the radius
-local DYNAMIC_CENTER_MAXSPAWNS = 30 -- max possible spawns
+local DYNAMIC_CENTER_MAXSPAWNS = 35 -- max possible spawns
 local DYNAMIC_CENTER_SPAWNCOUNTMATCHPVPERS = true -- pvp center gets bigger when more people are pvping
 local DYNAMIC_CENTER_IMPERFECT = true -- throw a bit of randomness in, makes pvp less stiff.
 
