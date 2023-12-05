@@ -13,12 +13,14 @@ local CLOSENESS_LIMIT = CFCRandomSpawn.Config.CLOSENESS_LIMIT ^ 2
 local CENTER_UPDATE_INTERVAL = customSpawnConfigForMap.centerUpdateInterval or CFCRandomSpawn.Config.CENTER_UPDATE_INTERVAL
 local IGNORE_BUILDERS = CFCRandomSpawn.Config.IGNORE_BUILDERS
 
-local DYNAMIC_CENTER_MINSIZE = 1750 -- getDynamicPvpCenter starts at this radius
-local DYNAMIC_CENTER_MAXSIZE = 3750 -- no bigger than this radius
+local DYNAMIC_CENTER_MINSIZE = 2000 -- getDynamicPvpCenter starts at this radius
+local DYNAMIC_CENTER_MAXSIZE = 4000 -- no bigger than this radius
 local DYNAMIC_CENTER_MINSPAWNS = 10 -- getDynamicPvpCenter needs at least this many spawns inside the radius
-local DYNAMIC_CENTER_MAXSPAWNS = 30 -- max possible spawns
+local DYNAMIC_CENTER_MAXSPAWNS = 35 -- max possible spawns
 local DYNAMIC_CENTER_SPAWNCOUNTMATCHPVPERS = true -- pvp center gets bigger when more people are pvping
 local DYNAMIC_CENTER_IMPERFECT = true -- throw a bit of randomness in, makes pvp less stiff.
+
+local playersWhoHaveSpawned = {}
 
 local function defaultPvpCenter()
     return pvpCenters[1]
@@ -59,6 +61,9 @@ function CFCRandomSpawn.refreshMapInfo()
     CLOSENESS_LIMIT = CFCRandomSpawn.Config.CLOSENESS_LIMIT ^ 2
     CENTER_UPDATE_INTERVAL = customSpawnConfigForMap.centerUpdateInterval or CFCRandomSpawn.Config.CENTER_UPDATE_INTERVAL
     IGNORE_BUILDERS = CFCRandomSpawn.Config.IGNORE_BUILDERS
+
+    -- purge this since it could now be outdated
+    CFCRandomSpawn.spawnsUnderARoof = nil
 
     loadPvpCenters()
 end
@@ -193,6 +198,68 @@ local function findFreeSpawnPoint( spawns, plys )
     return customSpawnsForMap[math.random( 1, #customSpawnsForMap )] -- If all spawnpoints are full, just return a random spawn anywhere in the map. Super rare case.
 end
 
+-- for below func
+local roofUpOffset = Vector( 0, 0, 500 )
+
+-- find spawns that are roofed
+local function getRoofedSpawns( spawns )
+    local spawnsUnderARoof = {}
+    local roofTrace = {
+        mask = MASK_SOLID_BRUSHONLY
+    }
+    for _, spawn in ipairs( spawns ) do
+        local spawnsPos = spawn.spawnPos
+        roofTrace.start = spawnsPos
+        roofTrace.endpos = spawnsPos + roofUpOffset
+
+        local roofTraceResult = util.TraceLine( roofTrace )
+        if roofTraceResult.Hit then
+            table.insert( spawnsUnderARoof, spawn )
+        end
+    end
+    -- not enough to get good results
+    if #spawnsUnderARoof <= 10 then return spawns end
+    return spawnsUnderARoof
+end
+
+-- find spawn that's least likely to spawn-in crash a player
+local function getACheapSpawn( spawns )
+    local alivePlayers = getLivingPlayers()
+    local playerPositions = {}
+    for _, ply in ipairs( alivePlayers ) do
+        table.insert( playerPositions, ply:GetPos() )
+    end
+
+    -- find spawns that aren't blocked by other players
+    local freeSpawns = {}
+    for _, spawn in ipairs( spawns ) do
+        if spawnIsFree( spawn.spawnPos, playerPositions ) then
+            table.insert( freeSpawns, spawn )
+        end
+    end
+
+    -- get the ent count of every spawn
+    local spawnsWithCounts = {}
+    for _, spawn in ipairs( freeSpawns ) do
+        local entsThatPlyWillLoad = ents.FindInPVS( spawn.spawnPos )
+        spawnsWithCounts[#entsThatPlyWillLoad] = spawn
+
+        if #entsThatPlyWillLoad < 250 then break end -- this one is fine, we dont need the most perfect spawn, just one that doesn't crash.
+    end
+
+    -- ok which one is the least expensive
+    local leastEntCount = math.huge
+    local smallestCountSpawn
+    for entCountInSpawnsPvs, spawn in pairs( spawnsWithCounts ) do
+        if entCountInSpawnsPvs < leastEntCount then
+            leastEntCount = entCountInSpawnsPvs
+            smallestCountSpawn = spawn
+        end
+    end
+
+    return smallestCountSpawn
+end
+
 local function getPlyAvg( plys, centerPos )
     if not plys or not plys[1] then return centerPos or Vector() end
 
@@ -228,7 +295,7 @@ local function getDynamicPvpCenter( measurablePlayers )
 
     -- add some randomness
     if DYNAMIC_CENTER_IMPERFECT then
-        local offset = VectorRand() * 800
+        local offset = VectorRand() * 1200
         offset.z = 0
         playersAveragePos = playersAveragePos + offset
     end
@@ -325,18 +392,39 @@ function CFCRandomSpawn.getOptimalSpawnPos()
     return randomFreeSpawn.spawnPos, randomFreeSpawn.spawnAngle
 end
 
+function CFCRandomSpawn.getCheapSpawn()
+    if not CFCRandomSpawn.spawnsUnderARoof then
+        CFCRandomSpawn.spawnsUnderARoof = getRoofedSpawns( customSpawnsForMap )
+    end
+
+    -- use spawns under a roof if we can, because this function is pretty expensive, 
+    -- finds all entities in every spawnpoint's PVS, we want to run it on as few spawns as possible.
+    local aCheapSpawn = getACheapSpawn( CFCRandomSpawn.spawnsUnderARoof )
+    return aCheapSpawn.spawnPos, aCheapSpawn.spawnAngle
+end
+
 function CFCRandomSpawn.handlePlayerSpawn( ply )
     if not mapHasCustomSpawns then return end
     if not ( ply and IsValid( ply ) ) then return end
     if IsValid( ply.LinkedSpawnPoint ) then return end
 
-    local optimalSpawnPosition, optimalSpawnAngles = CFCRandomSpawn.getOptimalSpawnPos()
+    timer.Simple( 0, function()
+        local needsACarefulFirstSpawn = not playersWhoHaveSpawned[ply] and #player.GetAll() > 20
+        playersWhoHaveSpawned[ply] = true
 
-    ply:SetPos( optimalSpawnPosition )
+        local optimalSpawnPosition, optimalSpawnAngles = nil, nil
+        if needsACarefulFirstSpawn then -- need a careful spawn, player might crash out if we just put them anywhere
+            optimalSpawnPosition, optimalSpawnAngles = CFCRandomSpawn.getCheapSpawn()
+        else
+            optimalSpawnPosition, optimalSpawnAngles = CFCRandomSpawn.getOptimalSpawnPos()
+        end
 
-    if optimalSpawnAngles then
-        ply:SetEyeAngles( optimalSpawnAngles )
-    end
+        ply:SetPos( optimalSpawnPosition )
+
+        if optimalSpawnAngles then
+            ply:SetEyeAngles( optimalSpawnAngles )
+        end
+    end )
 end
 
 hook.Add( "PlayerSpawn", "CFC_RandomSpawn_ChooseOptimalSpawnpoint", CFCRandomSpawn.handlePlayerSpawn )
