@@ -13,10 +13,10 @@ local CLOSENESS_LIMIT = CFCRandomSpawn.Config.CLOSENESS_LIMIT ^ 2
 local CENTER_UPDATE_INTERVAL = customSpawnConfigForMap.centerUpdateInterval or CFCRandomSpawn.Config.CENTER_UPDATE_INTERVAL
 local IGNORE_BUILDERS = CFCRandomSpawn.Config.IGNORE_BUILDERS
 
-local DYNAMIC_CENTER_MINSIZE = 1750 -- getDynamicPvpCenter starts at this radius
-local DYNAMIC_CENTER_MAXSIZE = 3750 -- no bigger than this radius
+local DYNAMIC_CENTER_MINSIZE = 2000 -- getDynamicPvpCenter starts at this radius
+local DYNAMIC_CENTER_MAXSIZE = 4000 -- no bigger than this radius
 local DYNAMIC_CENTER_MINSPAWNS = 10 -- getDynamicPvpCenter needs at least this many spawns inside the radius
-local DYNAMIC_CENTER_MAXSPAWNS = 30 -- max possible spawns
+local DYNAMIC_CENTER_MAXSPAWNS = 35 -- max possible spawns
 local DYNAMIC_CENTER_SPAWNCOUNTMATCHPVPERS = true -- pvp center gets bigger when more people are pvping
 local DYNAMIC_CENTER_IMPERFECT = true -- throw a bit of randomness in, makes pvp less stiff.
 
@@ -190,7 +190,7 @@ local function findFreeSpawnPoint( spawns, plys )
         end
     end
 
-    return customSpawnsForMap[math.random( 1, #customSpawnsForMap )] -- If all spawnpoints are full, just return a random spawn anywhere in the map. Super rare case.
+    return customSpawnsForMap[math.random( 1, #customSpawnsForMap )] -- If all spawnpoints are full, just return a random spawn anywhere in the map. Rare case.
 end
 
 local function getPlyAvg( plys, centerPos )
@@ -228,7 +228,7 @@ local function getDynamicPvpCenter( measurablePlayers )
 
     -- add some randomness
     if DYNAMIC_CENTER_IMPERFECT then
-        local offset = VectorRand() * 800
+        local offset = VectorRand() * 1000
         offset.z = 0
         playersAveragePos = playersAveragePos + offset
     end
@@ -245,7 +245,7 @@ local function getDynamicPvpCenter( measurablePlayers )
     -- allow this to adapt to pvper count
     local minSpawns = DYNAMIC_CENTER_MINSPAWNS
     if DYNAMIC_CENTER_SPAWNCOUNTMATCHPVPERS then
-        minSpawns = math.Clamp( measurablePlysCount, DYNAMIC_CENTER_MINSPAWNS, DYNAMIC_CENTER_MAXSPAWNS )
+        minSpawns = math.Clamp( DYNAMIC_CENTER_MINSPAWNS + measurablePlysCount, DYNAMIC_CENTER_MINSPAWNS, DYNAMIC_CENTER_MAXSPAWNS )
     end
 
     -- now determine the center's size
