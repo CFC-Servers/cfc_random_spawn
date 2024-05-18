@@ -1535,3 +1535,4 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["rp_nycity_day"] = {
        { spawnPos = Vector( -4220, -1069, 21 ), spawnAngle = Angle( 0, -90, 0 ) },
     },
 }
+
