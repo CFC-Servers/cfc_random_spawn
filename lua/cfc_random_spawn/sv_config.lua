@@ -1546,7 +1546,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_functional_flatgrass"] = {
    },
 }
 
-CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_cfc_136"] = {
+CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_cfc_140"] = {
     spawnpoints = {
        { spawnPos = Vector( -4108, -9234, 20 ), spawnAngle = Angle( 0, -180, 0 ) },
        { spawnPos = Vector( -3354, -9818, 20 ), spawnAngle = Angle( 0, 0, 0 ) },
