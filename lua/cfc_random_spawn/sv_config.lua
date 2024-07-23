@@ -238,6 +238,38 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_boreas"] = {
     }
 }
 
+CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_boreas_night"] = {
+    spawnpoints = {
+       { spawnPos = Vector( -10232, -12858, -10468 ), spawnAngle = Angle( 0, 90, 0 ) },
+       { spawnPos = Vector( -10109, -12864, -10470 ), spawnAngle = Angle( 0, 90, 0 ) },
+       { spawnPos = Vector( -9412, -12916, -10490 ), spawnAngle = Angle( 0, 113, 0 ) },
+       { spawnPos = Vector( -9412, -12141, -10437 ), spawnAngle = Angle( 0, 90, 0 ) },
+       { spawnPos = Vector( -9320, -12062, -10460 ), spawnAngle = Angle( 0, 79, 0 ) },
+       { spawnPos = Vector( -9032, -12929, -10480 ), spawnAngle = Angle( 0, 79, 0 ) },
+       { spawnPos = Vector( -9121, -12051, -10450 ), spawnAngle = Angle( 0, 79, 0 ) },
+       { spawnPos = Vector( -9035, -12172, -10470 ), spawnAngle = Angle( 0, 90, 0 ) },
+       { spawnPos = Vector( -10169, -12807, -10471 ), spawnAngle = Angle( 0, 90, 0 ) },
+       { spawnPos = Vector( -8337, -11798, -10473 ), spawnAngle = Angle( 0, 101, 0 ) },
+       { spawnPos = Vector( -8262, -11859, -10470 ), spawnAngle = Angle( 0, 101, 0 ) },
+       { spawnPos = Vector( -8403, -11883, -10470 ), spawnAngle = Angle( 0, 101, 0 ) },
+       { spawnPos = Vector( -8106, -12181, -10481 ), spawnAngle = Angle( 0, 90, 0 ) },
+       { spawnPos = Vector( -8140, -12262, -10484 ), spawnAngle = Angle( 0, 90, 0 ) },
+       { spawnPos = Vector( -10570, -11348, -10443 ), spawnAngle = Angle( 0, 34, 0 ) },
+       { spawnPos = Vector( -10509, -11434, -10471 ), spawnAngle = Angle( 0, 34, 0 ) },
+       { spawnPos = Vector( -10495, -11362, -10470 ), spawnAngle = Angle( 0, 34, 0 ) },
+       { spawnPos = Vector( -8503, -10486, -10430 ), spawnAngle = Angle( 0, 124, 0 ) },
+       { spawnPos = Vector( -8496, -10345, -10436 ), spawnAngle = Angle( 0, 124, 0 ) },
+       { spawnPos = Vector( -10440, -12506, -10451 ), spawnAngle = Angle( 0, 79, 0 ) },
+       { spawnPos = Vector( -8175, -12461, -10482 ), spawnAngle = Angle( 0, 101, 0 ) },
+       { spawnPos = Vector( -8118, -12403, -10479 ), spawnAngle = Angle( 0, 90, 0 ) },
+       { spawnPos = Vector( -10541, -11393, -9899 ), spawnAngle = Angle( 0, 34, 0 ) },
+       { spawnPos = Vector( -10544, -11934, -10492 ), spawnAngle = Angle( 0, 56, 0 ) },
+       { spawnPos = Vector( -8514, -11166, -10465 ), spawnAngle = Angle( 0, 113, 0 ) },
+       { spawnPos = Vector( -9774, -12903, -10469 ), spawnAngle = Angle( 0, 90, 0 ) },
+       { spawnPos = Vector( -10761, -11647, -10466 ), spawnAngle = Angle( 0, 34, 0 ) },
+    },
+}
+
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_mobenix_v3_final"] = {
     centerCutoff = 4500,
     centerUpdateInterval = nil,
