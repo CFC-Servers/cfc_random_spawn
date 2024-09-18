@@ -1801,5 +1801,36 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_aknevo"] = {
        { spawnPos = Vector( 4552, 3652, 0 ), spawnAngle = Angle( 0, 90, 0 ) },
        { spawnPos = Vector( 3637, 3290, 0 ), spawnAngle = Angle( 0, 0, 0 ) },
     },
- }
+}
+
+ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_highland"] = {
+    spawnpoints = {
+       { spawnPos = Vector( 7998, 11043, 79 ), spawnAngle = Angle( 0, 0, 0 ) },
+       { spawnPos = Vector( 8740, 13048, 90 ), spawnAngle = Angle( 0, 124, 0 ) },
+       { spawnPos = Vector( 8513, 13626, 88 ), spawnAngle = Angle( 0, -45, 0 ) },
+       { spawnPos = Vector( 9478, 13783, 67 ), spawnAngle = Angle( 0, -135, 0 ) },
+       { spawnPos = Vector( 8677, 11116, 90 ), spawnAngle = Angle( 0, -157, 0 ) },
+       { spawnPos = Vector( 8708, 12506, 80 ), spawnAngle = Angle( 0, -180, 0 ) },
+       { spawnPos = Vector( 8023, 12530, 76 ), spawnAngle = Angle( 0, 0, 0 ) },
+       { spawnPos = Vector( 7977, 13615, 71 ), spawnAngle = Angle( 0, -34, 0 ) },
+       { spawnPos = Vector( 9440, 12904, 80 ), spawnAngle = Angle( 0, 146, 0 ) },
+       { spawnPos = Vector( 8961, 10534, 77 ), spawnAngle = Angle( 0, 90, 0 ) },
+       { spawnPos = Vector( 8395, 10744, 87 ), spawnAngle = Angle( 0, 56, 0 ) },
+       { spawnPos = Vector( 9637, 10530, 83 ), spawnAngle = Angle( 0, 90, 0 ) },
+       { spawnPos = Vector( 11056, 10229, 85 ), spawnAngle = Angle( 0, 90, 0 ) },
+       { spawnPos = Vector( 10468, 10264, 107 ), spawnAngle = Angle( 0, 90, 0 ) },
+       { spawnPos = Vector( 10896, 10939, 78 ), spawnAngle = Angle( 0, -90, 0 ) },
+       { spawnPos = Vector( 12234, 10854, 107 ), spawnAngle = Angle( 0, -90, 0 ) },
+       { spawnPos = Vector( 12131, 10220, 80 ), spawnAngle = Angle( 0, 90, 0 ) },
+       { spawnPos = Vector( 12720, 10288, 75 ), spawnAngle = Angle( 0, -180, 0 ) },
+       { spawnPos = Vector( 12717, 10664, 83 ), spawnAngle = Angle( 0, -180, 0 ) },
+       { spawnPos = Vector( 12716, 10966, 78 ), spawnAngle = Angle( 0, -135, 0 ) },
+       { spawnPos = Vector( 9810, 10951, 82 ), spawnAngle = Angle( 0, -90, 0 ) },
+       { spawnPos = Vector( 9636, 10964, 81 ), spawnAngle = Angle( 0, -90, 0 ) },
+       { spawnPos = Vector( 8809, 11673, 82 ), spawnAngle = Angle( 0, -180, 0 ) },
+       { spawnPos = Vector( 8811, 11932, 73 ), spawnAngle = Angle( 0, -180, 0 ) },
+       { spawnPos = Vector( 8665, 10563, 81 ), spawnAngle = Angle( 0, 56, 0 ) },
+       { spawnPos = Vector( 11325, 10843, 79 ), spawnAngle = Angle( 0, -90, 0 ) },
+    },
+}
  
