@@ -1500,6 +1500,8 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["rp_nycity_day"] = {
     },
 }
 
+CFCRandomSpawn.Config.CUSTOM_SPAWNS["rp_nycity"] = CFCRandomSpawn.Config.CUSTOM_SPAWNS["rp_nycity_day"]
+
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["rp_southside"] = {
    spawnpoints = {
       { spawnPos = Vector( 6466, 4260, 224 ), spawnAngle = Angle( 0, -135, 0 ) },
@@ -1574,6 +1576,8 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["rp_southside"] = {
       { spawnPos = Vector( -2781, 9649, 128 ), spawnAngle = Angle( 0, -90, 0 ) },
    },
 }
+
+CFCRandomSpawn.Config.CUSTOM_SPAWNS["rp_southside_day"] = CFCRandomSpawn.Config.CUSTOM_SPAWNS["rp_southside"]
 
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_functional_flatgrass"] = {
     spawnpoints = {
