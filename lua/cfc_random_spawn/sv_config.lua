@@ -95,6 +95,8 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_novenka"] = {
     }
 }
 
+CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_novenka_night"] = CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_novenka"]
+
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_excess_construct_13"] = {
     centerCutoff = 2000,
     centerUpdateInterval = nil,
