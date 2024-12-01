@@ -2024,7 +2024,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_highland"] = {
        { spawnPos = Vector( 660, 816, 792 ), spawnAngle = Angle( 0, 45, 0 ) },
        { spawnPos = Vector( -803, -197, 412 ), spawnAngle = Angle( 0, -79, 0 ) },
     },
-} 
+}
 
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_headattackcity"] = {
    spawnpoints = {
