@@ -240,6 +240,8 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_boreas"] = {
     }
 }
 
+CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_boreas_night"] = CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_boreas"]
+
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_mobenix_v3_final"] = {
     centerCutoff = 4500,
     centerUpdateInterval = nil,
