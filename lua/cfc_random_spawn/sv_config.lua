@@ -2628,4 +2628,42 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_palm_city"] = {
        { spawnPos = Vector( 5605, 4522, 224 ), spawnAngle = Angle( 0, -180, 0 ) },
     },
 }
- 
+
+CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_sunsetgulch"] = {
+    spawnpoints = {
+       { spawnPos = Vector( 7147, -4960, 0 ), spawnAngle = Angle( 0, -90, 0 ) },
+       { spawnPos = Vector( 7740, -4961, 0 ), spawnAngle = Angle( 0, -90, 0 ) },
+       { spawnPos = Vector( 8274, -4927, 0 ), spawnAngle = Angle( 0, -90, 0 ) },
+       { spawnPos = Vector( 8925, -4947, 0 ), spawnAngle = Angle( 0, -90, 0 ) },
+       { spawnPos = Vector( 9555, -4901, 0 ), spawnAngle = Angle( 0, -90, 0 ) },
+       { spawnPos = Vector( 5441, -3520, 24 ), spawnAngle = Angle( 0, -180, 0 ) },
+       { spawnPos = Vector( 5455, -2626, 24 ), spawnAngle = Angle( 0, -180, 0 ) },
+       { spawnPos = Vector( 5472, 1999, 28 ), spawnAngle = Angle( 0, -180, 0 ) },
+       { spawnPos = Vector( 5464, 2595, 26 ), spawnAngle = Angle( 0, -180, 0 ) },
+       { spawnPos = Vector( 5472, 3039, 24 ), spawnAngle = Angle( 0, -180, 0 ) },
+       { spawnPos = Vector( 4669, 3392, 0 ), spawnAngle = Angle( 0, 0, 0 ) },
+       { spawnPos = Vector( 4658, 1994, 0 ), spawnAngle = Angle( 0, 0, 0 ) },
+       { spawnPos = Vector( 6797, -6256, 0 ), spawnAngle = Angle( 0, 90, 0 ) },
+       { spawnPos = Vector( 7545, -6246, 0 ), spawnAngle = Angle( 0, 90, 0 ) },
+       { spawnPos = Vector( 9748, -6243, 0 ), spawnAngle = Angle( 0, 135, 0 ) },
+       { spawnPos = Vector( 5550, 945, 16 ), spawnAngle = Angle( 0, 45, 0 ) },
+       { spawnPos = Vector( 6319, 808, 0 ), spawnAngle = Angle( 0, 45, 0 ) },
+       { spawnPos = Vector( 6278, -837, 0 ), spawnAngle = Angle( 0, 0, 0 ) },
+       { spawnPos = Vector( 5903, 9, 512 ), spawnAngle = Angle( 0, 0, 0 ) },
+       { spawnPos = Vector( 6130, -1952, 0 ), spawnAngle = Angle( 0, 0, 0 ) },
+       { spawnPos = Vector( 7779, -986, 64 ), spawnAngle = Angle( 0, -180, 0 ) },
+       { spawnPos = Vector( 7785, 1052, 16 ), spawnAngle = Angle( 0, 135, 0 ) },
+       { spawnPos = Vector( 7523, -2871, 0 ), spawnAngle = Angle( 0, -180, 0 ) },
+       { spawnPos = Vector( 7024, -4035, 0 ), spawnAngle = Angle( 0, -169, 0 ) },
+       { spawnPos = Vector( 4437, -3025, 0 ), spawnAngle = Angle( 0, 0, 0 ) },
+       { spawnPos = Vector( 4415, -1054, 0 ), spawnAngle = Angle( 0, 0, 0 ) },
+       { spawnPos = Vector( 4408, -493, 0 ), spawnAngle = Angle( 0, 0, 0 ) },
+       { spawnPos = Vector( 4416, 1439, 0 ), spawnAngle = Angle( 0, 0, 0 ) },
+       { spawnPos = Vector( 4650, 4454, 0 ), spawnAngle = Angle( 0, 0, 0 ) },
+       { spawnPos = Vector( 6576, -2602, 0 ), spawnAngle = Angle( 0, 0, 0 ) },
+       { spawnPos = Vector( 6575, -3560, 0 ), spawnAngle = Angle( 0, 0, 0 ) },
+       { spawnPos = Vector( 5537, -6318, 0 ), spawnAngle = Angle( 0, 45, 0 ) },
+       { spawnPos = Vector( 5545, 3042, 16 ), spawnAngle = Angle( 0, -90, 0 ) },
+    },
+}
+CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_sunsetgulch"] = CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_sunsetgulch_night"]
