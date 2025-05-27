@@ -13,6 +13,8 @@ local CLOSENESS_LIMIT = CFCRandomSpawn.Config.CLOSENESS_LIMIT ^ 2
 local CENTER_UPDATE_INTERVAL = customSpawnConfigForMap.centerUpdateInterval or CFCRandomSpawn.Config.CENTER_UPDATE_INTERVAL
 local IGNORE_BUILDERS = CFCRandomSpawn.Config.IGNORE_BUILDERS
 
+local ACTIVE_PLAYER_TIMEOUT = 120 -- players who haven't died/killed anyone in this many seconds aren't 'pvping' and shouldn't influence the pvp center, etc
+
 local DYNAMIC_CENTER_MINSIZE = 2000 -- getDynamicPvpCenter starts at this radius
 local DYNAMIC_CENTER_MAXSIZE = 4000 -- no bigger than this radius
 local DYNAMIC_CENTER_MINSPAWNS = 10 -- getDynamicPvpCenter needs at least this many spawns inside the radius
@@ -75,18 +77,29 @@ local function getPvpers()
     return pvpers
 end
 
+CFCRandomSpawn.activePlayers = CFCRandomSpawn.activePlayers or {}
+local activePlayers = CFCRandomSpawn.activePlayers
+
 local function getMeasurablePlayers()
     local measurablePlayers = {}
     local humans = IGNORE_BUILDERS and getPvpers() or player.GetAll()
 
+    local cur = CurTime()
+
     for _, ply in pairs( humans ) do
-        if ply:Alive() then
+        if ply:Alive() and activePlayers[ply] and activePlayers[ply] > cur then
             table.insert( measurablePlayers, ply )
         end
     end
 
     return measurablePlayers
 end
+
+hook.Add( "PlayerDeath", "cfc_randomspawn_trackactiveplayers", function( died, _inflictor, attacker )
+    local cur = CurTime()
+    activePlayers[died] = cur + ACTIVE_PLAYER_TIMEOUT
+    activePlayers[attacker] = cur + ACTIVE_PLAYER_TIMEOUT
+end )
 
 local function getLivingPlayers()
     local livingPlayers = {}
