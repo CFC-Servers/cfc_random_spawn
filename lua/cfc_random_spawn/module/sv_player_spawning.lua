@@ -109,6 +109,7 @@ end )
 
 hook.Add( "PlayerDeath", "cfc_randomspawn_trackrecentcombatants", function( died, _inflictor, attacker )
     countAsCombatting( died )
+    if not attacker:IsPlayer() then return end
     countAsCombatting( attacker )
 end )
 
