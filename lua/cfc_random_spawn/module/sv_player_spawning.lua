@@ -13,7 +13,7 @@ local CLOSENESS_LIMIT = CFCRandomSpawn.Config.CLOSENESS_LIMIT ^ 2
 local CENTER_UPDATE_INTERVAL = customSpawnConfigForMap.centerUpdateInterval or CFCRandomSpawn.Config.CENTER_UPDATE_INTERVAL
 local IGNORE_BUILDERS = CFCRandomSpawn.Config.IGNORE_BUILDERS
 
-local ACTIVE_PLAYER_TIMEOUT = 120 -- players who haven't died/killed anyone in this many seconds aren't 'pvping' and shouldn't influence the pvp center, etc
+local ACTIVE_PLAYER_TIMEOUT = 120 -- players who haven't died/killed anyone in this many seconds aren't 'pvping' and won't influence the pvp center, etc
 
 local DYNAMIC_CENTER_MINSIZE = 2000 -- getDynamicPvpCenter starts at this radius
 local DYNAMIC_CENTER_MAXSIZE = 4000 -- no bigger than this radius
@@ -212,8 +212,8 @@ local function getPlyAvg( plys, centerPos )
     local avgSum = plys[1]:GetPos()
     if #plys == 1 then return avgSum end
 
-    for i, ply in ipairs( plys ) do
-        if i == 1 then continue end -- already added their position
+    for i = 2, #plys do
+        local ply = plys[i]
         avgSum = avgSum + ply:GetPos()
     end
 
