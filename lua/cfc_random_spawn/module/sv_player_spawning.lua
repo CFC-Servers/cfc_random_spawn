@@ -22,6 +22,12 @@ local DYNAMIC_CENTER_MAXSPAWNS = 35 -- max possible spawns
 local DYNAMIC_CENTER_SPAWNCOUNTMATCHPVPERS = true -- pvp center gets bigger when more people are pvping
 local DYNAMIC_CENTER_IMPERFECT = true -- throw a bit of randomness in, makes pvp less stiff.
 
+CFCRandomSpawn.recentCombatants = CFCRandomSpawn.recentCombatants or {}
+local recentCombatants = CFCRandomSpawn.recentCombatants
+
+local CurTime = CurTime
+local Vector = Vector
+
 local function defaultPvpCenter()
     return pvpCenters[1]
 end
@@ -77,9 +83,6 @@ local function getPvpers()
     return pvpers
 end
 
-CFCRandomSpawn.activePlayers = CFCRandomSpawn.activePlayers or {}
-local activePlayers = CFCRandomSpawn.activePlayers
-
 local function getMeasurablePlayers()
     local measurablePlayers = {}
     local humans = IGNORE_BUILDERS and getPvpers() or player.GetAll()
@@ -87,7 +90,7 @@ local function getMeasurablePlayers()
     local cur = CurTime()
 
     for _, ply in pairs( humans ) do
-        if ply:Alive() and activePlayers[ply] and activePlayers[ply] > cur then
+        if ply:Alive() and recentCombatants[ply] > cur then
             table.insert( measurablePlayers, ply )
         end
     end
@@ -95,10 +98,22 @@ local function getMeasurablePlayers()
     return measurablePlayers
 end
 
-hook.Add( "PlayerDeath", "cfc_randomspawn_trackactiveplayers", function( died, _inflictor, attacker )
+local function countAsCombatting( ply )
     local cur = CurTime()
-    activePlayers[died] = cur + ACTIVE_PLAYER_TIMEOUT
-    activePlayers[attacker] = cur + ACTIVE_PLAYER_TIMEOUT
+    recentCombatants[ply] = math.max( cur + ACTIVE_PLAYER_TIMEOUT, recentCombatants[ply] + ACTIVE_PLAYER_TIMEOUT / 2 )
+end
+
+hook.Add( "PlayerInitialSpawn", "cfc_randomspawn_firstspawn", function( ply )
+    recentCombatants[ply] = 0
+end )
+
+hook.Add( "PlayerDeath", "cfc_randomspawn_trackrecentcombatants", function( died, _inflictor, attacker )
+    countAsCombatting( died )
+    countAsCombatting( attacker )
+end )
+
+hook.Add( "PlayerDisconnected", "cfc_randomspawn_cleanuprecentcombatants", function( ply )
+    recentCombatants[ply] = nil
 end )
 
 local function getLivingPlayers()
