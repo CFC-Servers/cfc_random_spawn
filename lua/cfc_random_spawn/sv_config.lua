@@ -8,6 +8,11 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS = {}
 
 hook.Add( "Initialize", "CFC_RandomSpawn_Init", function()
     local mapName = game.GetMap()
+    -- Validate map name to prevent path traversal
+    if not mapName or mapName == "" or string.find( mapName, "[/\\]" ) then
+        return
+    end
+    
     local configPath = "cfc_random_spawn/configs/" .. mapName .. ".lua"
     if file.Exists( configPath, "LUA" ) then
         print( "[CFC Random Spawn] Loading config: " .. configPath )
