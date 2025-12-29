@@ -1,0 +1,22 @@
+CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_genesis"] = {
+    spawnpoints = {
+        { spawnPos = Vector( 803.69219970703, -9528.7041015625, -8703.96875 ), spawnAngle = Angle( 0, -1, 0 ) },
+        { spawnPos = Vector( 811.24603271484, -9012.1923828125, -8703.96875 ), spawnAngle = Angle( 0, -1, 0 ) },
+        { spawnPos = Vector( 829.08959960938, -8367.6005859375, -8703.96875 ), spawnAngle = Angle( 0, -1, 0 ) },
+        { spawnPos = Vector( 1233.3120117188, -8016.03125, -8703.96875 ), spawnAngle = Angle( 0, -92, 0 ) },
+        { spawnPos = Vector( 788.72680664063, -8037.7875976563, -8703.96875 ), spawnAngle = Angle( 0, -40, 0 ) },
+        { spawnPos = Vector( 1817.1978759766, -8020.2055664063, -8703.96875 ), spawnAngle = Angle( 0, -91, 0 ) },
+        { spawnPos = Vector( 2227.3344726563, -8052.1538085938, -8703.96875 ), spawnAngle = Angle( 0, -131, 0 ) },
+        { spawnPos = Vector( 2232.6884765625, -8455.5673828125, -8703.96875 ), spawnAngle = Angle( 0, 178, 0 ) },
+        { spawnPos = Vector( 2218.3283691406, -8994.96875, -8703.96875 ), spawnAngle = Angle( 0, 178, 0 ) },
+        { spawnPos = Vector( 2197.7446289063, -9533.3037109375, -8703.96875 ), spawnAngle = Angle( 0, 178, 0 ) },
+        { spawnPos = Vector( 1315.8405761719, -9963.349609375, -8831.96875 ), spawnAngle = Angle( 0, 68, 0 ) },
+        { spawnPos = Vector( 1799.8558349609, -9980.5234375, -8831.96875 ), spawnAngle = Angle( 0, 120, 0 ) },
+        { spawnPos = Vector( 1957.0659179688, -7596.123046875, -8831.96875 ), spawnAngle = Angle( 0, -177, 0 ) },
+        { spawnPos = Vector( 1321.1058349609, -7583.7001953125, -8831.96875 ), spawnAngle = Angle( 0, 7, 0 ) },
+        { spawnPos = Vector( 1522.6043701172, -10080.1796875, -8831.96875 ), spawnAngle = Angle( 0, 91, 0 ) },
+        { spawnPos = Vector( 1110.9884033203, -8437.4453125, -8831.96875 ), spawnAngle = Angle( 0, -48, 0 ) },
+        { spawnPos = Vector( 1905.9572753906, -8432.453125, -8831.96875 ), spawnAngle = Angle( 0, -122, 0 ) },
+        { spawnPos = Vector( 1540.1981201172, -7185.2333984375, -8831.96875 ), spawnAngle = Angle( 0, -92, 0 ) },
+    },
+}
