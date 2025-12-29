@@ -6,10 +6,22 @@ CFCRandomSpawn.Config.IGNORE_BUILDERS = true -- Should 'center popularity' and p
 
 CFCRandomSpawn.Config.CUSTOM_SPAWNS = {}
 
-hook.Add( "Initialize", "CFC_RandomSpawn_Init", function()
-    local configPath = "configs/" .. game.GetMap() .. ".lua"
-    if file.Exists( configPath, "LUA" ) then
+function CFCRandomSpawn.loadConfig()
+    local configPath = "cfc_random_spawn/configs/" .. game.GetMap() .. ".lua"
+    local exists = file.Exists( configPath, "LUA" )
+    if exists then
         print( "[CFC Random Spawn] Loading config: " .. configPath )
         include( configPath )
+    else
+        print( "[CFC Random Spawn] No config found for map: " .. game.GetMap() )
     end
+end
+
+hook.Add( "Initialize", "CFC_RandomSpawn_Init", function()
+    CFCRandomSpawn.Config_WasLoaded = true
+    CFCRandomSpawn.loadConfig()
 end )
+
+-- autorefresh
+if not CFCRandomSpawn.Config_WasLoaded then return end
+CFCRandomSpawn.loadConfig()
