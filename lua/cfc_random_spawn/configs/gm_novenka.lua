@@ -1,4 +1,4 @@
-CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_novenka_improved"] = {
+CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_novenka"] = {
     spawnpoints = {
         { spawnPos = Vector( 5305, -6554, -344 ), spawnAngle = Angle( 0, 0, 0 ) },
         { spawnPos = Vector( 5152, -7070, -352 ), spawnAngle = Angle( 0, 90, 0 ) },
