@@ -16,12 +16,3 @@ function CFCRandomSpawn.loadConfig()
         print( "[CFC Random Spawn] No config found for map: " .. game.GetMap() )
     end
 end
-
-hook.Add( "Initialize", "CFC_RandomSpawn_Init", function()
-    CFCRandomSpawn.Config_WasLoaded = true
-    CFCRandomSpawn.loadConfig()
-end )
-
--- autorefresh
-if not CFCRandomSpawn.Config_WasLoaded then return end
-CFCRandomSpawn.loadConfig()

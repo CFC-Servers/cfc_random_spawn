@@ -4,5 +4,7 @@ CFCRandomSpawn.Config = CFCRandomSpawn.Config or {}
 AddCSLuaFile( "cfc_random_spawn/module/cl_spawns_editor.lua" )
 
 include( "cfc_random_spawn/sv_config.lua" )
+CFCRandomSpawn.loadConfig()
+
 include( "cfc_random_spawn/module/sv_player_spawning.lua" )
 include( "cfc_random_spawn/module/sv_spawns_editor.lua" )
