@@ -100,7 +100,7 @@ end
 
 local function countAsCombatting( ply )
     local cur = CurTime()
-    recentCombatants[ply] = math.max( cur + ACTIVE_PLAYER_TIMEOUT, recentCombatants[ply] + ACTIVE_PLAYER_TIMEOUT / 2 )
+    recentCombatants[ply] = cur + ACTIVE_PLAYER_TIMEOUT
 end
 
 hook.Add( "PlayerInitialSpawn", "cfc_randomspawn_firstspawn", function( ply )
@@ -108,8 +108,8 @@ hook.Add( "PlayerInitialSpawn", "cfc_randomspawn_firstspawn", function( ply )
 end )
 
 hook.Add( "PlayerDeath", "cfc_randomspawn_trackrecentcombatants", function( died, _inflictor, attacker )
-    countAsCombatting( died )
     if not attacker:IsPlayer() then return end
+    countAsCombatting( died )
     countAsCombatting( attacker )
 end )
 
