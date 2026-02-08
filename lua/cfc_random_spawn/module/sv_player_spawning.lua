@@ -13,12 +13,20 @@ local CLOSENESS_LIMIT = CFCRandomSpawn.Config.CLOSENESS_LIMIT ^ 2
 local CENTER_UPDATE_INTERVAL = customSpawnConfigForMap.centerUpdateInterval or CFCRandomSpawn.Config.CENTER_UPDATE_INTERVAL
 local IGNORE_BUILDERS = CFCRandomSpawn.Config.IGNORE_BUILDERS
 
+local ACTIVE_PLAYER_TIMEOUT = 120 -- players who haven't died/killed anyone in this many seconds aren't 'pvping' and won't influence the pvp center, etc
+
 local DYNAMIC_CENTER_MINSIZE = 2000 -- getDynamicPvpCenter starts at this radius
 local DYNAMIC_CENTER_MAXSIZE = 4000 -- no bigger than this radius
 local DYNAMIC_CENTER_MINSPAWNS = 10 -- getDynamicPvpCenter needs at least this many spawns inside the radius
 local DYNAMIC_CENTER_MAXSPAWNS = 35 -- max possible spawns
 local DYNAMIC_CENTER_SPAWNCOUNTMATCHPVPERS = true -- pvp center gets bigger when more people are pvping
 local DYNAMIC_CENTER_IMPERFECT = true -- throw a bit of randomness in, makes pvp less stiff.
+
+CFCRandomSpawn.recentCombatants = CFCRandomSpawn.recentCombatants or {}
+local recentCombatants = CFCRandomSpawn.recentCombatants
+
+local CurTime = CurTime
+local Vector = Vector
 
 local function defaultPvpCenter()
     return pvpCenters[1]
@@ -79,14 +87,35 @@ local function getMeasurablePlayers()
     local measurablePlayers = {}
     local humans = IGNORE_BUILDERS and getPvpers() or player.GetAll()
 
+    local cur = CurTime()
+
     for _, ply in pairs( humans ) do
-        if ply:Alive() then
+        if ply:Alive() and recentCombatants[ply] > cur then
             table.insert( measurablePlayers, ply )
         end
     end
 
     return measurablePlayers
 end
+
+local function countAsCombatting( ply )
+    local cur = CurTime()
+    recentCombatants[ply] = cur + ACTIVE_PLAYER_TIMEOUT
+end
+
+hook.Add( "PlayerInitialSpawn", "cfc_randomspawn_firstspawn", function( ply )
+    recentCombatants[ply] = 0
+end )
+
+hook.Add( "PlayerDeath", "cfc_randomspawn_trackrecentcombatants", function( died, _inflictor, attacker )
+    if not attacker:IsPlayer() then return end
+    countAsCombatting( died )
+    countAsCombatting( attacker )
+end )
+
+hook.Add( "PlayerDisconnected", "cfc_randomspawn_cleanuprecentcombatants", function( ply )
+    recentCombatants[ply] = nil
+end )
 
 local function getLivingPlayers()
     local livingPlayers = {}
@@ -196,7 +225,7 @@ end
 local function getPlyAvg( plys, centerPos )
     if not plys or not plys[1] then return centerPos or Vector() end
 
-    local avgSum = Vector()
+    local avgSum = Vector( 0, 0, 0 )
 
     for _, ply in ipairs( plys ) do
         avgSum = avgSum + ply:GetPos()
