@@ -225,7 +225,7 @@ end
 local function getPlyAvg( plys, centerPos )
     if not plys or not plys[1] then return centerPos or Vector() end
 
-    local avgSum = Vector()
+    local avgSum = Vector( 0, 0, 0 )
 
     for _, ply in ipairs( plys ) do
         avgSum = avgSum + ply:GetPos()
