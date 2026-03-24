@@ -27,6 +27,10 @@ Adding spawnpoints is done as follows:
         { centerPos = VECTOR, overrideCutoff = NUMBER },
         ...
     },
+    zones = {
+        { cornerA = VECTOR, cornerB = VECTOR },
+        ...
+    },
     spawnpoints = {
         { spawnPos = VECTOR, spawnAngle = ANGLE, pvp = BOOLEAN },
         ...
@@ -39,6 +43,10 @@ Adding spawnpoints is done as follows:
   - **pvpCenters**: defines one or more central positions where pvp most often takes place around, with the first one being the fallback if there are no pvpers. If none are defined, will default to the average position of all spawnpoints for this map.
     - `centerPos` is the position for the pvp center
     - `overrideCutoff` overrides the map/default cutoff value for obtaining the average player position near this specific pvp center, useful for maps with many centers that vary heavily in size
+  - **zones**: defines boxes that separate spawns into groups. Except in rare cases, spawns will only be chosen if they are in the same zone as the currently active pvp center. Any spawns not contained by a zone will be added to a default group.
+    - `cornerA` is the first corner of the zone
+    - `cornerB` is the second corner of the zone
+    - Lower-index zones will be checked first and will take priority if they overlap.
   - **spawnpoints**:
     - `spawnPos` is the foot position of the spawn
     - `spawnAngle` is the view angle for the spawn
@@ -52,6 +60,8 @@ To enable this tool run `cfc_spawneditor_toggle` in console.
 Features:
 - To add / remove spawns `cfc_spawneditor_spawnadd` / `cfc_spawneditor_spawndel`
 - To add / remove pvp centers `cfc_spawneditor_centeradd` / `cfc_spawneditor_centerdel`
+- To mark / cancel / add / remove zones `cfc_spawneditor_zonea` and `cfc_spawneditor_zoneb` / `cfc_spawneditor_zonecancel` / `cfc_spawneditor_zoneadd` / `cfc_spawneditor_zonedel`
+  - Zones will be previewed in magenta, then turn cyan when confirmed.
 - To change the cutoff radius for the current map `cfc_spawneditor_cutoff`
 - To export the current map's spawnpoints to console use `cfc_spawneditor_export`, you can then paste this into sv_config.lua
 
