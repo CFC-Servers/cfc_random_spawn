@@ -23,6 +23,7 @@ Adding spawnpoints is done as follows:
   ```lua
   CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_bluehills_test3"] = {
     centerCutoff = NUMBER,
+    centerUpdateInterval = NUMBER,
     dynamicCenterFallback = VECTOR,
     pvpCenters = {
         { centerPos = VECTOR, overrideCutoff = NUMBER },
@@ -39,20 +40,20 @@ Adding spawnpoints is done as follows:
   }
   ```
   Where 
-  - `centerCutoff` overrides `DEFAULT_CENTER_CUTOFF` for this map
-  - `centerUpdateInterval` overrives `CENTER_UPDATE_INTERVAL` for this map
+  - `centerCutoff` overrides `DEFAULT_CENTER_CUTOFF` for this map.
+  - `centerUpdateInterval` overrides `CENTER_UPDATE_INTERVAL` for this map.
   - `dynamicCenterFallback` defines the position to use for locating the dynamic pvp center (requies no manual pvp centers) when no active combat is happening. Best positioned at the 'natural spawn area' of the map. Defaults to `Vector( 0, 0, 0 )`.
   - **pvpCenters**: defines one or more central positions where pvp most often takes place around, with the first one being the fallback if there are no pvpers. If none are defined, will default to the average position of all spawnpoints for this map.
-    - `centerPos` is the position for the pvp center
-    - `overrideCutoff` overrides the map/default cutoff value for obtaining the average player position near this specific pvp center, useful for maps with many centers that vary heavily in size
+    - `centerPos` is the position for the pvp center.
+    - `overrideCutoff` overrides the map/default cutoff value for obtaining the average player position near this specific pvp center, useful for maps with many centers that vary heavily in size.
   - **zones**: defines boxes that separate spawns into groups. Except in rare cases, spawns will only be chosen if they are in the same zone as the currently active pvp center. Any spawns not contained by a zone will be added to a default group.
-    - `cornerA` is the first corner of the zone
-    - `cornerB` is the second corner of the zone
+    - `cornerA` is the first corner of the zone.
+    - `cornerB` is the second corner of the zone.
     - Lower-index zones will be checked first and will take priority if they overlap.
   - **spawnpoints**:
-    - `spawnPos` is the foot position of the spawn
-    - `spawnAngle` is the view angle for the spawn
-    - `pvp` is the pvp status of the spawn (currently does nothing)
+    - `spawnPos` is the foot position of the spawn.
+    - `spawnAngle` is the view angle for the spawn.
+    - `pvp` is the pvp status of the spawn (currently does nothing).
 
 ## Customizing spawnpoints
 
@@ -74,4 +75,4 @@ Visual appearance:
 This addon is not finished, the following is required for completion:
 - Currently `pvp` in the spawns table does nothing.
 - The whole code could do with a bit of a cleanup, theres unused vars, params, old print tables, etc.
-- Could make it possible for multiple pvp centers to be selected and then randomly chosen between (when under certain conditions) for maps with long and narrow or wide and sparse pvp areas that would benefit from having multiple centers grouped together
+- Could make it possible for multiple pvp centers to be selected and then randomly chosen between (when under certain conditions) for maps with long and narrow or wide and sparse pvp areas that would benefit from having multiple centers grouped together.
