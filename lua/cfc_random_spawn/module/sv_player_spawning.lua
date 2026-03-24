@@ -30,6 +30,16 @@ local recentCombatants = CFCRandomSpawn.recentCombatants
 local noZones = false
 local fallbackZoneID = nil
 
+local spawnTraceResult = {}
+local spawnTraceRequest = {
+    mins = Vector( -16, -16, 0 ),
+    maxs = Vector( 16, 16, 72 ),
+    mask = MASK_PLAYERSOLID,
+    collisiongroup = COLLISION_GROUP_PLAYER,
+    ignoreworld = true, -- In case some spawns are clipped slightly but can be escaped with crouch. They still should get fixed up, though!
+    output = spawnTraceResult,
+}
+
 local CurTime = CurTime
 local Vector = Vector
 
@@ -258,12 +268,17 @@ local function spawnsInsidePvpCenterCached( spawns )
     return cachedSpawnsInsideCenter
 end
 
-local function spawnIsFree( spawn, playerPositions )
+local function spawnIsFree( spawnPos, playerPositions )
     for _, playerPos in ipairs( playerPositions ) do
-        if playerPos:DistToSqr( spawn ) < CLOSENESS_LIMIT then
+        if playerPos:DistToSqr( spawnPos ) < CLOSENESS_LIMIT then
             return
         end
     end
+
+    spawnTraceRequest.start = spawnPos
+    spawnTraceRequest.endpos = spawnPos
+    util.TraceHull( spawnTraceRequest )
+    if spawnTraceResult.Hit then return false end
 
     return true
 end
