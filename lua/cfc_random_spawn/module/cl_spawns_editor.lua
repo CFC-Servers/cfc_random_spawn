@@ -118,7 +118,10 @@ local function addSpawn( ply )
     if not canRunCommand() then return end
     if not spawnTable.spawnpoints then spawnTable.spawnpoints = {} end
 
-    local pos = roundVector( ply:GetPos() )
+    local pos = ply:GetPos()
+    pos[3] = math.ceil( pos[3] ) -- Round z upwards to prevent clipping into the floor
+    pos = roundVector( pos ) -- Round everything else normally
+
     local eyeAngles = ply:EyeAngles():SnapTo( "y", 11.25 ) -- 11.25 * 32 == 360
 
     table.insert( spawnTable.spawnpoints, { spawnPos = pos, spawnAngle = Angle( 0, math.Round( eyeAngles.yaw ), 0 ) } )
