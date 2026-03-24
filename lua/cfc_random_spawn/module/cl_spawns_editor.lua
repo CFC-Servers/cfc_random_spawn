@@ -2,6 +2,7 @@ local boxColor = Color( 0, 255, 0 )
 local lineColor = Color( 0, 255, 0 )
 local centerColor = Color( 255, 0, 0 )
 local centerPointColor = Color( 255, 145, 0 )
+local centerActiveColor = Color( 255, 230, 0 )
 local zoneUnconfirmedColor = Color( 255, 0, 255 )
 local zoneConfirmedColor = Color( 0, 255, 255 )
 local minDeletionRange = 5000
@@ -19,6 +20,7 @@ local clearCode = tostring( math.random( 1000, 9999 ) )
 local spawnTable = {}
 local zoneCornerA = nil
 local zoneCornerB = nil
+local activeSpawnCenterPos = nil
 
 
 local function roundVector( vec, idp )
@@ -81,7 +83,7 @@ hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", f
                 render.DrawWireframeSphere( centerPos, centerCutoff, 75, 75, centerPointColor, true )
                 render.DrawWireframeSphere( centerPos, 5, 20, 20, centerColor, false )
             else
-                render.DrawWireframeSphere( centerPos, 40, 20, 20, centerColor, false )
+                render.DrawWireframeSphere( centerPos, 40, 10, 20, centerColor, false )
             end
         end
     end
@@ -94,6 +96,10 @@ hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", f
 
     if zoneCornerA and zoneCornerB then
         render.DrawWireframeBox( emptyVector, emptyAngle, zoneCornerA, zoneCornerB, zoneUnconfirmedColor, false )
+    end
+
+    if activeSpawnCenterPos then
+        render.DrawWireframeSphere( activeSpawnCenterPos, 50, 10, 16, centerActiveColor, false )
     end
 end )
 
@@ -110,6 +116,10 @@ local function toggleEditor( ply )
     else
         print( "Editor turned off!" )
     end
+
+    net.Start( "CFC_SpawnEditor_SetEditing" )
+    net.WriteBool( spawnEditorEnabled )
+    net.SendToServer()
 end
 
 concommand.Add( "cfc_spawneditor_toggle", toggleEditor, _, "Toggles the spawn editor" )
@@ -383,3 +393,8 @@ local function clearAll( _, _, args )
 end
 
 concommand.Add( "cfc_spawneditor_clearall", clearAll, _, "Clears all spawn points and pvp centers. Dangerous." )
+
+
+net.Receive( "CFC_SpawnEditor_ActiveSpawnCenter", function()
+    activeSpawnCenterPos = net.ReadVector()
+end )

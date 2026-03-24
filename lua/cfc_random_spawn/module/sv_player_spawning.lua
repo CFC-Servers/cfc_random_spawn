@@ -1,4 +1,5 @@
 CFCRandomSpawn = CFCRandomSpawn or {}
+CFCRandomSpawn.EditingPlayers = CFCRandomSpawn.EditingPlayers or {}
 
 local customSpawnConfigForMap = CFCRandomSpawn.Config.CUSTOM_SPAWNS[game.GetMap()] or {}
 local mapHasCustomSpawns = next( customSpawnConfigForMap )
@@ -42,6 +43,9 @@ local spawnTraceRequest = {
 
 local CurTime = CurTime
 local Vector = Vector
+
+util.AddNetworkString( "CFC_SpawnEditor_ActiveSpawnCenter" )
+
 
 local function defaultPvpCenter()
     return pvpCenters[1]
@@ -438,6 +442,23 @@ local function updatePopularCenter( measurablePlayers )
 
     CENTER_CUTOFF = mostPopularCenter.overrideCutoff or DEFAULT_CENTER_CUTOFF
     CENTER_CUTOFF_SQR = mostPopularCenter.overrideCutoffSqr or DEFAULT_CENTER_CUTOFF_SQR
+
+    -- Network to editors
+    local editors = CFCRandomSpawn.EditingPlayers
+    if not next( editors ) then return end
+
+    -- Validate
+    for i = #editors, 1, -1 do
+        if not IsValid( editors[i] ) then
+            table.remove( editors, i )
+        end
+    end
+
+    if not next( editors ) then return end
+
+    net.Start( "CFC_SpawnEditor_ActiveSpawnCenter" )
+    net.WriteVector( mostPopularCenter.centerPos )
+    net.Send( editors )
 end
 
 function CFCRandomSpawn.getOptimalSpawnPos()
