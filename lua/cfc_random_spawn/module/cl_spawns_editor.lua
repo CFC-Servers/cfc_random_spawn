@@ -2,6 +2,8 @@ local boxColor = Color( 0, 255, 0 )
 local lineColor = Color( 0, 255, 0 )
 local centerColor = Color( 255, 0, 0 )
 local centerPointColor = Color( 255, 145, 0 )
+local zoneUnconfirmedColor = Color( 255, 0, 255 )
+local zoneConfirmedColor = Color( 0, 255, 255 )
 local minDeletionRange = 5000
 local suggestedSpawnCount = 25
 local eyeHeight = 55
@@ -10,10 +12,18 @@ local playerMaxs = Vector( 16, 16, 72 )
 
 local spawnEditorEnabled = false
 local emptyAngle = Angle()
+local emptyVector = Vector()
 local shownClearWarning = false
 local shownSpawnCountWarning = false
 local clearCode = tostring( math.random( 1000, 9999 ) )
 local spawnTable = {}
+local zoneCornerA = nil
+local zoneCornerB = nil
+
+
+local function roundVector( vec, idp )
+    return Vector( math.Round( vec[1], idp ), math.Round( vec[2], idp ), math.Round( vec[3], idp ) )
+end
 
 local function requestSpawnPoints()
     net.Start( "CFC_SpawnEditor_RequestSpawnPoints" )
@@ -74,6 +84,16 @@ hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", f
             end
         end
     end
+
+    if spawnTable.zones then
+        for _, zone in ipairs( spawnTable.zones ) do
+            render.DrawWireframeBox( emptyVector, emptyAngle, zone.cornerA, zone.cornerB, zoneConfirmedColor, false )
+        end
+    end
+
+    if zoneCornerA and zoneCornerB then
+        render.DrawWireframeBox( emptyVector, emptyAngle, zoneCornerA, zoneCornerB, zoneUnconfirmedColor, false )
+    end
 end )
 
 local function toggleEditor( ply )
@@ -97,9 +117,7 @@ local function addSpawn( ply )
     if not canRunCommand() then return end
     if not spawnTable.spawnpoints then spawnTable.spawnpoints = {} end
 
-    local pos = ply:GetPos()
-    pos = Vector( math.Round( pos.x ), math.Round( pos.y ), math.Round( pos.z ) )
-
+    local pos = roundVector( ply:GetPos() )
     local eyeAngles = ply:EyeAngles():SnapTo( "y", 11.25 ) -- 11.25 * 32 == 360
 
     table.insert( spawnTable.spawnpoints, { spawnPos = pos, spawnAngle = Angle( 0, math.Round( eyeAngles.yaw ), 0 ) } )
@@ -181,6 +199,93 @@ end
 
 concommand.Add( "cfc_spawneditor_cutoff", setCenterCutoff, _, "Sets the cutoff for pvp centers, requires a number." )
 
+local function markZoneA( ply, _, _, argsStr )
+    if not canRunCommand() then return end
+
+    zoneCornerA = roundVector( argsStr == "eyes" and ply:EyePos() or ply:GetPos() )
+end
+
+concommand.Add( "cfc_spawneditor_zonea", markZoneA, _, "Marks corner A for a pvp spawn zone. Pass an argument of 'eyes' to position at your eyes instead of your feet." )
+
+local function markZoneB( ply, _, _, argsStr )
+    if not canRunCommand() then return end
+
+    zoneCornerB = roundVector( argsStr == "eyes" and ply:EyePos() or ply:GetPos() )
+end
+
+concommand.Add( "cfc_spawneditor_zoneb", markZoneB, _, "Marks corner B for a pvp spawn zone. Pass an argument of 'eyes' to position at your eyes instead of your feet." )
+
+local function cancelZoneMarking()
+    if not canRunCommand() then return end
+
+    zoneCornerA = nil
+    zoneCornerB = nil
+end
+
+concommand.Add( "cfc_spawneditor_zonecancel", cancelZoneMarking, _, "Cancels pvp spawn zone marking." )
+
+local function addZone()
+    if not canRunCommand() then return end
+    if not spawnTable.zones then spawnTable.zones = {} end
+
+    if not zoneCornerA then
+        print( "Missing corner A" )
+        return
+    end
+
+    if not zoneCornerB then
+        print( "Missing corner B" )
+        return
+    end
+
+    table.insert( spawnTable.zones, { cornerA = zoneCornerA, cornerB = zoneCornerB } )
+    zoneCornerA = nil
+    zoneCornerB = nil
+    sendConfigChangesToServer()
+end
+
+concommand.Add( "cfc_spawneditor_zoneadd", addZone, _, "Marks corner A for a pvp spawn zone" )
+
+local volumeShrinkMult = 1 / 100
+local function removeZone( ply, _, _, argsStr )
+    if not canRunCommand() then return end
+    if not spawnTable.zones then spawnTable.zones = {} end
+
+    local pos = argsStr == "eyes" and ply:EyePos() or ply:GetPos()
+    local bestZoneID = nil
+    local bestVolume = math.huge
+    local zones = spawnTable.zones
+
+    for zoneID, zone in ipairs( zones ) do
+        local a = zone.cornerA
+        local b = zone.cornerB
+
+        if pos:WithinAABox( a, b ) then
+            -- Shrink the difference before getting volume so the result doesn't blow out of float range.
+            local volumeApprox = math.abs(
+                ( ( a[1] - b[1] ) * volumeShrinkMult ) *
+                ( ( a[2] - b[2] ) * volumeShrinkMult ) *
+                ( ( a[3] - b[3] ) * volumeShrinkMult )
+            )
+
+            if volumeApprox < bestVolume then
+                bestZoneID = zoneID
+                bestVolume = volumeApprox
+            end
+        end
+    end
+
+    if not bestZoneID then
+        print( "You are not inside a pvp spawn zone." )
+        return
+    end
+
+    table.remove( zones, bestZoneID )
+    sendConfigChangesToServer()
+end
+
+concommand.Add( "cfc_spawneditor_zonedel", removeZone, _, "Removes the smallest pvp spawn zone you are inside. Pass an argument of 'eyes' to position at your eyes instead of your feet." )
+
 local function printSpawnTable()
     if not canRunCommand() then return end
 
@@ -206,6 +311,17 @@ local function printSpawnTable()
         for _, center in ipairs( spawnTable.pvpCenters ) do
             mainString = mainString .. tab .. tab .. "{ "
             mainString = mainString .. string.format( "centerPos = Vector( %s, %s, %s )", center.centerPos.x, center.centerPos.y, center.centerPos.z )
+            mainString = mainString .. " },\n"
+        end
+        mainString = mainString .. tab .. "},\n"
+    end
+
+    if istable( spawnTable.zones ) then
+        mainString = mainString .. tab .. "zones = {\n"
+        for _, zone in ipairs( spawnTable.zones ) do
+            mainString = mainString .. tab .. tab .. "{ "
+            mainString = mainString .. string.format( "cornerA = Vector( %s, %s, %s ), ", zone.cornerA.x, zone.cornerA.y, zone.cornerA.z )
+            mainString = mainString .. string.format( "cornerB = Vector( %s, %s, %s ) ", zone.cornerB.x, zone.cornerB.y, zone.cornerB.z )
             mainString = mainString .. " },\n"
         end
         mainString = mainString .. tab .. "},\n"
