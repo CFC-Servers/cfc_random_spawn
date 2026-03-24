@@ -476,3 +476,10 @@ timer.Create( "CFC_RandomSpawn_CalculateMostPopularPvpCenter", CENTER_UPDATE_INT
 
     updatePopularCenter( measurablePlayers )
 end )
+
+concommand.Add( "cfc_spawneditor_center_interval", function( ply, _, args )
+    if IsValid( ply ) and not ply:IsAdmin() then return end
+    if #args == 0 then return end
+
+    timer.Adjust( "CFC_RandomSpawn_CalculateMostPopularPvpCenter", tonumber( args[1] ), 0 )
+end, nil, "Sets the update interval for pvp centers. Lasts until the next map change." )
