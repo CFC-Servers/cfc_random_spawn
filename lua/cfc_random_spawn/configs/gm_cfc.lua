@@ -1,6 +1,11 @@
--- TODO: Place underground spawns and add a system that allows spawns to be grouped by z-pos and select based on where the player was before dying
+-- TODO: Place underground spawns
 
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_cfc"] = {
+   dynamicCenterStartingPos = Vector( 3330, -7300, 360 ),
+   zones = {
+      { cornerA = Vector( 15410, -16280, -230 ), cornerB = Vector( -15410, 2700, 4500 ), },
+      { cornerA = Vector( 15410, -16280, -231 ), cornerB = Vector( -15410, 2700, -2000 ), },
+   },
    spawnpoints = {
       { spawnPos = Vector( -7124, -10097, 276 ), spawnAngle = Angle( 0, -45, 0 ) },
       { spawnPos = Vector( -5735, -10162, 276 ), spawnAngle = Angle( 0, -90, 0 ) },
