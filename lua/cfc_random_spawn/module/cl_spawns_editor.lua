@@ -315,9 +315,9 @@ local function printSpawnTable()
         mainString = mainString .. tab .. "centerUpdateInterval = " .. spawnTable.centerUpdateInterval .. ",\n"
     end
 
-    if spawnTable.dynamicCenterFallback then
-        local vec = spawnTable.dynamicCenterFallback
-        mainString = mainString .. tab .. string.format( "dynamicCenterFallback = Vector( %s, %s, %s ),\n", vec.x, vec.y, vec.z )
+    if spawnTable.dynamicCenterStartingPos then
+        local vec = spawnTable.dynamicCenterStartingPos
+        mainString = mainString .. tab .. string.format( "dynamicCenterStartingPos = Vector( %s, %s, %s ),\n", vec.x, vec.y, vec.z )
     end
 
     if istable( spawnTable.pvpCenters ) then
