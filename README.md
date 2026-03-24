@@ -67,6 +67,7 @@ Features:
   - Zones will be previewed in magenta, then turn cyan when confirmed.
 - To change the cutoff radius for the current map `cfc_spawneditor_cutoff`
 - To export the current map's spawnpoints to console use `cfc_spawneditor_export`, you can then paste this into sv_config.lua
+- To change the pdate interval for pvp centers temporarily for debugging, use `cfc_spawneditor_center_interval <interval>`
 
 Visual appearance:
 ![image](https://user-images.githubusercontent.com/69946827/190715330-645c7701-953d-452e-aa52-9908e479eecf.png)
