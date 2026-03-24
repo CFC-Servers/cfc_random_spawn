@@ -240,7 +240,7 @@ CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_cfc"] = {
       { spawnPos = Vector( -6686, -10055, 283 ), spawnAngle = Angle( 0, -180, 0 ) },
       { spawnPos = Vector( 5721, -9840, 532 ), spawnAngle = Angle( 0, -180, 0 ) },
       { spawnPos = Vector( -6424, -4994, 20 ), spawnAngle = Angle( 0, -135, 0 ) },
-      { spawnPos = Vector( -7104, -3428, 20 ), spawnAngle = Angle( 0, 0, 0 ) },
+      { spawnPos = Vector( -7104, -3428, 21 ), spawnAngle = Angle( 0, 0, 0 ) },
       { spawnPos = Vector( 2515, -9471, 500 ), spawnAngle = Angle( 0, 0, 0 ) },
       { spawnPos = Vector( -7098, -5152, 21 ), spawnAngle = Angle( 0, 0, 0 ) },
       { spawnPos = Vector( -7212, -7779, 720 ), spawnAngle = Angle( 0, 0, 0 ) },
