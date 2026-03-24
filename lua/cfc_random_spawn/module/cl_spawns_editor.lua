@@ -307,6 +307,14 @@ local function printSpawnTable()
 
     local mainString = string.format( [[CFCRandomSpawn.Config.CUSTOM_SPAWNS["%s"] = {%s]], game.GetMap(), "\n" )
 
+    if spawnTable.centerCutoff then
+        mainString = mainString .. tab .. "centerCutoff = " .. spawnTable.centerCutoff .. ",\n"
+    end
+
+    if spawnTable.centerUpdateInterval then
+        mainString = mainString .. tab .. "centerUpdateInterval = " .. spawnTable.centerUpdateInterval .. ",\n"
+    end
+
     if spawnTable.dynamicCenterFallback then
         local vec = spawnTable.dynamicCenterFallback
         mainString = mainString .. tab .. string.format( "dynamicCenterFallback = Vector( %s, %s, %s ),\n", vec.x, vec.y, vec.z )
