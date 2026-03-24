@@ -1,6 +1,9 @@
 util.AddNetworkString( "CFC_SpawnEditor_SendSpawnPoints" )
 util.AddNetworkString( "CFC_SpawnEditor_RequestSpawnPoints" )
 util.AddNetworkString( "CFC_SpawnEditor_UpdateSpawnPoints" )
+util.AddNetworkString( "CFC_SpawnEditor_SetEditing" )
+
+CFCRandomSpawn.EditingPlayers = CFCRandomSpawn.EditingPlayers or {}
 
 net.Receive( "CFC_SpawnEditor_RequestSpawnPoints", function( _, ply )
     if not ply:IsAdmin() then return end
@@ -20,4 +23,16 @@ net.Receive( "CFC_SpawnEditor_UpdateSpawnPoints", function( _, ply )
 
     CFCRandomSpawn.Config.CUSTOM_SPAWNS[game.GetMap()] = newSpawnTable
     CFCRandomSpawn.refreshMapInfo()
+end )
+
+net.Receive( "CFC_SpawnEditor_SetEditing", function( _, ply )
+    if not ply:IsAdmin() then return end
+
+    if net.ReadBool() then
+        if not table.HasValue( CFCRandomSpawn.EditingPlayers ) then
+            table.insert( CFCRandomSpawn.EditingPlayers, ply )
+        end
+    else
+        table.RemoveByValue( CFCRandomSpawn.EditingPlayers, ply )
+    end
 end )
