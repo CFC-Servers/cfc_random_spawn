@@ -55,8 +55,9 @@ local function sendConfigChangesToServer()
     net.SendToServer()
 end
 
-hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", function()
+hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", function( _, sky, sky3d )
     if not spawnEditorEnabled then return end
+    if sky or sky3d then return end
 
     local centerCutoff = spawnTable.centerCutoff or 3000
 
