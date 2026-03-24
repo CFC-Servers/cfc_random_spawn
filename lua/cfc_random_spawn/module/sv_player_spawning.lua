@@ -9,6 +9,7 @@ local pvpCenters = customSpawnConfigForMap.pvpCenters or {}
 local DEFAULT_CENTER_CUTOFF = customSpawnConfigForMap.centerCutoff or CFCRandomSpawn.Config.DEFAULT_CENTER_CUTOFF
 local DEFAULT_CENTER_CUTOFF_SQR = DEFAULT_CENTER_CUTOFF ^ 2
 local CENTER_CUTOFF_SQR = DEFAULT_CENTER_CUTOFF_SQR
+local DYNAMIC_CENTER_FALLBACK = customSpawnConfigForMap.dynamicCenterFallback or Vector()
 local SELECTION_SIZE = CFCRandomSpawn.Config.SELECTION_SIZE
 local CLOSENESS_LIMIT = CFCRandomSpawn.Config.CLOSENESS_LIMIT ^ 2
 local CENTER_UPDATE_INTERVAL = customSpawnConfigForMap.centerUpdateInterval or CFCRandomSpawn.Config.CENTER_UPDATE_INTERVAL
@@ -333,7 +334,7 @@ local function getPlayerPopularityFromPoint( point, plys, radiusSqr )
 end
 
 local function getDynamicPvpCenter( measurablePlayers )
-    local playersAveragePos = getPlyAvg( measurablePlayers, nil )
+    local playersAveragePos = getPlyAvg( measurablePlayers, DYNAMIC_CENTER_FALLBACK )
 
     local measurablePlysCount = #measurablePlayers
 

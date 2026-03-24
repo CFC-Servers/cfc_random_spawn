@@ -307,6 +307,11 @@ local function printSpawnTable()
 
     local mainString = string.format( [[CFCRandomSpawn.Config.CUSTOM_SPAWNS["%s"] = {%s]], game.GetMap(), "\n" )
 
+    if spawnTable.dynamicCenterFallback then
+        local vec = spawnTable.dynamicCenterFallback
+        mainString = mainString .. tab .. string.format( "dynamicCenterFallback = Vector( %s, %s, %s ),\n", vec.x, vec.y, vec.z )
+    end
+
     if istable( spawnTable.pvpCenters ) then
         mainString = mainString .. tab .. "pvpCenters = {\n"
         for _, center in ipairs( spawnTable.pvpCenters ) do

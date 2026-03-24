@@ -23,6 +23,7 @@ Adding spawnpoints is done as follows:
   ```lua
   CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_bluehills_test3"] = {
     centerCutoff = NUMBER,
+    dynamicCenterFallback = VECTOR,
     pvpCenters = {
         { centerPos = VECTOR, overrideCutoff = NUMBER },
         ...
@@ -40,6 +41,7 @@ Adding spawnpoints is done as follows:
   Where 
   - `centerCutoff` overrides `DEFAULT_CENTER_CUTOFF` for this map
   - `centerUpdateInterval` overrives `CENTER_UPDATE_INTERVAL` for this map
+  - `dynamicCenterFallback` defines the position to use for locating the dynamic pvp center (requies no manual pvp centers) when no active combat is happening. Best positioned at the 'natural spawn area' of the map. Defaults to `Vector( 0, 0, 0 )`.
   - **pvpCenters**: defines one or more central positions where pvp most often takes place around, with the first one being the fallback if there are no pvpers. If none are defined, will default to the average position of all spawnpoints for this map.
     - `centerPos` is the position for the pvp center
     - `overrideCutoff` overrides the map/default cutoff value for obtaining the average player position near this specific pvp center, useful for maps with many centers that vary heavily in size
