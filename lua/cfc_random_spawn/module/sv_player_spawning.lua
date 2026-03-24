@@ -141,6 +141,15 @@ local function getMeasurablePlayers()
         end
     end
 
+    -- Retry without the combat check if no one's been active
+    if #measurablePlayers == 0 then
+        for _, ply in pairs( humans ) do
+            if ply:Alive() then
+                table.insert( measurablePlayers, ply )
+            end
+        end
+    end
+
     return measurablePlayers
 end
 
