@@ -1,8 +1,9 @@
 local boxColor = Color( 0, 255, 0 )
 local lineColor = Color( 0, 255, 0 )
-local centerColor = Color( 255, 0, 0 )
-local centerPointColor = Color( 255, 145, 0 )
+local centerPointColor = Color( 255, 0, 0 )
+local centerRangeColor = Color( 255, 145, 0 )
 local centerActiveColor = Color( 255, 230, 0 )
+local centerActiveRangeColor = Color( 255, 195, 0 )
 local zoneUnconfirmedColor = Color( 255, 0, 255 )
 local zoneConfirmedColor = Color( 0, 255, 255 )
 local minDeletionRange = 5000
@@ -20,7 +21,7 @@ local clearCode = tostring( math.random( 1000, 9999 ) )
 local spawnTable = {}
 local zoneCornerA = nil
 local zoneCornerB = nil
-local activeSpawnCenterPos = nil
+local activeSpawnCenter = nil
 
 
 local function roundVector( vec, idp )
@@ -57,11 +58,22 @@ local function sendConfigChangesToServer()
     net.SendToServer()
 end
 
+local function drawPvPCenter( center, pointColor, rangeColor, radius )
+    local pos = center.centerPos
+    local cutoff = spawnTable.centerCutoff or 3000
+
+    if cutoff > LocalPlayer():GetPos():Distance( pos ) then
+        render.DrawLine( pos - Vector( 0, 0, cutoff ), pos + Vector( 0, 0, cutoff ), pointColor, true )
+        render.DrawWireframeSphere( pos, cutoff, 75, 75, rangeColor, true )
+        render.DrawWireframeSphere( pos, radius, 20, 20, pointColor, false )
+    else
+        render.DrawWireframeSphere( pos, radius, 10, 20, pointColor, false )
+    end
+end
+
 hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", function( _, sky, sky3d )
     if not spawnEditorEnabled then return end
     if sky or sky3d then return end
-
-    local centerCutoff = spawnTable.centerCutoff or 3000
 
     if spawnTable.spawnpoints then
         for _, spawn in ipairs( spawnTable.spawnpoints ) do
@@ -76,15 +88,7 @@ hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", f
 
     if spawnTable.pvpCenters then
         for _, center in ipairs( spawnTable.pvpCenters ) do
-            local centerPos = center.centerPos
-
-            if centerCutoff > LocalPlayer():GetPos():Distance( centerPos ) then
-                render.DrawLine( centerPos - Vector( 0, 0, centerCutoff ), centerPos + Vector( 0, 0, centerCutoff ), centerColor, true )
-                render.DrawWireframeSphere( centerPos, centerCutoff, 75, 75, centerPointColor, true )
-                render.DrawWireframeSphere( centerPos, 5, 20, 20, centerColor, false )
-            else
-                render.DrawWireframeSphere( centerPos, 40, 10, 20, centerColor, false )
-            end
+            drawPvPCenter( center, centerPointColor, centerRangeColor, 40 )
         end
     end
 
@@ -98,8 +102,8 @@ hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", f
         render.DrawWireframeBox( emptyVector, emptyAngle, zoneCornerA, zoneCornerB, zoneUnconfirmedColor, false )
     end
 
-    if activeSpawnCenterPos then
-        render.DrawWireframeSphere( activeSpawnCenterPos, 50, 10, 16, centerActiveColor, false )
+    if activeSpawnCenter then
+        drawPvPCenter( activeSpawnCenter, centerActiveColor, centerActiveRangeColor, 50 )
     end
 end )
 
@@ -395,6 +399,9 @@ end
 concommand.Add( "cfc_spawneditor_clearall", clearAll, _, "Clears all spawn points and pvp centers. Dangerous." )
 
 
-net.Receive( "CFC_SpawnEditor_ActiveSpawnCenterPos", function()
-    activeSpawnCenterPos = net.ReadVector()
+net.Receive( "CFC_SpawnEditor_ActiveSpawnCenter", function()
+    activeSpawnCenter = {
+        centerPos = net.ReadVector(),
+        centerCutoff = net.ReadFloat(),
+    }
 end )
