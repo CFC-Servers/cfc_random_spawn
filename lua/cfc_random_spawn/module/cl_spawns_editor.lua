@@ -395,6 +395,6 @@ end
 concommand.Add( "cfc_spawneditor_clearall", clearAll, _, "Clears all spawn points and pvp centers. Dangerous." )
 
 
-net.Receive( "CFC_SpawnEditor_ActiveSpawnCenter", function()
+net.Receive( "CFC_SpawnEditor_ActiveSpawnCenterPos", function()
     activeSpawnCenterPos = net.ReadVector()
 end )
