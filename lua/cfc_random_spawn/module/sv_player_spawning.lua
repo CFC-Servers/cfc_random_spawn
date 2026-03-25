@@ -467,6 +467,7 @@ local function updatePopularCenter( measurablePlayers )
     net.Start( "CFC_SpawnEditor_ActiveCenter" )
     net.WriteVector( mostPopularCenter.centerPos )
     net.WriteFloat( mostPopularCenter.centerCutoff or DEFAULT_CENTER_CUTOFF )
+    net.WriteUInt( mostPopularCenter.zoneID, 10 )
     net.Send( editors )
 end
 

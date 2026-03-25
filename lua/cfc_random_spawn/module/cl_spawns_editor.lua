@@ -77,16 +77,38 @@ hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", f
     if sky or sky3d then return end
 
     if spawnTable.spawnpoints then
-        local activeCenterPos = activeCenter and activeCenter.centerPos
-        local activeCenterCutoff = activeCenter and activeCenter.centerCutoff or centerCutoffDefault
+        local activeCenterPos
+        local activeCenterCutoff
+        local activeCenterZoneCornerA
+        local activeCenterZoneCornerB
 
+        -- Cace active center stuff
+        if activeCenter then
+            activeCenterPos = activeCenter.centerPos
+            activeCenterCutoff = activeCenter.centerCutoff or centerCutoffDefault
+
+            if spawnTable.zones then
+                local zone = spawnTable.zones[activeCenter.zoneID]
+
+                if zone then
+                    activeCenterZoneCornerA = zone.cornerA
+                    activeCenterZoneCornerB = zone.cornerB
+                end
+            end
+        end
+
+        -- Draw spawns
         for _, spawn in ipairs( spawnTable.spawnpoints ) do
             local spawnPos = spawn.spawnPos
             local spawnAngle = spawn.spawnAngle
             local color = spawnColor
 
             if activeCenterPos and spawnPos:Distance( activeCenterPos ) <= activeCenterCutoff then
-                color = spawnColorActiveCenter
+                local isInZone = activeCenterZoneCornerA == nil or spawnPos:WithinAABox( activeCenterZoneCornerA, activeCenterZoneCornerB )
+
+                if isInZone then
+                    color = spawnColorActiveCenter
+                end
             end
 
             render.DrawWireframeBox( spawnPos, spawnAngle or emptyAngle, playerMins, playerMaxs, color, false )
@@ -413,5 +435,6 @@ net.Receive( "CFC_SpawnEditor_ActiveCenter", function()
     activeCenter = {
         centerPos = net.ReadVector(),
         centerCutoff = net.ReadFloat(),
+        zoneID = net.ReadUInt( 10 ),
     }
 end )
