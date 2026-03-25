@@ -1,9 +1,9 @@
 local spawnColor = Color( 0, 255, 0 )
-local spawnColorActiveCenter = Color( 200, 255, 0 )
+local spawnColorActiveCenter = Color( 0, 180, 255 )
 local centerPointColor = Color( 255, 0, 0 )
 local centerRangeColor = Color( 255, 145, 0 )
-local centerActiveColor = Color( 255, 230, 0 )
-local centerActiveRangeColor = Color( 255, 195, 0 )
+local centerActiveColor = Color( 0, 50, 255 )
+local centerActiveRangeColor = Color( 75, 0, 255 )
 local zoneUnconfirmedColor = Color( 255, 0, 255 )
 local zoneConfirmedColor = Color( 0, 255, 255 )
 local minDeletionRange = 5000
