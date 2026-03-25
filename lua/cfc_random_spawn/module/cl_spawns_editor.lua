@@ -21,7 +21,7 @@ local clearCode = tostring( math.random( 1000, 9999 ) )
 local spawnTable = {}
 local zoneCornerA = nil
 local zoneCornerB = nil
-local activeSpawnCenter = nil
+local activeCenter = nil
 local centerCutoffDefault = 3000
 
 
@@ -77,8 +77,8 @@ hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", f
     if sky or sky3d then return end
 
     if spawnTable.spawnpoints then
-        local activeCenterPos = activeSpawnCenter and activeSpawnCenter.centerPos
-        local activeCenterCutoff = activeSpawnCenter and activeSpawnCenter.centerCutoff or centerCutoffDefault
+        local activeCenterPos = activeCenter and activeCenter.centerPos
+        local activeCenterCutoff = activeCenter and activeCenter.centerCutoff or centerCutoffDefault
 
         for _, spawn in ipairs( spawnTable.spawnpoints ) do
             local spawnPos = spawn.spawnPos
@@ -112,8 +112,8 @@ hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", f
         render.DrawWireframeBox( emptyVector, emptyAngle, zoneCornerA, zoneCornerB, zoneUnconfirmedColor, false )
     end
 
-    if activeSpawnCenter then
-        drawPvPCenter( activeSpawnCenter, centerActiveColor, centerActiveRangeColor, 50 )
+    if activeCenter then
+        drawPvPCenter( activeCenter, centerActiveColor, centerActiveRangeColor, 50 )
     end
 end )
 
@@ -409,8 +409,8 @@ end
 concommand.Add( "cfc_spawneditor_clearall", clearAll, _, "Clears all spawn points and pvp centers. Dangerous." )
 
 
-net.Receive( "CFC_SpawnEditor_ActiveSpawnCenter", function()
-    activeSpawnCenter = {
+net.Receive( "CFC_SpawnEditor_ActiveCenter", function()
+    activeCenter = {
         centerPos = net.ReadVector(),
         centerCutoff = net.ReadFloat(),
     }
