@@ -1,5 +1,5 @@
-local boxColor = Color( 0, 255, 0 )
-local lineColor = Color( 0, 255, 0 )
+local spawnColor = Color( 0, 255, 0 )
+local spawnColorActiveCenter = Color( 200, 255, 0 )
 local centerPointColor = Color( 255, 0, 0 )
 local centerRangeColor = Color( 255, 145, 0 )
 local centerActiveColor = Color( 255, 230, 0 )
@@ -22,6 +22,7 @@ local spawnTable = {}
 local zoneCornerA = nil
 local zoneCornerB = nil
 local activeSpawnCenter = nil
+local centerCutoffDefault = 3000
 
 
 local function roundVector( vec, idp )
@@ -60,7 +61,7 @@ end
 
 local function drawPvPCenter( center, pointColor, rangeColor, radius )
     local pos = center.centerPos
-    local cutoff = spawnTable.centerCutoff or 3000
+    local cutoff = spawnTable.centerCutoff or centerCutoffDefault
 
     if cutoff > LocalPlayer():GetPos():Distance( pos ) then
         render.DrawLine( pos - Vector( 0, 0, cutoff ), pos + Vector( 0, 0, cutoff ), pointColor, true )
@@ -76,13 +77,22 @@ hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", f
     if sky or sky3d then return end
 
     if spawnTable.spawnpoints then
+        local activeCenterPos = activeSpawnCenter and activeSpawnCenter.centerPos
+        local activeCenterCutoff = activeSpawnCenter and activeSpawnCenter.centerCutoff or centerCutoffDefault
+
         for _, spawn in ipairs( spawnTable.spawnpoints ) do
             local spawnPos = spawn.spawnPos
             local spawnAngle = spawn.spawnAngle
-            render.DrawWireframeBox( spawnPos, spawnAngle or emptyAngle, playerMins, playerMaxs, boxColor, false )
+            local color = spawnColor
+
+            if activeCenterPos and spawnPos:Distance( activeCenterPos ) <= activeCenterCutoff then
+                color = spawnColorActiveCenter
+            end
+
+            render.DrawWireframeBox( spawnPos, spawnAngle or emptyAngle, playerMins, playerMaxs, color, false )
 
             local linePos = spawnPos + Vector( 0, 0, eyeHeight )
-            render.DrawLine( linePos, linePos + spawnAngle:Forward() * 50, lineColor, false )
+            render.DrawLine( linePos, linePos + spawnAngle:Forward() * 50, color, false )
         end
     end
 
