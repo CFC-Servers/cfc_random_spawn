@@ -332,8 +332,8 @@ local function findFreeSpawnPoint( spawns, plys )
     return customSpawnsForMap[math.random( 1, #customSpawnsForMap )] -- If all spawnpoints are full, just return a random spawn anywhere in the map. Rare case.
 end
 
-local function getPlyAvg( plys, centerPos )
-    if not plys or not plys[1] then return centerPos or Vector() end
+local function getPlyAvg( plys, fallbackPos )
+    if not plys or not plys[1] then return fallbackPos or Vector() end
 
     local avgSum = Vector( 0, 0, 0 )
 
