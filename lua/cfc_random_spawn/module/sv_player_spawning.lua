@@ -44,7 +44,7 @@ local spawnTraceRequest = {
 local CurTime = CurTime
 local Vector = Vector
 
-util.AddNetworkString( "CFC_SpawnEditor_ActiveSpawnCenterPos" )
+util.AddNetworkString( "CFC_SpawnEditor_ActiveSpawnCenter" )
 
 
 local function defaultPvpCenter()
@@ -464,8 +464,9 @@ local function updatePopularCenter( measurablePlayers )
 
     if not next( editors ) then return end
 
-    net.Start( "CFC_SpawnEditor_ActiveSpawnCenterPos" )
+    net.Start( "CFC_SpawnEditor_ActiveSpawnCenter" )
     net.WriteVector( mostPopularCenter.centerPos )
+    net.WriteFloat( mostPopularCenter.centerCutoff or DEFAULT_CENTER_CUTOFF )
     net.Send( editors )
 end
 
