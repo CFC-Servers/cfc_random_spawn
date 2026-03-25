@@ -1,12 +1,6 @@
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_obselisk"] = {
     centerCutoff = 3000,
     centerUpdateInterval = nil,
-    pvpCenters = {
-        { centerPos = Vector( -3981, -762, -1344 ), overrideCutoff = 3000 },
-        { centerPos = Vector( -5558, 56, -1344 ), overrideCutoff = 3000 },
-        { centerPos = Vector( -1693, -673, -1344 ), overrideCutoff = 3000 },
-        { centerPos = Vector( 2904, -588, -2624 ), overrideCutoff = 3000 }
-    },
     spawnpoints = {
         { spawnPos = Vector( -3680, -349, -1334 ), spawnAngle = Angle( 0, 45, 0 ), pvp = true },
         { spawnPos = Vector( -4513, -350, -1334 ), spawnAngle = Angle( 0, 135, 0 ), pvp = true },

@@ -1,19 +1,6 @@
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_mobenix_v3_final"] = {
     centerCutoff = 4500,
     centerUpdateInterval = nil,
-    pvpCenters = {
-        { centerPos = Vector( -9412, -2020, 10445 ), overrideCutoff = 3000 },
-        { centerPos = Vector( -384, 1271, -204 ), overrideCutoff = 3000 },
-        { centerPos = Vector( 3248, 2223, -321 ), overrideCutoff = 3000 },
-        { centerPos = Vector( -1072, 11970, 1086 ), overrideCutoff = 4000 },
-        { centerPos = Vector( 5202, -10829, 136 ), overrideCutoff = 4000 },
-        { centerPos = Vector( 8003, 3930, -315 ), overrideCutoff = 4000 },
-        { centerPos = Vector( 8497, -9219, 95 ), overrideCutoff = 3000 },
-        { centerPos = Vector( 10257, -342, -210 ), overrideCutoff = 4000 },
-        { centerPos = Vector( 8164, 9508, -443 ), overrideCutoff = 4000 },
-        { centerPos = Vector( 11528, -6996, -210 ), overrideCutoff = 4000 },
-        { centerPos = Vector( 15346, -8156, -461 ), overrideCutoff = 3000 }
-    },
     spawnpoints = {
         { spawnPos = Vector( -9124, -1747, 10384 ), spawnAngle = Angle( 0, 179, 0 ), pvp = true },
         { spawnPos = Vector( -9687, -1744, 10384 ), spawnAngle = Angle( 0, -1, 0 ), pvp = true },

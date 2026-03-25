@@ -25,10 +25,6 @@ Adding spawnpoints is done as follows:
     centerCutoff = NUMBER,
     centerUpdateInterval = NUMBER,
     dynamicCenterStartingPos = VECTOR,
-    pvpCenters = {
-        { centerPos = VECTOR, overrideCutoff = NUMBER },
-        ...
-    },
     zones = {
         { cornerA = VECTOR, cornerB = VECTOR },
         ...
@@ -42,10 +38,7 @@ Adding spawnpoints is done as follows:
   Where 
   - `centerCutoff` overrides `DEFAULT_CENTER_CUTOFF` for this map.
   - `centerUpdateInterval` overrides `CENTER_UPDATE_INTERVAL` for this map.
-  - `dynamicCenterStartingPos` defines the position to use for locating the dynamic pvp center (requies zero manual pvp centers) when no active combat is happening. Best positioned at the 'natural spawn area' of the map, as this is guaranteed to happen on initial map load. Defaults to `Vector( 0, 0, 0 )`.
-  - **pvpCenters**: defines one or more central positions where pvp most often takes place around, with the first one being the fallback if there are no pvpers. If none are defined, will default to the average position of all spawnpoints for this map.
-    - `centerPos` is the position for the pvp center.
-    - `overrideCutoff` overrides the map/default cutoff value for obtaining the average player position near this specific pvp center, useful for maps with many centers that vary heavily in size.
+  - `dynamicCenterStartingPos` defines the position to use for locating the dynamic pvp center when no active combat is happening. Best positioned at the 'natural spawn area' of the map, as this is guaranteed to happen on initial map load. Defaults to `Vector( 0, 0, 0 )`.
   - **zones**: defines boxes that separate spawns into groups. Except in rare cases, spawns will only be chosen if they are in the same zone as the currently active pvp center. Any spawns not contained by a zone will be added to a default group.
     - `cornerA` is the first corner of the zone.
     - `cornerB` is the second corner of the zone.
@@ -62,10 +55,8 @@ To enable this tool run `cfc_spawneditor_toggle` in console.
 
 Features:
 - To add / remove spawns `cfc_spawneditor_spawnadd` / `cfc_spawneditor_spawndel`
-- To add / remove pvp centers `cfc_spawneditor_centeradd` / `cfc_spawneditor_centerdel`
 - To mark / cancel / add / remove zones `cfc_spawneditor_zonea` and `cfc_spawneditor_zoneb` / `cfc_spawneditor_zonecancel` / `cfc_spawneditor_zoneadd` / `cfc_spawneditor_zonedel`
   - Zones will be previewed in magenta, then turn cyan when confirmed.
-- To change the cutoff radius for the current map `cfc_spawneditor_cutoff`
 - To export the current map's spawnpoints to console use `cfc_spawneditor_export`, you can then paste this into sv_config.lua
 - To change the update interval for pvp centers temporarily for debugging, use `cfc_spawneditor_center_interval <interval>`
 
