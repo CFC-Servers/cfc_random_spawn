@@ -200,12 +200,20 @@ local function getLivingPlayers()
     return livingPlayers
 end
 
+local function isInZone( pos, zoneID )
+    if noZones or zoneID == fallbackZoneID then return true end
+
+    local zone = zonesForMap[zoneID]
+
+    return pos:WithinAABox( zone.cornerA, zone.cornerB )
+end
+
 local function getNearestSpawn( nearPos, spawns )
     local nearestSpawn
     local closestDistSqr = math.huge
     for _, spawn in ipairs( spawns ) do
         local distToNearSqr = spawn.spawnPos:DistToSqr( nearPos )
-        if distToNearSqr < closestDistSqr then
+        if distToNearSqr < closestDistSqr and isInZone( nearPos, spawn.zoneID ) then
             closestDistSqr = distToNearSqr
             nearestSpawn = spawn
         end
