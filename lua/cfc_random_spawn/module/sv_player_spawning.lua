@@ -370,7 +370,7 @@ local function getDynamicPvpCenter( measurablePlayers )
     return dynamicPvpCenter
 end
 
-local function updatePopularCenter( measurablePlayers )
+local function updateActivePvpCenter( measurablePlayers )
     activePvpCenter = getDynamicPvpCenter( measurablePlayers )
 
     CFCRandomSpawn.activePvpCenter = activePvpCenter
@@ -391,11 +391,7 @@ local function updatePopularCenter( measurablePlayers )
 
     if not next( editors ) then return end
 
-    net.Start( "CFC_SpawnEditor_ActivePvpCenter" )
-        net.WriteVector( activePvpCenter.centerPos )
-        net.WriteFloat( activePvpCenter.centerCutoff or DEFAULT_CENTER_CUTOFF )
-        net.WriteUInt( activePvpCenter.zoneID, 10 )
-    net.Send( editors )
+    syncActivePvpCenter()
 end
 
 function CFCRandomSpawn.getOptimalSpawnPos()
@@ -403,7 +399,7 @@ function CFCRandomSpawn.getOptimalSpawnPos()
     local allLivingPlys = getLivingPlayers()
 
     if not CFCRandomSpawn.activePvpCenter then
-        updatePopularCenter( measurablePlayers )
+        updateActivePvpCenter( measurablePlayers )
     end
 
     local spawnsInsideCenter = spawnsInsidePvpCenterCached( customSpawnsForMap )
@@ -434,7 +430,7 @@ timer.Create( "CFC_RandomSpawn_CalculateActivePvpCenter", CENTER_UPDATE_INTERVAL
     if not mapHasCustomSpawns then return end
     local measurablePlayers = getMeasurablePlayers()
 
-    updatePopularCenter( measurablePlayers )
+    updateActivePvpCenter( measurablePlayers )
 end )
 
 concommand.Add( "cfc_spawneditor_pvpcenter_update_interval", function( ply, _, args )
