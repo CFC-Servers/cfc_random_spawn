@@ -1,5 +1,5 @@
 local spawnColor = Color( 0, 255, 0 )
-local spawnColorActiveCenter = Color( 0, 180, 255 )
+local spawnColorActiveCenter = Color( 0, 255, 255 )
 local centerActiveColor = Color( 0, 50, 255 )
 local centerActiveRangeColor = Color( 75, 0, 255 )
 local zoneUnconfirmedColor = Color( 255, 0, 255 )
@@ -20,7 +20,6 @@ local spawnTable = {}
 local zoneCornerA = nil
 local zoneCornerB = nil
 local activeCenter = nil
-local centerCutoffDefault = 3000
 
 
 local function roundVector( vec, idp )
@@ -35,6 +34,16 @@ end
 net.Receive( "CFC_SpawnEditor_SendSpawnPoints", function()
     spawnTable = net.ReadTable()
 end )
+
+
+net.Receive( "CFC_SpawnEditor_SyncActivePvpCenter", function()
+    activeCenter = {
+        centerPos = net.ReadVector(),
+        radius = net.ReadFloat(),
+        zoneID = net.ReadUInt( 10 ),
+    }
+end )
+
 
 local function canRunCommand()
     local ply = LocalPlayer()
@@ -59,7 +68,7 @@ end
 
 local function drawActiveCenter( center, pointColor, rangeColor, radius )
     local pos = center.centerPos
-    local cutoff = spawnTable.centerCutoff or centerCutoffDefault
+    local cutoff = center.radius
 
     if cutoff > LocalPlayer():GetPos():Distance( pos ) then
         render.DrawLine( pos - Vector( 0, 0, cutoff ), pos + Vector( 0, 0, cutoff ), pointColor, true )
@@ -83,7 +92,7 @@ hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", f
         -- Cace active center stuff
         if activeCenter then
             activeCenterPos = activeCenter.centerPos
-            activeCenterCutoff = activeCenter.centerCutoff or centerCutoffDefault
+            activeCenterCutoff = activeCenter.radius
 
             if spawnTable.zones then
                 local zone = spawnTable.zones[activeCenter.zoneID]
@@ -297,10 +306,6 @@ local function printSpawnTable()
 
     local mainString = string.format( [[CFCRandomSpawn.Config.CUSTOM_SPAWNS["%s"] = {%s]], game.GetMap(), "\n" )
 
-    if spawnTable.centerCutoff then
-        mainString = mainString .. tab .. "centerCutoff = " .. spawnTable.centerCutoff .. ",\n"
-    end
-
     if spawnTable.centerUpdateInterval then
         mainString = mainString .. tab .. "centerUpdateInterval = " .. spawnTable.centerUpdateInterval .. ",\n"
     end
@@ -360,12 +365,3 @@ local function clearAll( _, _, args )
 end
 
 concommand.Add( "cfc_spawneditor_clearall", clearAll, _, "Clears all spawn points. Dangerous." )
-
-
-net.Receive( "CFC_SpawnEditor_ActivePvpCenter", function()
-    activeCenter = {
-        centerPos = net.ReadVector(),
-        centerCutoff = net.ReadFloat(),
-        zoneID = net.ReadUInt( 10 ),
-    }
-end )

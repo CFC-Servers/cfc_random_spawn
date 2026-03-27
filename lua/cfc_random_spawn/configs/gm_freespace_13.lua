@@ -1,5 +1,4 @@
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_freespace_13"] = {
-    centerCutoff = 3000,
     centerUpdateInterval = nil,
     spawnpoints = {
         { spawnPos = Vector( -1313, 25, -14566 ), spawnAngle = Angle( 0, 180, 0 ), pvp = true },

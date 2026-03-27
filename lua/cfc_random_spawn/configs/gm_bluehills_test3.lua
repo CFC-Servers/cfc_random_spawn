@@ -1,5 +1,4 @@
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_bluehills_test3"] = {
-    centerCutoff = 2000,
     centerUpdateInterval = nil,
     spawnpoints = {
         { spawnPos = Vector( 1104.6744384766,  131.18112182617,  64.03125 ) },

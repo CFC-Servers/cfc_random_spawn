@@ -1,5 +1,4 @@
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_excess_construct_13"] = {
-    centerCutoff = 2000,
     centerUpdateInterval = nil,
     spawnpoints = {
         { spawnPos = Vector( -3225, -568, 683 ), spawnAngle = Angle( 0, 0, 0 ), pvp = true },

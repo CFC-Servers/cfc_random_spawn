@@ -12,7 +12,7 @@ Clone or download this repository into your `garrysmod/addons` folder and restar
 ## Usage Instructions
 The config for this addon is located in the `cfc_random_spawn/lua/cfc_random_spawn/sv_config.lua` file.  
 Here you will find 2 config constants, and the spawn points table structure. The constants are as follows:
-- `DEFAULT_CENTER_CUTOFF` `(default 3000)` - Default cutoff range from the most popular pvp center, where players further away from this will be ignored. The system tries to place you closest to everyone else.
+- `DEFAULT_CENTER_RADIUS` `(default 3000)` - Default cutoff range from the most popular pvp center, where players further away from this will be ignored. The system tries to place you closest to everyone else.
 - `CLOSENESS_LIMIT` `(default 400)` - Will not choose spawnpoints that are within this many units of a valid player (i.e. a living pvper). 0 to disable.
 - `SELECTION_SIZE` `(default 8)` - Max number of 'ideal' spawnpoints to select from randomly.
 - `CENTER_UPDATE_INTERVAL` `(default 60)` - The gap (in seconds) between each center popularity update. If set to 0, will update on every respawn.
@@ -22,7 +22,6 @@ Adding spawnpoints is done as follows:
 - Create an entry to the `CUSTOM_SPAWNS` table for the map of your choosing, as follows:
   ```lua
   CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_bluehills_test3"] = {
-    centerCutoff = NUMBER,
     centerUpdateInterval = NUMBER,
     dynamicCenterStartingPos = VECTOR,
     zones = {
@@ -36,7 +35,6 @@ Adding spawnpoints is done as follows:
   }
   ```
   Where 
-  - `centerCutoff` overrides `DEFAULT_CENTER_CUTOFF` for this map.
   - `centerUpdateInterval` overrides `CENTER_UPDATE_INTERVAL` for this map.
   - `dynamicCenterStartingPos` defines the position to use for locating the dynamic pvp center when no active combat is happening. Best positioned at the 'natural spawn area' of the map, as this is guaranteed to happen on initial map load. Defaults to `Vector( 0, 0, 0 )`.
   - **zones**: defines boxes that separate spawns into groups. Except in rare cases, spawns will only be chosen if they are in the same zone as the currently active pvp center. Any spawns not contained by a zone will be added to a default group.

@@ -1,5 +1,4 @@
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_construct_in_flatgrass"] = {
-    centerCutoff = nil,
     centerUpdateInterval = nil,
     spawnpoints = {
         { spawnPos = Vector( 1968, -1050, -8577 ), spawnAngle = Angle( 0, -180, 0 ), pvp = true },

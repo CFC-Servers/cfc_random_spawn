@@ -1,19 +1,20 @@
 util.AddNetworkString( "CFC_SpawnEditor_SendSpawnPoints" )
 util.AddNetworkString( "CFC_SpawnEditor_RequestSpawnPoints" )
 util.AddNetworkString( "CFC_SpawnEditor_UpdateSpawnPoints" )
+util.AddNetworkString( "CFC_SpawnEditor_SyncActivePvpCenter" )
 util.AddNetworkString( "CFC_SpawnEditor_SetEditing" )
 
 CFCRandomSpawn.EditingPlayers = CFCRandomSpawn.EditingPlayers or {}
 
-local function syncActivePvpCenter()
+function CFCRandomSpawn.syncActivePvpCenter()
     local activePvpCenter = CFCRandomSpawn.activePvpCenter
     if not activePvpCenter then return end
 
-    net.Start( "CFC_SpawnEditor_ActivePvpCenter" )
+    net.Start( "CFC_SpawnEditor_SyncActivePvpCenter" )
         net.WriteVector( activePvpCenter.centerPos )
-        net.WriteFloat( activePvpCenter.centerCutoff or DEFAULT_CENTER_CUTOFF )
+        net.WriteFloat( activePvpCenter.radius )
         net.WriteUInt( activePvpCenter.zoneID, 10 )
-    net.Send( editors )
+    net.Send( CFCRandomSpawn.EditingPlayers )
 end
 
 net.Receive( "CFC_SpawnEditor_RequestSpawnPoints", function( _, ply )
@@ -22,7 +23,7 @@ net.Receive( "CFC_SpawnEditor_RequestSpawnPoints", function( _, ply )
 
     if not customSpawnConfigForMap then return end
 
-    syncActivePvpCenter()
+    CFCRandomSpawn.syncActivePvpCenter()
 
     net.Start( "CFC_SpawnEditor_SendSpawnPoints" )
     net.WriteTable( customSpawnConfigForMap )

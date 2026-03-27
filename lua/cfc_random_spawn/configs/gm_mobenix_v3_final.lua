@@ -1,5 +1,4 @@
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_mobenix_v3_final"] = {
-    centerCutoff = 4500,
     centerUpdateInterval = nil,
     spawnpoints = {
         { spawnPos = Vector( -9124, -1747, 10384 ), spawnAngle = Angle( 0, 179, 0 ), pvp = true },

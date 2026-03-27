@@ -1,5 +1,4 @@
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_tubeway_circuit_v1"] = {
-    centerCutoff = 3000,
     centerUpdateInterval = nil,
     spawnpoints = {
         { spawnPos = Vector( 4338, 2662, 10 ), spawnAngle = Angle( 0, 178, 0 ), pvp = true },

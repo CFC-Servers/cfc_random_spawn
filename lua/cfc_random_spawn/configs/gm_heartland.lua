@@ -1,5 +1,4 @@
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_heartland"] = {
-    centerCutoff = 3000,
     centerUpdateInterval = nil,
     spawnpoints = {
         { spawnPos = Vector( 594, -351, 28 ), spawnAngle = Angle( 0, -180, 0 ), pvp = true },

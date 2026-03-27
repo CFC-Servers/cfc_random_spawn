@@ -6,9 +6,9 @@ local mapHasCustomSpawns = next( customSpawnConfigForMap )
 
 local customSpawnsForMap = customSpawnConfigForMap.spawnpoints or {}
 local zonesForMap = customSpawnConfigForMap.zones or {}
-local DEFAULT_CENTER_CUTOFF = customSpawnConfigForMap.centerCutoff or CFCRandomSpawn.Config.DEFAULT_CENTER_CUTOFF
-local DEFAULT_CENTER_CUTOFF_SQR = DEFAULT_CENTER_CUTOFF ^ 2
-local CENTER_CUTOFF_SQR = DEFAULT_CENTER_CUTOFF_SQR
+local DEFAULT_CENTER_RADIUS = CFCRandomSpawn.Config.DEFAULT_CENTER_RADIUS
+local DEFAULT_CENTER_RADIUS_SQR = DEFAULT_CENTER_RADIUS ^ 2
+local CENTER_RADIUS_SQR = DEFAULT_CENTER_RADIUS_SQR
 local DYNAMIC_CENTER_FALLBACK = customSpawnConfigForMap.dynamicCenterStartingPos or Vector()
 local SELECTION_SIZE = CFCRandomSpawn.Config.SELECTION_SIZE
 local CLOSENESS_LIMIT = CFCRandomSpawn.Config.CLOSENESS_LIMIT ^ 2
@@ -88,9 +88,10 @@ function CFCRandomSpawn.refreshMapInfo()
 
     if not mapHasCustomSpawns then return end
     customSpawnsForMap = customSpawnConfigForMap.spawnpoints or {}
-    DEFAULT_CENTER_CUTOFF = customSpawnConfigForMap.centerCutoff or CFCRandomSpawn.Config.DEFAULT_CENTER_CUTOFF
-    DEFAULT_CENTER_CUTOFF_SQR = DEFAULT_CENTER_CUTOFF ^ 2
-    CENTER_CUTOFF_SQR = DEFAULT_CENTER_CUTOFF_SQR
+    DEFAULT_CENTER_RADIUS = CFCRandomSpawn.Config.DEFAULT_CENTER_RADIUS
+    DEFAULT_CENTER_RADIUS_SQR = DEFAULT_CENTER_RADIUS ^ 2
+    CENTER_RADIUS = DEFAULT_CENTER_RADIUS
+    CENTER_RADIUS_SQR = CENTER_RADIUS ^ 2
     SELECTION_SIZE = CFCRandomSpawn.Config.SELECTION_SIZE
     CLOSENESS_LIMIT = CFCRandomSpawn.Config.CLOSENESS_LIMIT ^ 2
     CENTER_UPDATE_INTERVAL = customSpawnConfigForMap.centerUpdateInterval or CFCRandomSpawn.Config.CENTER_UPDATE_INTERVAL
@@ -216,7 +217,7 @@ local function getSpawnsInZone( spawns, zoneID )
     return filteredSpawns
 end
 
--- Get the first SELECTION_SIZE spawns that are closest to nearPos and are within range of CENTER_CUTOFF_SQR
+-- Get the first SELECTION_SIZE spawns that are closest to nearPos and are within range of CENTER_RADIUS_SQR
 local cachedSpawnsInsideCenter    = nil
 local nextSpawnsInsideCenterCache = 0
 
@@ -225,7 +226,7 @@ local function spawnsInsidePvpCenterCached( spawns )
     nextSpawnsInsideCenterCache = CurTime() + 7.5
 
     local center = CFCRandomSpawn.activePvpCenter
-    local sortedSpawns = spawnsSortedByDistTo( center.centerPos, spawns, CENTER_CUTOFF_SQR, center.zoneID )
+    local sortedSpawns = spawnsSortedByDistTo( center.centerPos, spawns, CENTER_RADIUS_SQR, center.zoneID )
 
     cachedSpawnsInsideCenter = {}
     for i = 1, SELECTION_SIZE do
@@ -364,8 +365,8 @@ local function getDynamicPvpCenter( measurablePlayers )
         end
     end
 
-    dynamicPvpCenter.overrideCutoff = math.sqrt( dynamicCenterSizeSqr )
-    dynamicPvpCenter.overrideCutoffSqr = dynamicCenterSizeSqr
+    dynamicPvpCenter.radius = math.sqrt( dynamicCenterSizeSqr )
+    dynamicPvpCenter.radiusSqr = dynamicCenterSizeSqr
 
     return dynamicPvpCenter
 end
@@ -375,8 +376,8 @@ local function updateActivePvpCenter( measurablePlayers )
 
     CFCRandomSpawn.activePvpCenter = activePvpCenter
 
-    CENTER_CUTOFF = activePvpCenter.overrideCutoff or DEFAULT_CENTER_CUTOFF
-    CENTER_CUTOFF_SQR = activePvpCenter.overrideCutoffSqr or DEFAULT_CENTER_CUTOFF_SQR
+    CENTER_RADIUS = activePvpCenter.radius or DEFAULT_CENTER_RADIUS
+    CENTER_RADIUS_SQR = activePvpCenter.radiusSqr or DEFAULT_CENTER_RADIUS_SQR
 
     -- Network to editors
     local editors = CFCRandomSpawn.EditingPlayers
@@ -391,7 +392,7 @@ local function updateActivePvpCenter( measurablePlayers )
 
     if not next( editors ) then return end
 
-    syncActivePvpCenter()
+    CFCRandomSpawn.syncActivePvpCenter()
 end
 
 function CFCRandomSpawn.getOptimalSpawnPos()
