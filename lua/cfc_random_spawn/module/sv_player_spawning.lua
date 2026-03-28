@@ -43,7 +43,6 @@ local spawnTraceRequest = {
 local CurTime = CurTime
 local Vector = Vector
 
-util.AddNetworkString( "CFC_SpawnEditor_ActiveCenter" )
 
 local function getZoneForPos( pos )
     if noZones then return NO_ZONE_ID end
