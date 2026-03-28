@@ -56,7 +56,7 @@ Features:
 - To mark / cancel / add / remove zones `cfc_spawneditor_zonea` and `cfc_spawneditor_zoneb` / `cfc_spawneditor_zonecancel` / `cfc_spawneditor_zoneadd` / `cfc_spawneditor_zonedel`
   - Zones will be previewed in magenta, then turn cyan when confirmed.
 - To export the current map's spawnpoints to console use `cfc_spawneditor_export`, you can then paste this into sv_config.lua
-- To change the update interval for pvp centers temporarily for debugging, use `cfc_spawneditor_center_interval <interval>`
+- To change the update interval for pvp centers temporarily for debugging, use `cfc_spawneditor_pvpcenter_update_interval <interval>`
 
 Visual appearance:
 ![image](https://user-images.githubusercontent.com/69946827/190715330-645c7701-953d-452e-aa52-9908e479eecf.png)
