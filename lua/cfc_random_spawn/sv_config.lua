@@ -1,4 +1,4 @@
-CFCRandomSpawn.Config.DEFAULT_CENTER_CUTOFF = 3000 -- Default cutoff range from the most popular pvp center, where players further away from this will be ignored. The system tries to place you closest to everyone else.
+CFCRandomSpawn.Config.DEFAULT_CENTER_RADIUS = 3000 -- Default cutoff range from the most popular pvp center, where players further away from this will be ignored. The system tries to place you closest to everyone else.
 CFCRandomSpawn.Config.CLOSENESS_LIMIT = 300 -- Will not choose spawnpoints that are within this many units of a valid player (i.e. a living pvper).
 CFCRandomSpawn.Config.SELECTION_SIZE = 16 -- Max number of 'ideal' spawnpoints to select from randomly.
 CFCRandomSpawn.Config.CENTER_UPDATE_INTERVAL = 120 -- The gap (in seconds) between each center popularity update. If set to 0, will update on every respawn.

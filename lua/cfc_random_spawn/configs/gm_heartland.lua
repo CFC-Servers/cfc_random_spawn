@@ -1,17 +1,5 @@
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_heartland"] = {
-    centerCutoff = 3000,
     centerUpdateInterval = nil,
-    pvpCenters = {
-        { centerPos = Vector( -18, -437, 36 ), overrideCutoff = 2250 },
-        { centerPos = Vector( -2933, 444, 137 ), overrideCutoff = 2250 },
-        { centerPos = Vector( -25, 3166, 25 ), overrideCutoff = 2800 },
-        { centerPos = Vector( -3900, 2314, 101 ), overrideCutoff = 2250 },
-        { centerPos = Vector( 4026, 2408, 101 ), overrideCutoff = 2250 },
-        { centerPos = Vector( -3073, 3625, 1602 ), overrideCutoff = 1000 },
-        { centerPos = Vector( 1641, 5494, -123 ), overrideCutoff = 2250 },
-        { centerPos = Vector( -6533, 3447, 190 ), overrideCutoff = 2250 },
-        { centerPos = Vector( -7682, 11888, 97 ), overrideCutoff = 2250 }
-    },
     spawnpoints = {
         { spawnPos = Vector( 594, -351, 28 ), spawnAngle = Angle( 0, -180, 0 ), pvp = true },
         { spawnPos = Vector( -614, -347, 29 ), spawnAngle = Angle( 0, 0, 0 ), pvp = true },

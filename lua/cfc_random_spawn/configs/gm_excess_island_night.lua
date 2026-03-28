@@ -1,14 +1,5 @@
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_excess_island_night"] = {
-    centerCutoff = nil,
     centerUpdateInterval = nil,
-    pvpCenters = {
-        { centerPos = Vector( 251, -2425, 48 ), overrideCutoff = 2250 },
-        { centerPos = Vector( 3568, -1319, 247 ), overrideCutoff = 1250 },
-        { centerPos = Vector( 3542, -4542, 155 ), overrideCutoff = 2250 },
-        { centerPos = Vector( 424, 1786, 247 ), overrideCutoff = 1250 },
-        { centerPos = Vector( -2233, 1916, 261 ), overrideCutoff = 2250 },
-        { centerPos = Vector( 4175, 2640, 244 ), overrideCutoff = 3250 }
-    },
     spawnpoints = {
         { spawnPos = Vector( 176, -2657, 11 ), spawnAngle = Angle( 0, -90, 0 ), pvp = true },
         { spawnPos = Vector( 170, -2271, 11 ), spawnAngle = Angle( 0, 0, 0 ), pvp = true },

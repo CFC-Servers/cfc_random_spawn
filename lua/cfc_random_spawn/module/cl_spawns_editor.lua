@@ -1,7 +1,5 @@
 local spawnColor = Color( 0, 255, 0 )
-local spawnColorActiveCenter = Color( 0, 180, 255 )
-local centerPointColor = Color( 255, 0, 0 )
-local centerRangeColor = Color( 255, 145, 0 )
+local spawnColorActiveCenter = Color( 0, 255, 255 )
 local centerActiveColor = Color( 0, 50, 255 )
 local centerActiveRangeColor = Color( 75, 0, 255 )
 local zoneUnconfirmedColor = Color( 255, 0, 255 )
@@ -22,7 +20,6 @@ local spawnTable = {}
 local zoneCornerA = nil
 local zoneCornerB = nil
 local activeCenter = nil
-local centerCutoffDefault = 3000
 
 
 local function roundVector( vec, idp )
@@ -37,6 +34,16 @@ end
 net.Receive( "CFC_SpawnEditor_SendSpawnPoints", function()
     spawnTable = net.ReadTable()
 end )
+
+
+net.Receive( "CFC_SpawnEditor_SyncActivePvpCenter", function()
+    activeCenter = {
+        centerPos = net.ReadVector(),
+        radius = net.ReadFloat(),
+        zoneID = net.ReadUInt( 10 ),
+    }
+end )
+
 
 local function canRunCommand()
     local ply = LocalPlayer()
@@ -59,9 +66,9 @@ local function sendConfigChangesToServer()
     net.SendToServer()
 end
 
-local function drawPvPCenter( center, pointColor, rangeColor, radius )
+local function drawActiveCenter( center, pointColor, rangeColor, radius )
     local pos = center.centerPos
-    local cutoff = spawnTable.centerCutoff or centerCutoffDefault
+    local cutoff = center.radius
 
     if cutoff > LocalPlayer():GetPos():Distance( pos ) then
         render.DrawLine( pos - Vector( 0, 0, cutoff ), pos + Vector( 0, 0, cutoff ), pointColor, true )
@@ -85,7 +92,7 @@ hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", f
         -- Cace active center stuff
         if activeCenter then
             activeCenterPos = activeCenter.centerPos
-            activeCenterCutoff = activeCenter.centerCutoff or centerCutoffDefault
+            activeCenterCutoff = activeCenter.radius
 
             if spawnTable.zones then
                 local zone = spawnTable.zones[activeCenter.zoneID]
@@ -118,12 +125,6 @@ hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", f
         end
     end
 
-    if spawnTable.pvpCenters then
-        for _, center in ipairs( spawnTable.pvpCenters ) do
-            drawPvPCenter( center, centerPointColor, centerRangeColor, 40 )
-        end
-    end
-
     if spawnTable.zones then
         for _, zone in ipairs( spawnTable.zones ) do
             render.DrawWireframeBox( emptyVector, emptyAngle, zone.cornerA, zone.cornerB, zoneConfirmedColor, false )
@@ -135,7 +136,7 @@ hook.Add( "PostDrawTranslucentRenderables", "CFC_SpawnEditor_DrawSpawnPoints", f
     end
 
     if activeCenter then
-        drawPvPCenter( activeCenter, centerActiveColor, centerActiveRangeColor, 50 )
+        drawActiveCenter( activeCenter, centerActiveColor, centerActiveRangeColor, 50 )
     end
 end )
 
@@ -197,57 +198,6 @@ local function removeSpawn( ply )
 end
 
 concommand.Add( "cfc_spawneditor_spawndel", removeSpawn, _, "Removes the nearest spawn point" )
-
-local function addPvpCenter( ply )
-    if not canRunCommand() then return end
-    if not spawnTable.pvpCenters then spawnTable.pvpCenters = {} end
-
-    table.insert( spawnTable.pvpCenters, { centerPos = ply:GetPos() } )
-    sendConfigChangesToServer()
-end
-
-concommand.Add( "cfc_spawneditor_centeradd", addPvpCenter, _, "Adds a pvp center at your location" )
-
-local function removePvpCenter( ply )
-    if not canRunCommand() then return end
-    if not spawnTable.pvpCenters then spawnTable.pvpCenters = {} end
-
-    local nearPos = ply:GetPos()
-    local pvpCenters = spawnTable.pvpCenters
-
-    table.sort( pvpCenters, function( a, b )
-        return nearPos:DistToSqr( a.centerPos ) < nearPos:DistToSqr( b.centerPos )
-    end )
-
-    if spawnTable.pvpCenters[1].centerPos:DistToSqr( ply:GetPos() ) > minDeletionRange then
-        print( "You are too far away from the nearest pvp center, please move closer to it." )
-        return
-    end
-
-    table.remove( spawnTable.pvpCenters, 1 )
-    sendConfigChangesToServer()
-end
-
-concommand.Add( "cfc_spawneditor_centerdel", removePvpCenter, _, "Removes the nearest pvp center" )
-
-local function setCenterCutoff( _, _, args )
-    if not canRunCommand() then return end
-    if not spawnTable.pvpCenters then spawnTable.pvpCenters = {} end
-
-    local cutoff = tonumber( args[1] )
-    if not cutoff then
-        print( "Please provide a number for the cutoff." )
-        return
-    end
-
-    if spawnTable.centerCutoff then
-        print( "Overwriting old cutoff of " .. spawnTable.centerCutoff )
-    end
-    spawnTable.centerCutoff = cutoff
-    sendConfigChangesToServer()
-end
-
-concommand.Add( "cfc_spawneditor_cutoff", setCenterCutoff, _, "Sets the cutoff for pvp centers, requires a number." )
 
 local function markZoneA( ply, _, _, argsStr )
     if not canRunCommand() then return end
@@ -356,10 +306,6 @@ local function printSpawnTable()
 
     local mainString = string.format( [[CFCRandomSpawn.Config.CUSTOM_SPAWNS["%s"] = {%s]], game.GetMap(), "\n" )
 
-    if spawnTable.centerCutoff then
-        mainString = mainString .. tab .. "centerCutoff = " .. spawnTable.centerCutoff .. ",\n"
-    end
-
     if spawnTable.centerUpdateInterval then
         mainString = mainString .. tab .. "centerUpdateInterval = " .. spawnTable.centerUpdateInterval .. ",\n"
     end
@@ -367,16 +313,6 @@ local function printSpawnTable()
     if spawnTable.dynamicCenterStartingPos then
         local vec = spawnTable.dynamicCenterStartingPos
         mainString = mainString .. tab .. string.format( "dynamicCenterStartingPos = Vector( %s, %s, %s ),\n", vec.x, vec.y, vec.z )
-    end
-
-    if istable( spawnTable.pvpCenters ) then
-        mainString = mainString .. tab .. "pvpCenters = {\n"
-        for _, center in ipairs( spawnTable.pvpCenters ) do
-            mainString = mainString .. tab .. tab .. "{ "
-            mainString = mainString .. string.format( "centerPos = Vector( %s, %s, %s )", center.centerPos.x, center.centerPos.y, center.centerPos.z )
-            mainString = mainString .. " },\n"
-        end
-        mainString = mainString .. tab .. "},\n"
     end
 
     if istable( spawnTable.zones ) then
@@ -428,13 +364,4 @@ local function clearAll( _, _, args )
     print( "Cleared all spawns!" )
 end
 
-concommand.Add( "cfc_spawneditor_clearall", clearAll, _, "Clears all spawn points and pvp centers. Dangerous." )
-
-
-net.Receive( "CFC_SpawnEditor_ActiveCenter", function()
-    activeCenter = {
-        centerPos = net.ReadVector(),
-        centerCutoff = net.ReadFloat(),
-        zoneID = net.ReadUInt( 10 ),
-    }
-end )
+concommand.Add( "cfc_spawneditor_clearall", clearAll, _, "Clears all spawn points. Dangerous." )

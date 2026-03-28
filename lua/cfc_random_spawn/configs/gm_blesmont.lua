@@ -1,11 +1,5 @@
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_blesmont"] = {
-    centerCutoff = nil,
     centerUpdateInterval = nil,
-    pvpCenters = {
-        { centerPos = Vector( 7050, -7530, 8 ), overrideCutoff = 4000 },
-        { centerPos = Vector( 10429, -8922, 9 ), overrideCutoff = 4000 },
-        { centerPos = Vector( 3386, -8406, 8 ), overrideCutoff = 4000 }
-    },
     spawnpoints = {
         { spawnPos = Vector( 6925, -7964, 3 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },
         { spawnPos = Vector( 7336, -7815, 3 ), spawnAngle = Angle( 0, 90, 0 ), pvp = true },

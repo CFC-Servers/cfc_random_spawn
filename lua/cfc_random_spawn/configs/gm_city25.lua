@@ -1,14 +1,5 @@
 CFCRandomSpawn.Config.CUSTOM_SPAWNS["gm_city25"] = {
-    centerCutoff = 3000,
     centerUpdateInterval = nil,
-    pvpCenters = {
-        { centerPos = Vector( 7, -1340, 101 ), overrideCutoff = 3000 },
-        { centerPos = Vector( -3786, -3121, 92 ), overrideCutoff = 4000 },
-        { centerPos = Vector( -899, -6346, 109 ), overrideCutoff = 3000 },
-        { centerPos = Vector( 2892, -5823, 101 ), overrideCutoff = 3000 },
-        { centerPos = Vector( -2008, -7467, 94 ), overrideCutoff = 4000 },
-        { centerPos = Vector( 4600, -7998, 91 ), overrideCutoff = 4000 }
-    },
     spawnpoints = {
         { spawnPos = Vector( 599, -1308, 83 ), spawnAngle = Angle( 0, -180, 0 ), pvp = true },
         { spawnPos = Vector( 598, -1878, 83 ), spawnAngle = Angle( 0, -180, 0 ), pvp = true },

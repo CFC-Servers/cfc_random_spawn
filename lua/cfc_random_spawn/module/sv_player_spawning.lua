@@ -6,10 +6,9 @@ local mapHasCustomSpawns = next( customSpawnConfigForMap )
 
 local customSpawnsForMap = customSpawnConfigForMap.spawnpoints or {}
 local zonesForMap = customSpawnConfigForMap.zones or {}
-local pvpCenters = customSpawnConfigForMap.pvpCenters or {}
-local DEFAULT_CENTER_CUTOFF = customSpawnConfigForMap.centerCutoff or CFCRandomSpawn.Config.DEFAULT_CENTER_CUTOFF
-local DEFAULT_CENTER_CUTOFF_SQR = DEFAULT_CENTER_CUTOFF ^ 2
-local CENTER_CUTOFF_SQR = DEFAULT_CENTER_CUTOFF_SQR
+local DEFAULT_CENTER_RADIUS = CFCRandomSpawn.Config.DEFAULT_CENTER_RADIUS
+local DEFAULT_CENTER_RADIUS_SQR = DEFAULT_CENTER_RADIUS ^ 2
+local CENTER_RADIUS_SQR = DEFAULT_CENTER_RADIUS_SQR
 local DYNAMIC_CENTER_FALLBACK = customSpawnConfigForMap.dynamicCenterStartingPos or Vector()
 local SELECTION_SIZE = CFCRandomSpawn.Config.SELECTION_SIZE
 local CLOSENESS_LIMIT = CFCRandomSpawn.Config.CLOSENESS_LIMIT ^ 2
@@ -44,12 +43,6 @@ local spawnTraceRequest = {
 local CurTime = CurTime
 local Vector = Vector
 
-util.AddNetworkString( "CFC_SpawnEditor_ActiveCenter" )
-
-
-local function defaultPvpCenter()
-    return pvpCenters[1]
-end
 
 local function getZoneForPos( pos )
     if noZones then return NO_ZONE_ID end
@@ -63,22 +56,6 @@ local function getZoneForPos( pos )
     return fallbackZoneID
 end
 
-local function loadPvpCenters()
-    if not pvpCenters or not defaultPvpCenter() then
-        CFCRandomSpawn.doDynamicCenters = true
-    end
-
-    for _, centerData in pairs( pvpCenters ) do
-        local overrideCutoff = centerData.overrideCutoff
-
-        if overrideCutoff then
-            centerData.overrideCutoffSqr = overrideCutoff ^ 2
-        end
-    end
-
-    CFCRandomSpawn.mostPopularCenter = defaultPvpCenter()
-end
-
 local function loadZones()
     noZones = table.IsEmpty( zonesForMap )
 
@@ -89,10 +66,6 @@ local function loadZones()
             spawn.zoneID = fallbackZoneID
         end
 
-        for _, pvpCenter in ipairs( pvpCenters ) do
-            pvpCenter.zoneID = fallbackZoneID
-        end
-
         return
     end
 
@@ -101,34 +74,28 @@ local function loadZones()
     for _, spawn in ipairs( customSpawnsForMap ) do
         spawn.zoneID = getZoneForPos( spawn.spawnPos )
     end
-
-    for _, pvpCenter in ipairs( pvpCenters ) do
-        pvpCenter.zoneID = getZoneForPos( pvpCenters.centerPos )
-    end
 end
 
-loadPvpCenters()
 loadZones()
 
-local mostPopularCenter = CFCRandomSpawn.mostPopularCenter
+local activePvpCenter = CFCRandomSpawn.activePvpCenter
 
 function CFCRandomSpawn.refreshMapInfo()
-    mostPopularCenter = CFCRandomSpawn.mostPopularCenter
+    activePvpCenter = CFCRandomSpawn.activePvpCenter
     customSpawnConfigForMap = CFCRandomSpawn.Config.CUSTOM_SPAWNS[game.GetMap()]
     mapHasCustomSpawns = next( customSpawnConfigForMap )
 
     if not mapHasCustomSpawns then return end
     customSpawnsForMap = customSpawnConfigForMap.spawnpoints or {}
-    pvpCenters = customSpawnConfigForMap.pvpCenters or {}
-    DEFAULT_CENTER_CUTOFF = customSpawnConfigForMap.centerCutoff or CFCRandomSpawn.Config.DEFAULT_CENTER_CUTOFF
-    DEFAULT_CENTER_CUTOFF_SQR = DEFAULT_CENTER_CUTOFF ^ 2
-    CENTER_CUTOFF_SQR = DEFAULT_CENTER_CUTOFF_SQR
+    DEFAULT_CENTER_RADIUS = CFCRandomSpawn.Config.DEFAULT_CENTER_RADIUS
+    DEFAULT_CENTER_RADIUS_SQR = DEFAULT_CENTER_RADIUS ^ 2
+    CENTER_RADIUS = DEFAULT_CENTER_RADIUS
+    CENTER_RADIUS_SQR = CENTER_RADIUS ^ 2
     SELECTION_SIZE = CFCRandomSpawn.Config.SELECTION_SIZE
     CLOSENESS_LIMIT = CFCRandomSpawn.Config.CLOSENESS_LIMIT ^ 2
     CENTER_UPDATE_INTERVAL = customSpawnConfigForMap.centerUpdateInterval or CFCRandomSpawn.Config.CENTER_UPDATE_INTERVAL
     IGNORE_BUILDERS = CFCRandomSpawn.Config.IGNORE_BUILDERS
 
-    loadPvpCenters()
     loadZones()
 end
 
@@ -249,7 +216,7 @@ local function getSpawnsInZone( spawns, zoneID )
     return filteredSpawns
 end
 
--- Get the first SELECTION_SIZE spawns that are closest to nearPos and are within range of CENTER_CUTOFF_SQR
+-- Get the first SELECTION_SIZE spawns that are closest to nearPos and are within range of CENTER_RADIUS_SQR
 local cachedSpawnsInsideCenter    = nil
 local nextSpawnsInsideCenterCache = 0
 
@@ -257,8 +224,8 @@ local function spawnsInsidePvpCenterCached( spawns )
     if cachedSpawnsInsideCenter and nextSpawnsInsideCenterCache > CurTime() then return cachedSpawnsInsideCenter end
     nextSpawnsInsideCenterCache = CurTime() + 7.5
 
-    local center = CFCRandomSpawn.mostPopularCenter
-    local sortedSpawns = spawnsSortedByDistTo( center.centerPos, spawns, CENTER_CUTOFF_SQR, center.zoneID )
+    local center = CFCRandomSpawn.activePvpCenter
+    local sortedSpawns = spawnsSortedByDistTo( center.centerPos, spawns, CENTER_RADIUS_SQR, center.zoneID )
 
     cachedSpawnsInsideCenter = {}
     for i = 1, SELECTION_SIZE do
@@ -344,22 +311,6 @@ local function getPlyAvg( plys, fallbackPos )
     return avgSum / #plys
 end
 
--- Players within the point's radius each provide a score of 1, while players outside the radius provide a score that falls off quadratically
-local function getPlayerPopularityFromPoint( point, plys, radiusSqr )
-    local totalScore = 0
-    radiusSqr = radiusSqr or DEFAULT_CENTER_CUTOFF_SQR
-
-    for _, ply in pairs( plys ) do
-        local plyDistanceSqr = ( ply:GetPos():DistToSqr( point ) )
-
-        if plyDistanceSqr < radiusSqr then plyDistanceSqr = radiusSqr end
-
-        totalScore = totalScore + radiusSqr / plyDistanceSqr
-    end
-
-    return totalScore
-end
-
 local function getDynamicPvpCenter( measurablePlayers )
     local playersAveragePos = getPlyAvg( measurablePlayers, DYNAMIC_CENTER_FALLBACK )
 
@@ -413,43 +364,19 @@ local function getDynamicPvpCenter( measurablePlayers )
         end
     end
 
-    dynamicPvpCenter.overrideCutoff = math.sqrt( dynamicCenterSizeSqr )
-    dynamicPvpCenter.overrideCutoffSqr = dynamicCenterSizeSqr
+    dynamicPvpCenter.radius = math.sqrt( dynamicCenterSizeSqr )
+    dynamicPvpCenter.radiusSqr = dynamicCenterSizeSqr
 
     return dynamicPvpCenter
 end
 
--- Gets the most populated pvp center via the electron force model, to eliminate outliers
-local function getMostPopulatedCenter( plys )
-    local bestScore = -1
-    local bestCenter = { centerPos = Vector() }
+local function updateActivePvpCenter( measurablePlayers )
+    activePvpCenter = getDynamicPvpCenter( measurablePlayers )
 
-    if not pvpCenters[2] then return defaultPvpCenter() end -- No need to make extra calculations if there's only one pvp center
-    if not plys or not plys[1] then return defaultPvpCenter() end -- Use the first pvp center as the primary one if there are no pvpers
+    CFCRandomSpawn.activePvpCenter = activePvpCenter
 
-    for _, center in ipairs( pvpCenters ) do
-        local score = getPlayerPopularityFromPoint( center.centerPos, plys, center.overrideCutoffSqr )
-
-        if score > bestScore then
-            bestScore = score
-            bestCenter = center
-        end
-    end
-
-    return bestCenter
-end
-
-local function updatePopularCenter( measurablePlayers )
-    if CFCRandomSpawn.doDynamicCenters then
-        mostPopularCenter = getDynamicPvpCenter( measurablePlayers )
-    else
-        mostPopularCenter = getMostPopulatedCenter( measurablePlayers )
-    end
-
-    CFCRandomSpawn.mostPopularCenter = mostPopularCenter
-
-    CENTER_CUTOFF = mostPopularCenter.overrideCutoff or DEFAULT_CENTER_CUTOFF
-    CENTER_CUTOFF_SQR = mostPopularCenter.overrideCutoffSqr or DEFAULT_CENTER_CUTOFF_SQR
+    CENTER_RADIUS = activePvpCenter.radius or DEFAULT_CENTER_RADIUS
+    CENTER_RADIUS_SQR = activePvpCenter.radiusSqr or DEFAULT_CENTER_RADIUS_SQR
 
     -- Network to editors
     local editors = CFCRandomSpawn.EditingPlayers
@@ -464,19 +391,15 @@ local function updatePopularCenter( measurablePlayers )
 
     if not next( editors ) then return end
 
-    net.Start( "CFC_SpawnEditor_ActiveCenter" )
-    net.WriteVector( mostPopularCenter.centerPos )
-    net.WriteFloat( mostPopularCenter.centerCutoff or DEFAULT_CENTER_CUTOFF )
-    net.WriteUInt( mostPopularCenter.zoneID, 10 )
-    net.Send( editors )
+    CFCRandomSpawn.syncActivePvpCenter()
 end
 
 function CFCRandomSpawn.getOptimalSpawnPos()
     local measurablePlayers = getMeasurablePlayers()
     local allLivingPlys = getLivingPlayers()
 
-    if not CFCRandomSpawn.mostPopularCenter then
-        updatePopularCenter( measurablePlayers )
+    if not CFCRandomSpawn.activePvpCenter then
+        updateActivePvpCenter( measurablePlayers )
     end
 
     local spawnsInsideCenter = spawnsInsidePvpCenterCached( customSpawnsForMap )
@@ -488,6 +411,8 @@ end
 function CFCRandomSpawn.handlePlayerSpawn( ply )
     if not mapHasCustomSpawns then return end
     if not ( ply and IsValid( ply ) ) then return end
+
+    -- TODO: make this a hook
     if IsValid( ply.LinkedSpawnPoint ) then return end
 
     local optimalSpawnPosition, optimalSpawnAngles = CFCRandomSpawn.getOptimalSpawnPos()
@@ -501,16 +426,16 @@ end
 
 hook.Add( "PlayerSpawn", "CFC_RandomSpawn_ChooseOptimalSpawnpoint", CFCRandomSpawn.handlePlayerSpawn )
 
-timer.Create( "CFC_RandomSpawn_CalculateMostPopularPvpCenter", CENTER_UPDATE_INTERVAL, 0, function()
+timer.Create( "CFC_RandomSpawn_CalculateActivePvpCenter", CENTER_UPDATE_INTERVAL, 0, function()
     if not mapHasCustomSpawns then return end
     local measurablePlayers = getMeasurablePlayers()
 
-    updatePopularCenter( measurablePlayers )
+    updateActivePvpCenter( measurablePlayers )
 end )
 
-concommand.Add( "cfc_spawneditor_center_interval", function( ply, _, args )
+concommand.Add( "cfc_spawneditor_pvpcenter_update_interval", function( ply, _, args )
     if IsValid( ply ) and not ply:IsAdmin() then return end
     if #args == 0 then return end
 
-    timer.Adjust( "CFC_RandomSpawn_CalculateMostPopularPvpCenter", tonumber( args[1] ), 0 )
+    timer.Adjust( "CFC_RandomSpawn_CalculateActivePvpCenter", tonumber( args[1] ), 0 )
 end, nil, "Sets the update interval for pvp centers. Lasts until the next map change." )
