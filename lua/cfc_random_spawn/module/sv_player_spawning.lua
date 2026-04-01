@@ -324,7 +324,7 @@ local function getDynamicPvpCenter( measurablePlayers )
     end
 
     local closestSpawnToAverage = getNearestSpawn( playersAveragePos, customSpawnsForMap )
-    if not closestSpawnToAverage then
+    if not closestSpawnToAverage then -- stupid fallback
         closestSpawnToAverage = customSpawnsForMap[math.random( 1, #customSpawnsForMap )]
 
     end
