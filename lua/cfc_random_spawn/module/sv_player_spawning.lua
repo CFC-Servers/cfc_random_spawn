@@ -324,6 +324,10 @@ local function getDynamicPvpCenter( measurablePlayers )
     end
 
     local closestSpawnToAverage = getNearestSpawn( playersAveragePos, customSpawnsForMap )
+    if not closestSpawnToAverage then -- stupid fallback
+        closestSpawnToAverage = customSpawnsForMap[math.random( 1, #customSpawnsForMap )]
+    end
+
     local fauxPvpcenterPos = closestSpawnToAverage.spawnPos
     local zoneID = closestSpawnToAverage.zoneID
     -- use nearest spawnpoint as a sanity point
